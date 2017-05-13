@@ -1,5 +1,10 @@
 # Longboye
 
+![Longboye](https://github.com/lgastasko/longboye/raw/master/longboye.jpg "Longboye")
+
+> "Dogs are better than human beings because they know but do not tell."
+> - Emily Dickinson
+
 Longboye is a Haskell import statement prettifier.
 
 You pass it one or more paths to filenames or directories on the command line
