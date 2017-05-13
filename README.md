@@ -1,6 +1,6 @@
 # Longboye
 
-![Longboye](https://github.com/lgastasko/longboye/raw/master/longboye.jpg "Longboye")
+![Longboye](https://github.com/lgastako/longboye/blob/master/longboye.jpg?raw=true "Longboye")
 
 > "Dogs are better than human beings because they know but do not tell."
 > - Emily Dickinson
