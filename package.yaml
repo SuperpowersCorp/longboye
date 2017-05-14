@@ -19,7 +19,11 @@ library:
   - Longboye
   dependencies:
   - base >=4.7 && <5
+  - directory
   - docopt
+  - megaparsec
+  - text
+  - safe
 
 executables:
   longboye:
