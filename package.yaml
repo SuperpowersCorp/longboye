@@ -21,6 +21,7 @@ library:
   - base >=4.7 && <5
   - directory
   - docopt
+  - haskell-src-exts
   - megaparsec
   - text
   - safe
