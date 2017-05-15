@@ -36,7 +36,7 @@ cleanFile path = do
   case Cracker.crackE path contents of
     Left err                    -> return . Left $ err
     Right (NoImports _)         -> return . Right $ ()
-    Right (WithImports cracked) -> doCleaning path contents cracked >>= return . Right
+    Right (WithImports cracked) -> Right <$> doCleaning path contents cracked
 
 doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
 doCleaning path contents (prefix, imports, suffix) = do
@@ -65,7 +65,7 @@ doCleaning path contents (prefix, imports, suffix) = do
 
 swap :: VerifiedTempPath -> FilePath -> IO ()
 swap vtp path = rename src dst
-  where src = Verify.accessPath $ vtp
+  where src = Verify.accessPath vtp
         dst = path
 
 cleanText :: Text -> [Import] -> Text -> Text
