@@ -27,6 +27,13 @@ occasionally, so if somehow Longboye detects any problems or crashes at any
 point, you can find the original contents of the file in the temporary `.lbak`
 file in the same directory.
 
+## TODOs
+
+- [x] Basic Formatting
+- [ ] Atomic file swapping
+- [ ] Sort Imports (with Prelude at top)
+- [ ] Handle extra indenting for global hiding resolution
+
 ## Examples
 
     TODO: Add examples.
