@@ -49,7 +49,7 @@ format maxModLen maxAsLenM4 imp =
                       else "         "
         formattedAs    = pad maxAsLen . maybe "" (" as " <>) . asClause $ imp
         formattedMembs = mHiding <> formatMembers maxAsLen maxModLen (members imp)
-        mHiding        = bool " hiding " "" (hiding imp)-- TODO: Fix this
+        mHiding        = bool "" " hiding " (hiding imp) -- TODO: Fix this
         maxAsLen       = maxAsLenM4 + 4
         pad n s        = s <> padding
           where padding = Text.replicate (n - Text.length s) " "
