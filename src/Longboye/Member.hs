@@ -59,7 +59,7 @@ render sep (OpMember name ops) = name <> renderedOps
 
 renderName :: Name a -> Text
 renderName (Ident _ n)  = Text.pack n
-renderName (Symbol _ n) = Text.pack n
+renderName (Symbol _ n) = "(" <> Text.pack n <> ")"
 
 cnameText :: CName a -> Text
 cnameText (VarName _ name) = renderName name
