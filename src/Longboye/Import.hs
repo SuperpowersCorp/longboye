@@ -50,8 +50,8 @@ format maxModLen maxAsLenM4 imp =
         formattedAs    = pad maxAsLen . fromMaybe "" . fmap (" as " <>) $ asClause imp
         formattedMembs = mHiding <> formatMembers maxAsLen maxModLen (members imp)
         mHiding        = bool " hiding " "" (hiding imp)-- TODO: Fix this
-        maxAsLen = maxAsLenM4 + 4
-        pad n s   = s <> padding
+        maxAsLen       = maxAsLenM4 + 4
+        pad n s        = s <> padding
           where padding = Text.replicate (n - (Text.length s)) " "
 
 asLength :: Import -> Int
@@ -59,15 +59,15 @@ asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
 formatMembers :: Int -> Int -> Maybe [Member] -> Text
 formatMembers maxAsLen maxModLen = fromMaybe "" . fmap f
-  where f ms = " ( "
-                 <> (Text.intercalate sep . map (Member.render sep) $ ms)
-                 <> lastPadding
-                 <> ")"
+  where f ms    = " ( "
+                    <> (Text.intercalate sep . map (Member.render sep) $ ms)
+                    <> lastPadding
+                    <> ")"
           where lastPadding
                   | length ms == 1 = " "
                   | length ms == 0 = ""
                   | otherwise      = "\n" <> padding
-        sep = "\n" <> padding <> ", "
+        sep     = "\n" <> padding <> ", "
         padding = Text.replicate n " "
           where n = 1 + maxAsLen + maxModLen + Text.length "import qualified "
 
