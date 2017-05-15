@@ -1,180 +1,77 @@
 module Longboye.Imports.Cracker
-       ( crack
+       ( Cracked(..)
+       , crack
        , crackE
        ) where
 
-import           Prelude hiding        ( drop
-                                       , take
-                                       , length
-                                       )
-
-import           Control.Applicative   ( (<$>)
-                                       , (<|>)
-                                       , empty
-                                       )
-import           Control.Monad         ( void )
-import           Data.Char             ( Char )
-import           Data.Functor.Identity ( Identity )
-import           Data.Text             ( Text
-                                       , pack
-                                       )
-import qualified Data.Text             as Text
-import           Longboye.Import       ( Import )
-import qualified Longboye.Import       as Import
-import           Longboye.Member       ( Member( ClassMember
-                                               , FnMember
-                                               , OpMember
-                                               )
-                                       )
-import qualified Longboye.Parsers      as Parsers
+import           Data.Text                    ( Text )
+import qualified Data.Text                    as Text
+import qualified Debug
+import           Language.Haskell.Exts        ( Module( Module
+                                                      , XmlHybrid
+                                                      , XmlPage
+                                                      )
+                                              , SrcSpanInfo
+                                              , srcSpanEndLine
+                                              , srcSpanStartLine
+                                              , srcInfoSpan
+                                              , importAnn
+                                              )
+import           Language.Haskell.Exts.Parser ( ParseResult( ParseOk
+                                                           , ParseFailed
+                                                           )
+                                              , defaultParseMode
+                                              , parseFilename
+                                              )
+import qualified Language.Haskell.Exts.Parser as Parser
+import           Language.Haskell.Exts.Syntax ( ImportDecl )
+import           Longboye.Import              ( Import )
+import qualified Longboye.Import              as Import
 import           Overture
-import           Text.Megaparsec       ( Dec
-                                       , ParsecT
-                                       , between
-                                       , choice
-                                       , lookAhead
-                                       , many
-                                       , manyTill
-                                       , optional
-                                       , sepBy
-                                       , sepBy1
-                                       )
-import           Text.Megaparsec.Char  ( anyChar
-                                       , alphaNumChar
-                                       , char
-                                       , lowerChar
-                                       , spaceChar
-                                       , string
-                                       , upperChar
-                                       )
-import qualified Text.Megaparsec.Char  as C
-import           Text.Megaparsec.Error ( ParseError
-                                       )
-import qualified Text.Megaparsec.Lexer as L
-import           Text.Megaparsec.Text  ( Parser )
 
-type Language = (Text, [Import], Text)
+data Cracked
+  = NoImports Text
+  | WithImports (Text, [Import], Text)
+  deriving (Eq, Ord, Read, Show)
 
-crack :: String -> Text -> Maybe Language
-crack = (eitherToMaybe .) . crackE
+crack :: FilePath -> Text -> Maybe Cracked
+crack path = eitherToMaybe . crackE path
 
-crackE :: String -> Text -> Either (ParseError Char Dec) Language
-crackE filename = Parsers.parse filename language
+crackE :: FilePath -> Text -> Either Text Cracked
+crackE path source = case Parser.parseModuleWithMode parseMode sourceText of
+  ParseOk parsedMod ->
+    if null imports
+      then Right . NoImports   $ source
+      else Right . WithImports $ (prefix, imports, suffix)
+    where imports = getImports (Debug.log "parsedMod" parsedMod)
+          prefix  = extractPrefix parsedMod source
+          suffix  = extractSuffix parsedMod source
+  ParseFailed srcLoc err ->
+    Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
+  where parseMode  = defaultParseMode { parseFilename = path }
+        sourceText = Text.unpack source
 
-language :: ParsecT Dec Text Identity Language
-language = sc >> importsOnlyHaskell
+extractPrefix :: (Module SrcSpanInfo) -> Text -> Text
+extractPrefix (XmlPage _ _ _ _ _ _ _)       _      = notSupported "XmlPage"
+extractPrefix (XmlHybrid _ _ _ _ _ _ _ _ _) _      = notSupported "XmlHybrid"
+extractPrefix (Module _ _ _ importDecls _)  source =
+  mconcat . take n . Text.lines $ source
+  where n = srcSpanStartLine . srcInfoSpan . importAnn . head $ importDecls
 
-importsOnlyHaskell :: Parser Language
-importsOnlyHaskell = (,,) <$> preImports <*> imports <*> postImports
+extractSuffix :: (Module SrcSpanInfo) -> Text -> Text
+extractSuffix (XmlPage _ _ _ _ _ _ _)       _      = notSupported "XmlPage"
+extractSuffix (XmlHybrid _ _ _ _ _ _ _ _ _) _      = notSupported "XmlHybrid"
+extractSuffix (Module _ _ _ importDecls _)  source =
+  mconcat . drop n . Text.lines $ source
+  where n = srcSpanEndLine . srcInfoSpan . importAnn . last $ importDecls
 
-preImports :: Parser Text
-preImports = pack <$> manyTill anyChar (lookAhead import')
+extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
+extractImports (Module _l _ _ decls _)       = decls
+extractImports (XmlHybrid _ _ _ _ _ _ _ _ _) = notSupported "XmlHybrid"
+extractImports (XmlPage _ _ _ _ _ _ _)       = notSupported "XmlPage"
 
-imports :: Parser [Import]
-imports = error "imports not implemented."
+getImports :: Module SrcSpanInfo -> [Import]
+getImports = (map Import.fromDecl) <$> extractImports
 
--- import           Foo
--- import           Foo.Bar
--- import           Foo.Bar as Bar
--- import           Foo.Bar as Baz
--- import           Foo.Bar as Baz.Bif
--- import           Foo.Bar as Baz.Bif        ( bam )
--- import           Foo.Bar                   ( baz )
--- import           Foo.Bar                   ( Foo(..), Bar(bif, bam), baz )
--- import           Foo.Bar as Baz            ( bif )
--- import           Foo.Bar            hiding ( baz, bif )
--- import           Foo.Bar as Baz     hiding ( bif )
--- above + qualified
-
-import' :: Parser Import
-import' = do
-  void $ string "import"
-  void sc
-  q   <- maybeToBool <$> optional (string "qualified")
-  void sc
-  modu <- importedModule
-  void sc
-  as  <- optional asClause
-  hiding <- maybeToBool <$> optional (string "hiding")
-  void sc
-  membs <- optional membersList
-  return $ Import.from q modu as hiding membs
-  where maybeToBool Nothing = False
-        maybeToBool _       = True
-
-asClause :: Parser Text
-asClause = do
-  void . lexeme . string $ "as"
-  void sc
-  modName
-
-membersList :: Parser [Member]
-membersList = between lparen rparen $ member `sepBy` lexeme (char ',')
-
-member :: Parser Member
-member = classMemb <|> fnMemb <|> opMemb
-
-classMemb :: Parser Member
-classMemb = do
-  className <- typeClassName
-  classOps  <- optional (between lparen rparen tcOpList)
-  return $ ClassMember className classOps
-
-typeClassName :: Parser Text
-typeClassName = do
-  firstLetter <- upperChar
-  rest        <- many cnChars
-  return . Text.pack $ firstLetter:rest
-  where cnChars = alphaNumChar <|> char '_' -- TODO: anything else?
-
-tcOpList :: Parser [Text]
-tcOpList = tcOp `sepBy` comma
-
-tcOp :: Parser Text
-tcOp = error "tcOp not implemented."
-
-fnMemb :: Parser Member
-fnMemb = FnMember <$> identifer
-  where identifer = do
-          firstLetter <- lowerChar
-          rest        <- many idChars
-          return . Text.pack $ firstLetter:rest
-        idChars = alphaNumChar <|> char '_' -- TODO: others?
-
-opMemb :: Parser Member
-opMemb = between lparen rparen (mk <$> p)
-  where mk      = OpMember . Text.pack
-        p       = many . choice . map C.char $ opChars
-        opChars = "<>!@#$%^&*-+." :: String
-
-importedModule :: Parser Text
-importedModule = modName
-
-modName :: Parser Text
-modName = Text.intercalate "." <$> modSeg `sepBy1` char '.'
-
-modSeg :: Parser Text
-modSeg = do
-  firstLetter <- upperChar
-  rest        <- many modChars
-  return . Text.pack $ firstLetter:rest
-  where modChars = alphaNumChar <|> char '_' -- TODO: anything else?
-
-postImports :: Parser Text
-postImports = error "postImports not implemented."
-
--- | sc: space consumer
-sc :: ParsecT Dec Text Identity ()
-sc = L.space (void spaceChar) empty empty
-
-lexeme :: Parser a -> Parser a
-lexeme = L.lexeme sc
-
-lparen :: ParsecT Dec Text Identity Char
-lparen = char '('
-
-rparen :: ParsecT Dec Text Identity Char
-rparen = char ')'
-
-comma :: ParsecT Dec Text Identity Char
-comma  = char ','
+notSupported :: String -> a
+notSupported = error . (++ " modules not supported.")
