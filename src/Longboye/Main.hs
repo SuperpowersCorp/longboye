@@ -1,5 +1,4 @@
 {-# LANGUAGE QuasiQuotes     #-}
-{-# LANGUAGE TemplateHaskell #-}
 module Longboye.Main ( main ) where
 
 import           Control.Monad         ( when )
@@ -12,7 +11,6 @@ import           System.Console.Docopt ( Docopt
                                        , docoptFile
                                        , exitWithUsage
                                        , getAllArgs
-                                       -- , getArgOrExitWith
                                        , isPresent
                                        , longOption
                                        , parseArgsOrExit
@@ -28,16 +26,14 @@ main_ :: [String] -> IO ()
 main_ argv = do
   opts <- parseArgsOrExit patterns argv
 
-  when (opts `isPresent` (longOption "version")) $ do
+  when (opts `isPresent` longOption "version") $ do
     putStrLn $ "Longboye v" ++ version
     exitSuccess
 
-  when (opts `isPresent` (longOption "help")) $ do
-    exitWithUsage patterns
+  when (opts `isPresent` longOption "help") $ exitWithUsage patterns
 
-  when (opts `isPresent` (command "imports")) $ do
-    let paths = opts `getAllArgs` (argument "path")
+  when (opts `isPresent` command "imports") $ do
+    let paths = opts `getAllArgs` argument "path"
     Imports.clean paths
 
   where version      = "0.0.0.1"
-        -- getArgOrExit = getArgOrExitWith patterns

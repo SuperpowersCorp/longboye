@@ -31,18 +31,12 @@ clean (path:paths) = cleanFile path >>= either abort continue
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
-  -- putStrLn $ "Processing file: " ++ path
+  putStrLn $ "Processing file: " ++ path
   contents <- readFile path
   case Cracker.crackE path contents of
-    Left err                    -> do
-      -- putStrLn $ "ERROR: " ++ unpack err
-      return . Left $ err
-    Right (NoImports _)         -> do
-      -- putStrLn "No imports, so no changes..."
-      return . Right $ ()
-    Right (WithImports cracked) -> do
-      -- putStrLn "Found imports, so doing cleaning..."
-      doCleaning path contents cracked >>= return . Right
+    Left err                    -> return . Left $ err
+    Right (NoImports _)         -> return . Right $ ()
+    Right (WithImports cracked) -> doCleaning path contents cracked >>= return . Right
 
 doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
 doCleaning path contents (prefix, imports, suffix) = do
@@ -76,7 +70,7 @@ swap vtp path = rename src dst
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
-  (formatPrefix prefix) <> (formatImports imports) <> (formatSuffix suffix)
+  formatPrefix prefix <> formatImports imports <> formatSuffix suffix
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
         formatSuffix  = ("\n" <>)   . Text.stripStart
         formatImports = Text.unlines . map (Import.format maxModLen maxAsLen)

@@ -34,7 +34,7 @@ fromDecl :: ImportDecl SrcSpanInfo -> Import
 fromDecl decl = Import qual modName asC hid membs
   where qual            = importQualified decl
         modName         = renderModName . importModule $ decl
-        asC             = renderModName <$> (importAs decl)
+        asC             = renderModName <$> importAs decl
         hid             = fromMaybe False (isHiding <$> importSpecs decl)
         membs           = Member.fromDecl <$> importSpecs decl
 
@@ -47,25 +47,25 @@ format maxModLen maxAsLenM4 imp =
         qual      = if qualified imp
                       then "qualified"
                       else "         "
-        formattedAs    = pad maxAsLen . fromMaybe "" . fmap (" as " <>) $ asClause imp
+        formattedAs    = pad maxAsLen . maybe "" (" as " <>) . asClause $ imp
         formattedMembs = mHiding <> formatMembers maxAsLen maxModLen (members imp)
         mHiding        = bool " hiding " "" (hiding imp)-- TODO: Fix this
         maxAsLen       = maxAsLenM4 + 4
         pad n s        = s <> padding
-          where padding = Text.replicate (n - (Text.length s)) " "
+          where padding = Text.replicate (n - Text.length s) " "
 
 asLength :: Import -> Int
 asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
 formatMembers :: Int -> Int -> Maybe [Member] -> Text
-formatMembers maxAsLen maxModLen = fromMaybe "" . fmap f
+formatMembers maxAsLen maxModLen = maybe "" f
   where f ms    = " ( "
                     <> (Text.intercalate sep . map (Member.render sep) $ ms)
                     <> lastPadding
                     <> ")"
           where lastPadding
+                  | null ms        = ""
                   | length ms == 1 = " "
-                  | length ms == 0 = ""
                   | otherwise      = "\n" <> padding
         sep     = "\n" <> padding <> ", "
         padding = Text.replicate n " "

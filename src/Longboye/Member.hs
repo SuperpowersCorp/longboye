@@ -53,8 +53,8 @@ render sep (OpMember name ops) = name <> renderedOps
         sep'        = "\n" <> Text.replicate n " " <> Text.tail sep
         n           = 2 + Text.length name
         lastPadding
+          | null ops        = ""
           | length ops == 1 = " "
-          | length ops == 0 = ""
           | otherwise       = "\n" <> (Text.tail . Text.init . Text.init) sep'
 
 renderName :: Name a -> Text
