@@ -4,27 +4,27 @@ module Longboye.Member
        , render
        ) where
 
-import           Data.Monoid           ( (<>) )
-import           Data.Text             ( Text )
+import           Data.Monoid                   ( (<>) )
+import           Data.Text                     ( Text )
 import qualified Data.Text             as Text
-import           Language.Haskell.Exts ( CName( ConName
-                                              , VarName
-                                              )
-                                       , ImportSpecList( ImportSpecList )
-                                       , ImportSpec( IAbs
-                                                   , IThingAll
-                                                   , IThingWith
-                                                   , IVar
-                                                   )
-                                       , Name( Ident
-                                             , Symbol
-                                             )
-                                       , Namespace( NoNamespace
-                                                  , TypeNamespace
-                                                  , PatternNamespace
-                                                  )
-                                       , SrcSpanInfo
-                                       )
+import           Language.Haskell.Exts         ( CName( ConName
+                                                      , VarName
+                                                      )
+                                               , ImportSpecList( ImportSpecList)
+                                               , ImportSpec( IAbs
+                                                           , IThingAll
+                                                           , IThingWith
+                                                           , IVar
+                                                           )
+                                               , Name( Ident
+                                                     , Symbol
+                                                     )
+                                               , Namespace( NoNamespace
+                                                          , TypeNamespace
+                                                          , PatternNamespace
+                                                          )
+                                               , SrcSpanInfo
+                                               )
 
 data Member
   = NamedMember Text

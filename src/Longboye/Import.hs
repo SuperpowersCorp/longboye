@@ -13,7 +13,7 @@ import qualified Data.Text             as Text
 import           Longboye.Member                 ( Member )
 import qualified Longboye.Member       as Member
 import           Language.Haskell.Exts           ( ImportDecl
-                                                 , ImportSpecList( ImportSpecList )
+                                                 , ImportSpecList( ImportSpecList)
                                                  , ModuleName( ModuleName )
                                                  , SrcSpanInfo
                                                  , importAs

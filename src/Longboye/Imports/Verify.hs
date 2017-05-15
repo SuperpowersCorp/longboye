@@ -9,8 +9,6 @@ import           Control.Monad         ( unless )
 import           Data.Text             ( Text )
 import qualified Data.Text     as Text
 
--- import qualified Longboye.Imports.Cracker   as Cracker
-
 data VerifiedTempPath = VerifiedTempPath FilePath
 
 accessPath :: VerifiedTempPath -> FilePath

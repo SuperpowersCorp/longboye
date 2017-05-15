@@ -31,6 +31,7 @@ file in the same directory.
 
 - [x] Basic Formatting
 - [ ] BUG: Handle extra indenting for global hiding resolution
+- [ ] BUG: Bad handling of closing paren of opList
 - [ ] Sort Imports (with Prelude at top)
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
