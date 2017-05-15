@@ -1,18 +1,23 @@
 module Longboye.Import
        ( Import(..)
+       , asLength
        , format
        , fromDecl
        ) where
 
+import           Data.Maybe                   ( fromMaybe )
 import           Data.Monoid                  ( (<>) )
 import           Data.Text                    ( Text )
 import qualified Data.Text                    as Text
 import           Longboye.Member              ( Member )
+import qualified Longboye.Member              as Member
 import           Language.Haskell.Exts        ( ImportDecl
                                               , ModuleName( ModuleName )
                                               , SrcSpanInfo
-                                              , importQualified
+                                              , importAs
                                               , importModule
+                                              , importQualified
+                                              , importSpecs
                                               )
 
 data Import = Import
@@ -27,16 +32,29 @@ fromDecl :: ImportDecl SrcSpanInfo -> Import
 fromDecl decl = Import qual modName asC hid membs
   where qual            = importQualified decl
         modName         = renderModName . importModule $ decl
-
-        asC             = error "asC not implemented."
+        asC             = renderModName <$> (importAs decl)
         hid             = error "hid not implemented."
-        membs           = error "membs not implemented."
+        membs           = Member.fromDecl <$> importSpecs decl
 
-        renderModName (ModuleName _ name) = Text.pack name
+format :: Int -> Int -> Import -> Text
+format maxModLen maxAsLen imp =
+  "import " <> qual <> " " <> paddedMod <> formattedAs <> formattedMembs
+  where paddedMod = pad maxModLen (importedModule imp)
+        qual      = if qualified imp
+                      then "qualified"
+                      else "         "
+        formattedAs    = fromMaybe "" $ (pad maxAsLen) <$> asClause imp
+        formattedMembs = formatMembers (members imp)
+        pad n s   = s <> padding
+          where padding = Text.replicate ((Text.length s) - n) " "
 
-format :: Import -> Text
-format imp = "import " <> qual <> " " <> importedModule imp <> rest
-  where qual = if qualified imp
-                 then "qualified"
-                 else "         "
-        rest = " [REST COMING SOON]"
+asLength :: Import -> Int
+asLength = fromMaybe 0 . (Text.length <$>) . asClause
+
+formatMembers :: Maybe [Member] -> Text
+formatMembers Nothing         = ""
+formatMembers (Just _members) = " ( " <> memberList <> " )"
+  where memberList = "MEMBERS SOON" -- TODO: finish me
+
+renderModName :: ModuleName a -> Text
+renderModName (ModuleName _ name) = Text.pack name

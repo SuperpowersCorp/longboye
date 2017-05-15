@@ -21,9 +21,9 @@ accessPath (VerifiedTempPath path) = path
 -- the imports.
 tempContent :: Text -> FilePath -> IO VerifiedTempPath
 tempContent _original path =
-  --error "tempContent not defined."
-  -- TODO: implmenet me for real
+  -- TODO: implement me for real
   return $ VerifiedTempPath path
+  --error "tempContent not defined."
   -- verify <$> readFile path >>= either reportError return
   -- where
   --   reportError err =

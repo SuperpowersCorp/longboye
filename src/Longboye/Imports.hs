@@ -82,5 +82,7 @@ cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
   (formatPrefix prefix) <> (formatImports imports) <> (formatSuffix suffix)
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
-        formatImports = Text.unlines . map Import.format
+        formatImports = Text.unlines . map (Import.format modLen asLen)
         formatSuffix  = ("\n" <>) . Text.stripStart
+        modLen        = maximum . map (Text.length . Import.importedModule) $ imports
+        asLen         = maximum . map Import.asLength $ imports
