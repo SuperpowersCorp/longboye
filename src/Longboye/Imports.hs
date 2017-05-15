@@ -40,24 +40,12 @@ cleanFile path = do
 
 doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
 doCleaning path contents (prefix, imports, suffix) = do
-  -- putStrLn $ "Writing backup @ " ++ backupPath
   void $ writeFile backupPath contents
-
   let cleaned = cleanText prefix imports suffix
-
-  -- putStrLn $ "Writing cleaned @ " ++ tempPath
   writeFile tempPath cleaned
-
-  -- putStrLn $ "Verifying contents @ " ++ tempPath
   verifiedTempPath <- Verify.tempContent contents tempPath
-
-  -- putStrLn $ "Swapping temp file back @ " ++ path
   void $ swap verifiedTempPath path
-
-  -- putStrLn $ "Verifying new content @ " ++ path
   void $ Verify.newContent cleaned path
-
-  -- putStrLn $ "Removing backup file @ " ++ backupPath
   void $ removeFile backupPath
 
   where backupPath      = path ++ ".lbak"
