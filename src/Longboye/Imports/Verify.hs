@@ -5,11 +5,10 @@ module Longboye.Imports.Verify
        , tempContent
        ) where
 
-import           Control.Monad              ( unless )
-import           Data.Text                  ( Text
-                                            -- , pack
-                                            )
-import qualified Data.Text                  as Text
+import           Control.Monad         ( unless )
+import           Data.Text             ( Text )
+import qualified Data.Text     as Text
+
 -- import qualified Longboye.Imports.Cracker   as Cracker
 
 data VerifiedTempPath = VerifiedTempPath FilePath

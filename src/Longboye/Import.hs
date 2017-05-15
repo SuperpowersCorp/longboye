@@ -5,20 +5,20 @@ module Longboye.Import
        , fromDecl
        ) where
 
-import           Data.Maybe                   ( fromMaybe )
-import           Data.Monoid                  ( (<>) )
-import           Data.Text                    ( Text )
-import qualified Data.Text                    as Text
-import           Longboye.Member              ( Member )
-import qualified Longboye.Member              as Member
-import           Language.Haskell.Exts        ( ImportDecl
-                                              , ModuleName( ModuleName )
-                                              , SrcSpanInfo
-                                              , importAs
-                                              , importModule
-                                              , importQualified
-                                              , importSpecs
-                                              )
+import           Data.Maybe                      ( fromMaybe )
+import           Data.Monoid                     ( (<>) )
+import           Data.Text                       ( Text )
+import qualified Data.Text             as Text
+import           Longboye.Member                 ( Member )
+import qualified Longboye.Member       as Member
+import           Language.Haskell.Exts           ( ImportDecl
+                                                 , ModuleName( ModuleName)
+                                                 , SrcSpanInfo
+                                                 , importAs
+                                                 , importModule
+                                                 , importQualified
+                                                 , importSpecs
+                                                 )
 
 data Import = Import
   { qualified      :: Bool
@@ -38,7 +38,7 @@ fromDecl decl = Import qual modName asC hid membs
 
 format :: Int -> Int -> Import -> Text
 format maxModLen maxAsLenM4 imp =
-  "import " <> qual <> " " <> paddedMod <> formattedAs <> formattedMembs
+  Text.stripEnd $ "import " <> qual <> " " <> paddedMod <> formattedAs <> formattedMembs
   where paddedMod = pad maxModLen (importedModule imp)
         qual      = if qualified imp
                       then "qualified"

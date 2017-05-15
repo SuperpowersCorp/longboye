@@ -3,13 +3,12 @@ module Debug
        , log
        ) where
 
-import Prelude hiding (log)
-
-import           Data.Monoid       ( (<>) )
-import           Data.Text         ( Text )
-import qualified Data.Text         as Text
+import           Prelude           hiding ( log )
+import           Data.Monoid              ( (<>) )
+import           Data.Text                ( Text )
+import qualified Data.Text        as Text
 import           Overture
-import           System.IO.Unsafe  ( unsafePerformIO )
+import           System.IO.Unsafe         ( unsafePerformIO )
 
 crash :: Text -> a
 crash msg = error . Text.unpack $ "Debug.crash: " <> msg

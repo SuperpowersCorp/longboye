@@ -1,29 +1,27 @@
 module Longboye.Imports ( clean ) where
 
-import           Prelude           hiding ( readFile
-                                          , writeFile
-                                          )
-
-import           Control.Monad            ( void )
-import           Data.Monoid              ( (<>) )
-import           Data.Text                ( Text
-                                          , unpack
-                                          )
+import           Prelude                      hiding ( readFile
+                                                     , writeFile
+                                                     )
+import           Control.Monad                       ( void )
+import           Data.Monoid                         ( (<>) )
+import           Data.Text                           ( Text
+                                                     , unpack
+                                                     )
 import qualified Data.Text                as Text
-import           Data.Text.IO             ( readFile
-                                          , writeFile
-                                          )
-import           Longboye.Import          ( Import )
+import           Data.Text.IO                        ( readFile
+                                                     , writeFile
+                                                     )
+import           Longboye.Import                     ( Import )
 import qualified Longboye.Import          as Import
-import           Longboye.Imports.Cracker ( Cracked( NoImports
-                                                   , WithImports
-                                                   )
-                                          )
+import           Longboye.Imports.Cracker            ( Cracked( NoImports
+                                                              , WithImports
+                                                              ) )
 import qualified Longboye.Imports.Cracker as Cracker
-import           Longboye.Imports.Verify  ( VerifiedTempPath )
+import           Longboye.Imports.Verify             ( VerifiedTempPath )
 import qualified Longboye.Imports.Verify  as Verify
-import           System.Directory         ( removeFile )
-import           System.Posix.Files       ( rename )
+import           System.Directory                    ( removeFile )
+import           System.Posix.Files                  ( rename )
 
 clean :: [FilePath] -> IO ()
 clean []           = return ()
