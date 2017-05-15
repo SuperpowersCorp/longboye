@@ -37,24 +37,34 @@ fromDecl decl = Import qual modName asC hid membs
         membs           = Member.fromDecl <$> importSpecs decl
 
 format :: Int -> Int -> Import -> Text
-format maxModLen maxAsLen imp =
+format maxModLen maxAsLenM4 imp =
   "import " <> qual <> " " <> paddedMod <> formattedAs <> formattedMembs
   where paddedMod = pad maxModLen (importedModule imp)
         qual      = if qualified imp
                       then "qualified"
                       else "         "
-        formattedAs    = fromMaybe "" $ (pad maxAsLen) <$> asClause imp
-        formattedMembs = formatMembers (members imp)
+        formattedAs    = pad maxAsLen . fromMaybe "" . fmap (" as " <>) $ asClause imp
+        formattedMembs = formatMembers maxAsLen maxModLen (members imp)
+        maxAsLen = maxAsLenM4 + 4
         pad n s   = s <> padding
-          where padding = Text.replicate ((Text.length s) - n) " "
+          where padding = Text.replicate (n - (Text.length s)) " "
 
 asLength :: Import -> Int
 asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
-formatMembers :: Maybe [Member] -> Text
-formatMembers Nothing         = ""
-formatMembers (Just _members) = " ( " <> memberList <> " )"
-  where memberList = "MEMBERS SOON" -- TODO: finish me
+formatMembers :: Int -> Int -> Maybe [Member] -> Text
+formatMembers maxAsLen maxModLen = fromMaybe "" . fmap f
+  where f ms = " ( "
+                 <> (Text.intercalate sep . map (Member.render sep) $ ms)
+                 <> lastPadding
+                 <> ")"
+          where lastPadding
+                  | length ms == 1 = " "
+                  | length ms == 0 = ""
+                  | otherwise      = "\n" <> padding
+        sep = "\n" <> padding <> ", "
+        padding = Text.replicate n " "
+          where n = 1 + maxAsLen + maxModLen + Text.length "import qualified "
 
 renderModName :: ModuleName a -> Text
 renderModName (ModuleName _ name) = Text.pack name

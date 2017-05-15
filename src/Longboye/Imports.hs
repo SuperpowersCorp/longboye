@@ -13,7 +13,6 @@ import qualified Data.Text                as Text
 import           Data.Text.IO             ( readFile
                                           , writeFile
                                           )
-
 import           Longboye.Import          ( Import )
 import qualified Longboye.Import          as Import
 import           Longboye.Imports.Cracker ( Cracked( NoImports
@@ -21,7 +20,6 @@ import           Longboye.Imports.Cracker ( Cracked( NoImports
                                                    )
                                           )
 import qualified Longboye.Imports.Cracker as Cracker
-
 import           Longboye.Imports.Verify  ( VerifiedTempPath )
 import qualified Longboye.Imports.Verify  as Verify
 import           System.Directory         ( removeFile )
@@ -35,39 +33,39 @@ clean (path:paths) = cleanFile path >>= either abort continue
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
-  putStrLn $ "Processing file: " ++ path
+  -- putStrLn $ "Processing file: " ++ path
   contents <- readFile path
   case Cracker.crackE path contents of
     Left err                    -> do
-      putStrLn $ "ERROR: " ++ unpack err
+      -- putStrLn $ "ERROR: " ++ unpack err
       return . Left $ err
     Right (NoImports _)         -> do
-      putStrLn "No imports, so no changes..."
+      -- putStrLn "No imports, so no changes..."
       return . Right $ ()
     Right (WithImports cracked) -> do
-      putStrLn "Found imports, so doing cleaning..."
+      -- putStrLn "Found imports, so doing cleaning..."
       doCleaning path contents cracked >>= return . Right
 
 doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
 doCleaning path contents (prefix, imports, suffix) = do
-  putStrLn $ "Writing backup @ " ++ backupPath
+  -- putStrLn $ "Writing backup @ " ++ backupPath
   void $ writeFile backupPath contents
 
   let cleaned = cleanText prefix imports suffix
 
-  putStrLn $ "Writing cleaned @ " ++ tempPath
+  -- putStrLn $ "Writing cleaned @ " ++ tempPath
   writeFile tempPath cleaned
 
-  putStrLn $ "Verifying contents @ " ++ tempPath
+  -- putStrLn $ "Verifying contents @ " ++ tempPath
   verifiedTempPath <- Verify.tempContent contents tempPath
 
-  putStrLn $ "Swapping temp file back @ " ++ path
+  -- putStrLn $ "Swapping temp file back @ " ++ path
   void $ swap verifiedTempPath path
 
-  putStrLn $ "Verifying new content @ " ++ path
+  -- putStrLn $ "Verifying new content @ " ++ path
   void $ Verify.newContent cleaned path
 
-  putStrLn $ "Removing backup file @ " ++ backupPath
+  -- putStrLn $ "Removing backup file @ " ++ backupPath
   void $ removeFile backupPath
 
   where backupPath      = path ++ ".lbak"
@@ -82,7 +80,7 @@ cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
   (formatPrefix prefix) <> (formatImports imports) <> (formatSuffix suffix)
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
-        formatImports = Text.unlines . map (Import.format modLen asLen)
-        formatSuffix  = ("\n" <>) . Text.stripStart
-        modLen        = maximum . map (Text.length . Import.importedModule) $ imports
-        asLen         = maximum . map Import.asLength $ imports
+        formatSuffix  = ("\n" <>)   . Text.stripStart
+        formatImports = Text.unlines . map (Import.format maxModLen maxAsLen)
+        maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
+        maxAsLen      = maximum . map Import.asLength                       $ imports

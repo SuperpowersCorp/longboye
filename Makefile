@@ -24,7 +24,7 @@ setup:
 test: build
 	cp src/Longboye/Imports/Cracker.hs /tmp/foo.hs
 	stack exec longboye -- imports /tmp/foo.hs
-	head -10 /tmp/foo.hs
+	head -30 /tmp/foo.hs
 
 b: build
 hl: hlint

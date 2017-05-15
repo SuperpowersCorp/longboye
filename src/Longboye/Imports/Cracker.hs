@@ -6,7 +6,6 @@ module Longboye.Imports.Cracker
 
 import           Data.Text                    ( Text )
 import qualified Data.Text                    as Text
-import qualified Debug
 import           Language.Haskell.Exts        ( Module( Module
                                                       , XmlHybrid
                                                       , XmlPage
@@ -43,7 +42,7 @@ crackE path source = case Parser.parseModuleWithMode parseMode sourceText of
     if null imports
       then Right . NoImports   $ source
       else Right . WithImports $ (prefix, imports, suffix)
-    where imports = getImports (Debug.log "parsedMod" parsedMod)
+    where imports = getImports parsedMod
           prefix  = extractPrefix parsedMod source
           suffix  = extractSuffix parsedMod source
   ParseFailed srcLoc err ->

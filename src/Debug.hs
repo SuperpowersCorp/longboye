@@ -16,5 +16,5 @@ crash msg = error . Text.unpack $ "Debug.crash: " <> msg
 
 log :: Show val => Text -> val -> val
 log msg val = unsafePerformIO $ do
-  putLine (msg <> ": " <> show_ val)
+  putLine ("DEBUG: " <> msg <> " => " <> show_ val)
   return val
