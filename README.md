@@ -30,9 +30,13 @@ file in the same directory.
 ## TODOs
 
 - [x] Basic Formatting
-- [ ] Atomic file swapping
+- [ ] BUG: Handle extra indenting for global hiding resolution
 - [ ] Sort Imports (with Prelude at top)
-- [ ] Handle extra indenting for global hiding resolution
+- [ ] Atomic file swapping
+- [ ] Sub-directory traversal
+- [ ] Examples
+- [ ] License
+- [ ] Solicit Feedback
 
 ## Examples
 
