@@ -10,7 +10,7 @@ import qualified Data.Text             as Text
 import           Language.Haskell.Exts         ( CName( ConName
                                                       , VarName
                                                       )
-                                               , ImportSpecList( ImportSpecList)
+                                               , ImportSpecList( ImportSpecList )
                                                , ImportSpec( IAbs
                                                            , IThingAll
                                                            , IThingWith
