@@ -82,5 +82,5 @@ cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
   (formatPrefix prefix) <> (formatImports imports) <> (formatSuffix suffix)
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
-        formatImports = mconcat . map Import.format
-        formatSuffix  = ("\n\n" <>) . Text.stripStart
+        formatImports = Text.unlines . map Import.format
+        formatSuffix  = ("\n" <>) . Text.stripStart

@@ -55,14 +55,14 @@ extractPrefix :: (Module SrcSpanInfo) -> Text -> Text
 extractPrefix (XmlPage _ _ _ _ _ _ _)       _      = notSupported "XmlPage"
 extractPrefix (XmlHybrid _ _ _ _ _ _ _ _ _) _      = notSupported "XmlHybrid"
 extractPrefix (Module _ _ _ importDecls _)  source =
-  mconcat . take n . Text.lines $ source
+  Text.unlines . take (n - 1) . Text.lines $ source
   where n = srcSpanStartLine . srcInfoSpan . importAnn . head $ importDecls
 
 extractSuffix :: (Module SrcSpanInfo) -> Text -> Text
 extractSuffix (XmlPage _ _ _ _ _ _ _)       _      = notSupported "XmlPage"
 extractSuffix (XmlHybrid _ _ _ _ _ _ _ _ _) _      = notSupported "XmlHybrid"
 extractSuffix (Module _ _ _ importDecls _)  source =
-  mconcat . drop n . Text.lines $ source
+  Text.unlines . drop n . Text.lines $ source
   where n = srcSpanEndLine . srcInfoSpan . importAnn . last $ importDecls
 
 extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
