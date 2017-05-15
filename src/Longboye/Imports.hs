@@ -9,11 +9,13 @@ import           Data.Monoid              ( (<>) )
 import           Data.Text                ( Text
                                           , unpack
                                           )
+import qualified Data.Text                as Text
 import           Data.Text.IO             ( readFile
                                           , writeFile
                                           )
 
 import           Longboye.Import          ( Import )
+import qualified Longboye.Import          as Import
 import           Longboye.Imports.Cracker ( Cracked( NoImports
                                                    , WithImports
                                                    )
@@ -77,4 +79,8 @@ swap vtp path = rename src dst
         dst = path
 
 cleanText :: Text -> [Import] -> Text -> Text
-cleanText prefix _imports suffix = prefix <> "\n\nSORRY IMPORTS REMOVED\n\n" <> suffix
+cleanText prefix imports suffix =
+  (formatPrefix prefix) <> (formatImports imports) <> (formatSuffix suffix)
+  where formatPrefix  = (<> "\n\n") . Text.stripEnd
+        formatImports = mconcat . map Import.format
+        formatSuffix  = ("\n\n" <>) . Text.stripStart

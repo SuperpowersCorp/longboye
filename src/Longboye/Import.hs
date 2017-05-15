@@ -1,13 +1,19 @@
 module Longboye.Import
        ( Import(..)
-       , from
+       , format
        , fromDecl
        ) where
 
-import Data.Text                    ( Text )
-import Longboye.Member              ( Member )
-import Language.Haskell.Exts        ( SrcSpanInfo )
-import Language.Haskell.Exts.Syntax ( ImportDecl )
+import           Data.Monoid                  ( (<>) )
+import           Data.Text                    ( Text )
+import qualified Data.Text                    as Text
+import           Longboye.Member              ( Member )
+import           Language.Haskell.Exts        ( ImportDecl
+                                              , ModuleName( ModuleName )
+                                              , SrcSpanInfo
+                                              , importQualified
+                                              , importModule
+                                              )
 
 data Import = Import
   { qualified      :: Bool
@@ -17,9 +23,20 @@ data Import = Import
   , members        :: Maybe [Member]
   } deriving (Eq, Ord, Read, Show)
 
-from :: Bool -> Text -> Maybe Text -> Bool -> Maybe [Member] -> Import
-from _qualified _importedModule _asClause _hiding _members =
-  error "Import.from not implemented."
-
 fromDecl :: ImportDecl SrcSpanInfo -> Import
-fromDecl _decl = error "fromDecl not implemented."
+fromDecl decl = Import qual modName asC hid membs
+  where qual            = importQualified decl
+        modName         = renderModName . importModule $ decl
+
+        asC             = error "asC not implemented."
+        hid             = error "hid not implemented."
+        membs           = error "membs not implemented."
+
+        renderModName (ModuleName _ name) = Text.pack name
+
+format :: Import -> Text
+format imp = "import " <> qual <> " " <> importedModule imp <> rest
+  where qual = if qualified imp
+                 then "qualified"
+                 else "         "
+        rest = " [REST COMING SOON]"
