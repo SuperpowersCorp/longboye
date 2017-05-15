@@ -3,7 +3,6 @@
 module Longboye.Main ( main ) where
 
 import           Control.Monad         ( when )
-import           Data.Char             ( toUpper )
 import qualified Longboye.Imports      as Imports
 import           System.Environment    ( getArgs )
 import           System.Exit           ( exitSuccess )
@@ -13,7 +12,7 @@ import           System.Console.Docopt ( Docopt
                                        , docoptFile
                                        , exitWithUsage
                                        , getAllArgs
-                                       , getArgOrExitWith
+                                       -- , getArgOrExitWith
                                        , isPresent
                                        , longOption
                                        , parseArgsOrExit
@@ -41,4 +40,4 @@ main_ argv = do
     Imports.clean paths
 
   where version      = "0.0.0.1"
-        getArgOrExit = getArgOrExitWith patterns
+        -- getArgOrExit = getArgOrExitWith patterns

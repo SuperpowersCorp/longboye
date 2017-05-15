@@ -8,21 +8,17 @@ import           Prelude hiding        ( drop
                                        , length
                                        )
 
-import           Control.Applicative   ( (<$>), (<|>), (*>), empty)
+import           Control.Applicative   ( (<$>)
+                                       , (<|>)
+                                       , empty
+                                       )
 import           Control.Monad         ( void )
 import           Data.Char             ( Char )
 import           Data.Functor.Identity ( Identity )
 import           Data.Text             ( Text
-                                       , take
-                                       , drop
-                                       , splitOn
-                                       , length
                                        , pack
                                        )
 import qualified Data.Text             as Text
-import           Data.Maybe            ( fromJust
-                                       , isJust
-                                       )
 import           Longboye.Import       ( Import )
 import qualified Longboye.Import       as Import
 import           Longboye.Member       ( Member( ClassMember
@@ -43,7 +39,6 @@ import           Text.Megaparsec       ( Dec
                                        , sepBy
                                        , sepBy1
                                        )
-import qualified Text.Megaparsec       as P
 import           Text.Megaparsec.Char  ( anyChar
                                        , alphaNumChar
                                        , char
@@ -97,13 +92,13 @@ import' = do
   void sc
   q   <- maybeToBool <$> optional (string "qualified")
   void sc
-  mod <- importedModule
+  modu <- importedModule
   void sc
   as  <- optional asClause
-  h   <- maybeToBool <$> optional (string "hiding")
+  hiding <- maybeToBool <$> optional (string "hiding")
   void sc
-  m   <- optional membersList
-  return $ Import.from q mod as h m
+  membs <- optional membersList
+  return $ Import.from q modu as hiding membs
   where maybeToBool Nothing = False
         maybeToBool _       = True
 
@@ -175,6 +170,11 @@ sc = L.space (void spaceChar) empty empty
 lexeme :: Parser a -> Parser a
 lexeme = L.lexeme sc
 
+lparen :: ParsecT Dec Text Identity Char
 lparen = char '('
+
+rparen :: ParsecT Dec Text Identity Char
 rparen = char ')'
+
+comma :: ParsecT Dec Text Identity Char
 comma  = char ','

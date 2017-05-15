@@ -5,10 +5,13 @@ module Longboye.Imports.Verify
        , tempContent
        ) where
 
-import           Data.Text ( Text
-                           , pack
-                           )
-import qualified Longboye.Imports.Cracker as Cracker
+import           Control.Monad              ( unless )
+import           Data.Text                  ( Text
+                                            , pack
+                                            )
+import qualified Data.Text                  as Text
+-- import qualified Longboye.Imports.Cracker   as Cracker
+import qualified Longboye.Imports.Cracker2  as Cracker
 
 data VerifiedTempPath = VerifiedTempPath FilePath
 
@@ -29,8 +32,10 @@ tempContent original path =
       return $ if op == sp && os == ss
         then VerifiedTempPath $ path
         else error "Temporary content could not be verified."
+
     oFilename = "original"
     sFilename = path
+
     -- lame, but for now:
     -- verify suspect =
     --   case Cracker.crack originalFilename original of
@@ -43,4 +48,7 @@ tempContent original path =
     --           else error "Temporary content could not be verified."
 
 newContent :: Text -> FilePath -> IO ()
-newContent content path = error "newContent not implemented."
+newContent content path = do
+  newContents <- Text.pack <$> readFile path
+  unless (newContents == content) $ error errMsg
+    where errMsg = "newContent could not be verified at " ++ path

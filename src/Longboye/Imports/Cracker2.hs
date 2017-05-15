@@ -1,39 +1,56 @@
-module Longboye.Imports.Cracker2 ( crack ) where
+module Longboye.Imports.Cracker2 ( crack, crackE ) where
 
 import           Data.Text                    ( Text )
+import qualified Data.Text                    as Text
+import           Language.Haskell.Exts        ( Module( Module
+                                                      , XmlHybrid
+                                                      , XmlPage
+                                                      )
+                                              , SrcSpanInfo
+                                              )
+import           Language.Haskell.Exts.Parser ( ParseResult( ParseOk
+                                                           , ParseFailed
+                                                           )
+                                              , defaultParseMode
+                                              , parseFilename
+                                              )
+import qualified Language.Haskell.Exts.Parser as Parser
 import           Longboye.Import              ( Import )
-import qualified Longboye.Import              as Import
+import           Overture
 
-import           Language.Haskell.Exts
-import           Language.Haskell.Exts.Pretty -- ( prettyPrint )
-import           Data.Maybe                   -- ()
-import           System.Environment           -- ()
+data Cracked
+  = NoImports Text
+  | WithImports (Text, [Import], Text)
+  deriving (Eq, Ord, Read, Show)
 
-type Cracked = (Text, [Import], Text)
+crack :: FilePath -> Text -> Maybe Cracked
+crack path = eitherToMaybe . crackE path
 
-crack :: String -> Text -> Maybe Cracked
-crack filename s = undefined
+crackE :: FilePath -> Text -> Either Text Cracked
+crackE path source = case Parser.parseModuleWithMode parseMode sourceText of
+  ParseOk parsedMod ->
+    if null imports
+      then Right . NoImports   $ source
+      else Right . WithImports $ (prefix, imports, suffix)
+    where imports = getImports parsedMod
+          prefix  = extractPrefix source
+          suffix  = extractSuffix source
+  ParseFailed srcLoc err ->
+    Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
+  where parseMode  = defaultParseMode { parseFilename = path }
+        sourceText = Text.unpack source
 
--- parseModuleFromFile :: String -> Module srcSpanInfo
-parseModuleFromFile inp = fromParseResult $ parseFileContents inp
+extractPrefix :: Text -> Text
+extractPrefix = error "extractPrefix not implemented."
 
-main :: IO ()
-main = main_ =<< getArgs
+extractSuffix :: Text -> Text
+extractSuffix = error "extractSuffix not implemented."
 
-main_ :: [String] -> IO ()
-main_ []     = getContents   >>= processSource
-main_ [file] = readFile file >>= processSource
-main_ _      = usage
+getImports :: Module SrcSpanInfo -> [Import]
+getImports (XmlHybrid _ _ _ _ _ _ _ _ _)                  = notSupported "XmlHybrid"
+getImports (XmlPage _ _ _ _ _ _ _)                        = notSupported "XmlPage"
+getImports (Module _l _mHead _pragmas importDecls _decls) = convert importDecls
+  where convert _decls = [] -- TODO: implement me
 
-processSource :: String -> IO ()
-processSource src = do
-  let mod = parseModuleFromFile src
-  putStrLn $ prettyPrint mod
-
-usage :: IO ()
-usage = putStrLn "usage soon"
-
-index n xs =
-  case drop n xs of
-    x:_ -> Just x
-    []  -> Nothing
+notSupported :: String -> a
+notSupported = error . (++ " modules not supported.")

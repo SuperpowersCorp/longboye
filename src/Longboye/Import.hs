@@ -1,10 +1,10 @@
-module Longboye.Import ( Import, from ) where
+module Longboye.Import ( Import(..), from ) where
 
 import Data.Text       ( Text )
 import Longboye.Member ( Member )
 
 data Import = Import
-  { _qualified     :: Bool
+  { qualified      :: Bool
   , importedModule :: Text
   , asClause       :: Maybe Text
   , hiding         :: Bool
@@ -12,5 +12,5 @@ data Import = Import
   } deriving (Eq, Ord, Read, Show)
 
 from :: Bool -> Text -> Maybe Text -> Bool -> Maybe [Member] -> Import
-from qualified importedModule asClause hiding members =
+from _qualified _importedModule _asClause _hiding _members =
   error "Import.from not implemented."

@@ -10,6 +10,10 @@ github: superpowerscorp/longboye
 extra-source-files:
 - README.md
 
+ghc-options:
+- -Wall
+- -Werror
+
 default-extensions:
 - OverloadedStrings
 
@@ -18,13 +22,15 @@ library:
   exposed-modules:
   - Longboye
   dependencies:
-  - base >=4.7 && <5
+  - base              >=4.7 && <5
   - directory
   - docopt
   - haskell-src-exts
   - megaparsec
-  - text
   - safe
+  - system-fileio
+  - text
+  - unix
 
 executables:
   longboye:
