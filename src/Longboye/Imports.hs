@@ -48,8 +48,8 @@ doCleaning path contents (prefix, imports, suffix) = do
   writeFile tempPath cleaned
   void $ rename tempPath path
   void $ removeFile backupPath
-  where backupPath = path ++ ".lbak"
-        tempPath   = path ++ ".ltemp"
+  where backupPath = path ++ ".longboye.bak"
+        tempPath   = path ++ ".longboye.tmp"
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =

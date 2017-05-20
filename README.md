@@ -17,15 +17,13 @@ The operations are performed by:
 
 - making a temporary backup of the file in the same directory as the original
 - writing the new content to a temporary file in the same directory
-- verifying the new content in the temporary file
 - atomically swapping the temporary file into place
-- verifying the new content in place
 - deleting the backup file
 
 This provides a high degree of safety.  Of course cosmic rays do flip bits
 occasionally, so if somehow Longboye detects any problems or crashes at any
-point, you can find the original contents of the file in the temporary `.lbak`
-file in the same directory.
+point, you can find the original contents of the file in the temporary
+`.longboye.bak` file in the same directory.
 
 ## TODOs
 
@@ -44,6 +42,9 @@ file in the same directory.
     - [X] Condense as column if there are no as
     - [X] Line up ops at end up asCol (as is) plus any extra space any hiding's
           need (if any) (not doing this exactly for now, will seek feedback)
+- [ ] Dangling parens are not let dangle eg. when dogfooding Longboye/Imports.hs
+- [ ] Adding extra space to Main.hs, which means we're replacing it even though we
+      crashed?
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
 - [ ] Examples
