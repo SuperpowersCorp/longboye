@@ -5,7 +5,6 @@ module Longboye.Member
        ) where
 
 import           Data.Monoid                   ( (<>) )
-import           Data.Ord                      ()
 import           Data.Text                     ( Text )
 import qualified Data.Text             as Text
 import           Language.Haskell.Exts         ( CName( ConName
