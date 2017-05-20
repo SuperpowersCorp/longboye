@@ -47,8 +47,6 @@ fromDecl (ImportSpecList _ _ specs) = map fromSpec specs
 render :: Text -> Member -> Text
 render _   (NamedMember name)   = name
 render _   (OpMember name [])   = name
-render _   (OpMember name [op]) = name <> renderedOps
-  where renderedOps = "( " <> op <> " )"
 render sep (OpMember name ops) = name <> renderedOps
   where renderedOps = if null ops
                         then ""
