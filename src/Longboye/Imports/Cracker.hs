@@ -51,23 +51,23 @@ crackE path source = case Parser.parseModuleWithMode parseMode sourceText of
         sourceText = Text.unpack source
 
 extractPrefix :: Module SrcSpanInfo -> Text -> Text
-extractPrefix (XmlPage {})                      _ = notSupported "XmlPage"
-extractPrefix (XmlHybrid {})                    _ = notSupported "XmlHybrid"
+extractPrefix XmlPage {}                        _ = notSupported "XmlPage"
+extractPrefix XmlHybrid {}                      _ = notSupported "XmlHybrid"
 extractPrefix (Module _ _ _ importDecls _) source =
   Text.unlines . take (n - 1) . Text.lines $ source
   where n = srcSpanStartLine . srcInfoSpan . importAnn . head $ importDecls
 
 extractSuffix :: Module SrcSpanInfo -> Text -> Text
-extractSuffix (XmlPage {})   _                    = notSupported "XmlPage"
-extractSuffix (XmlHybrid {}) _                    = notSupported "XmlHybrid"
+extractSuffix XmlPage {}   _                      = notSupported "XmlPage"
+extractSuffix XmlHybrid {} _                      = notSupported "XmlHybrid"
 extractSuffix (Module _ _ _ importDecls _) source =
   Text.unlines . drop n . Text.lines $ source
   where n = srcSpanEndLine . srcInfoSpan . importAnn . last $ importDecls
 
 extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
 extractImports (Module _l _ _ decls _) = decls
-extractImports (XmlHybrid {})          = notSupported "XmlHybrid"
-extractImports (XmlPage {})            = notSupported "XmlPage"
+extractImports XmlHybrid {}            = notSupported "XmlHybrid"
+extractImports XmlPage {}              = notSupported "XmlPage"
 
 getImports :: Module SrcSpanInfo -> [Import]
 getImports = map Import.fromDecl <$> extractImports

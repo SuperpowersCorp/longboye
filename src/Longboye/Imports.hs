@@ -4,6 +4,7 @@ import           Prelude                      hiding ( readFile
                                                      , writeFile
                                                      )
 import           Control.Monad                       ( void )
+import           Data.Maybe                          ( fromMaybe )
 import           Data.Monoid                         ( (<>) )
 import           Data.List                           ( sortBy )
 import           Data.Ord                            ( comparing )
@@ -50,9 +51,8 @@ doCleaning path contents (prefix, imports, suffix) = do
   void $ swap verifiedTempPath path
   void $ Verify.newContent cleaned path
   void $ removeFile backupPath
-
-  where backupPath      = path ++ ".lbak"
-        tempPath        = path ++ ".ltemp"
+  where backupPath = path ++ ".lbak"
+        tempPath   = path ++ ".ltemp"
 
 swap :: VerifiedTempPath -> FilePath -> IO ()
 swap vtp path = rename src dst
@@ -69,19 +69,13 @@ cleanText prefix imports suffix =
         maxAsLen      = maximum . map Import.asLength                       $ imports
         finalImports  = sortBy (comparing sortDetails) imports
         npo           = length . filter isPreludish $ finalImports
-        isPreludish i = im == "Prelude" || im == "Overture"
-          where im = Import.importedModule i
+        isPreludish   = flip any ["Prelude", "Overture"] . (==) . Import.importedModule
         sep is        = if npo <= 0
                           then is
                           else mconcat [pos, space, rest]
                             where (pos, rest) = splitAt npo is
                                   space       = ["\n"]
-        -- crack         = span isOverture
-        -- isOverture i  = im == "Prelude" || im == "Overture"
-        --   where im = Import.importedModule i
-        sortDetails i = case prioritySortValue of
-                          Just v  -> v
-                          Nothing -> (im, q)
+        sortDetails i = fromMaybe (im, q) prioritySortValue
                         where
                           prioritySortValue
                             | im == "Prelude"  = Just ("30", q)
