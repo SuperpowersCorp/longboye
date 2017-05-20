@@ -18,12 +18,11 @@ import           Data.Text.IO                        ( readFile
                                                      )
 import           Longboye.Import                     ( Import )
 import qualified Longboye.Import          as Import
-import           Longboye.Imports.Cracker            ( Cracked( NoImports
+import           Longboye.Parser                     ( Parsed( NoImports
                                                               , WithImports
-                                                              ) )
-import qualified Longboye.Imports.Cracker as Cracker
-import           Longboye.Imports.Verify             ( VerifiedTempPath )
-import qualified Longboye.Imports.Verify  as Verify
+                                                              )
+                                                     )
+import qualified Longboye.Parser          as Parser
 import           System.Directory                    ( removeFile )
 import           System.Posix.Files                  ( rename )
 
@@ -37,27 +36,20 @@ cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
   putStrLn $ "Processing file: " ++ path
   contents <- readFile path
-  case Cracker.crackE path contents of
+  case Parser.parseE path contents of
     Left err                    -> return . Left $ err
     Right (NoImports _)         -> return . Right $ ()
-    Right (WithImports cracked) -> Right <$> doCleaning path contents cracked
+    Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
 
 doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
 doCleaning path contents (prefix, imports, suffix) = do
   void $ writeFile backupPath contents
   let cleaned = cleanText prefix imports suffix
   writeFile tempPath cleaned
-  verifiedTempPath <- Verify.tempContent contents tempPath
-  void $ swap verifiedTempPath path
-  void $ Verify.newContent cleaned path
+  void $ rename tempPath path
   void $ removeFile backupPath
   where backupPath = path ++ ".lbak"
         tempPath   = path ++ ".ltemp"
-
-swap :: VerifiedTempPath -> FilePath -> IO ()
-swap vtp path = rename src dst
-  where src = Verify.accessPath vtp
-        dst = path
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =

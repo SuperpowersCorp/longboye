@@ -1,7 +1,7 @@
-module Longboye.Imports.Cracker
-       ( Cracked(..)
-       , crack
-       , crackE
+module Longboye.Parser
+       ( Parsed(..)
+       , parse
+       , parseE
        ) where
 
 import           Overture
@@ -29,16 +29,16 @@ import           Language.Haskell.Exts.Syntax           ( ImportDecl )
 import           Longboye.Import                        ( Import )
 import qualified Longboye.Import              as Import
 
-data Cracked
+data Parsed
   = NoImports Text
   | WithImports (Text, [Import], Text)
   deriving (Eq, Ord, Read, Show)
 
-crack :: FilePath -> Text -> Maybe Cracked
-crack path = eitherToMaybe . crackE path
+parse :: FilePath -> Text -> Maybe Parsed
+parse path = eitherToMaybe . parseE path
 
-crackE :: FilePath -> Text -> Either Text Cracked
-crackE path source = case Parser.parseModuleWithMode parseMode sourceText of
+parseE :: FilePath -> Text -> Either Text Parsed
+parseE path source = case Parser.parseModuleWithMode parseMode sourceText of
   ParseOk parsedMod ->
     if null imports
       then Right . NoImports   $ source

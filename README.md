@@ -36,7 +36,6 @@ file in the same directory.
 - [X] BUG: in current version Prelude HIDING (some, shit) wraps across lines
       wrong (mayb be fixed by above)
 - [X] Extra spacing at end of hiding
-
 - [X] Condensing
   - [X] BUG: Handle extra indenting for global hiding resolution
   - [X] Even as is, hiding should be in the as column, but let's just figure out
@@ -45,7 +44,6 @@ file in the same directory.
     - [X] Condense as column if there are no as
     - [X] Line up ops at end up asCol (as is) plus any extra space any hiding's
           need (if any) (not doing this exactly for now, will seek feedback)
-
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
 - [ ] Examples

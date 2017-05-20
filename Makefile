@@ -22,7 +22,7 @@ setup:
 	stack setup
 
 test: build
-	cp src/Longboye/Imports/Cracker.hs /tmp/foo.hs
+	cp src/Longboye/Parser.hs /tmp/foo.hs
 	stack exec longboye -- imports /tmp/foo.hs
 	head -30 /tmp/foo.hs
 
