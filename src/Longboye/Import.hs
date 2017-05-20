@@ -71,11 +71,13 @@ asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
 formatMembers :: Text -> Bool -> Int -> Int -> Maybe [Member] -> Text
 formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
-  where f ms    = "( "
+  where f ms    = "("
+                    <> firstPadding
                     <> (Text.intercalate sep . map (Member.render sep) $ ms)
                     <> lastPadding
                     <> ")"
-          where lastPadding
+          where firstPadding = if null ms then "" else " "
+                lastPadding
                   | null ms        = ""
                   | length ms == 1 = " "
                   | otherwise      = "\n" <> padding
