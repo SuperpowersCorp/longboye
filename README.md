@@ -43,15 +43,17 @@ point, you can find the original contents of the file in the temporary
     - [X] Line up ops at end up asCol (as is) plus any extra space any hiding's
           need (if any) (not doing this exactly for now, will seek feedback)
 - [X] Dangling parens are not let dangle eg. when dogfooding Longboye/Imports.hs
-- [ ] Adding extra space to Main.hs, which means we're replacing it even though we
-      crashed?
-- [ ] Atomic file swapping
+- [X] Atomic file swapping
+- [X] BUG: If you have a module with imports and no body, eg. app/Main.hs
+      it will fail to parse the file - actually not failing, the failure must be
+      something else, but it writes out the spacer after the imports even if there
+      is no body...
 - [ ] Sub-directory traversal
 - [ ] Examples
 - [ ] Solicit Feedback
 - [ ] License
-- [ ] BUG: If you have a module with imports and no body, eg. app/Main.hs
-      it will fail to parse the file
+- [ ] Adding extra space to Main.hs, which means we're replacing it even though we
+      crashed?
 
 ## Examples
 

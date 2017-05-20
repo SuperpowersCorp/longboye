@@ -55,7 +55,8 @@ cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
   formatPrefix prefix <> formatImports finalImports <> formatSuffix suffix
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
-        formatSuffix  = ("\n" <>)   . Text.stripStart
+        formatSuffix  = (suffixSep <>) . Text.stripStart
+        suffixSep     = if Text.null suffix then "" else "\n"
         formatImports = Text.unlines . sep . map fmt
         fmt           = Import.format anyQual anyHiding maxModLen maxAsLen
         anyQual       = any Import.qualified imports
