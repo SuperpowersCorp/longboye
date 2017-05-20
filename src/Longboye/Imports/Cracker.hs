@@ -4,6 +4,8 @@ module Longboye.Imports.Cracker
        , crackE
        ) where
 
+import           Overture
+
 import           Data.Text                              ( Text )
 import qualified Data.Text                    as Text
 import           Language.Haskell.Exts                  ( Module( Module
@@ -26,7 +28,6 @@ import qualified Language.Haskell.Exts.Parser as Parser
 import           Language.Haskell.Exts.Syntax           ( ImportDecl )
 import           Longboye.Import                        ( Import )
 import qualified Longboye.Import              as Import
-import           Overture
 
 data Cracked
   = NoImports Text

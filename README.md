@@ -50,6 +50,8 @@ file in the same directory.
 - [ ] Examples
 - [ ] Solicit Feedback
 - [ ] License
+- [ ] BUG: If you have a module with imports and no body, eg. app/Main.hs
+      it will fail to parse the file
 
 ## Examples
 

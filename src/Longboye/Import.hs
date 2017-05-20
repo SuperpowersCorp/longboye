@@ -10,17 +10,17 @@ import           Data.Maybe                      ( fromMaybe )
 import           Data.Monoid                     ( (<>) )
 import           Data.Text                       ( Text )
 import qualified Data.Text             as Text
-import           Longboye.Member                 ( Member )
-import qualified Longboye.Member       as Member
 import           Language.Haskell.Exts           ( ImportDecl
-                                                 , ImportSpecList( ImportSpecList )
-                                                 , ModuleName( ModuleName )
+                                                 , ImportSpecList( ImportSpecList)
+                                                 , ModuleName( ModuleName)
                                                  , SrcSpanInfo
                                                  , importAs
                                                  , importModule
                                                  , importQualified
                                                  , importSpecs
                                                  )
+import           Longboye.Member                 ( Member )
+import qualified Longboye.Member       as Member
 
 data Import = Import
   { qualified      :: Bool
@@ -40,15 +40,22 @@ fromDecl decl = Import qual modName asC hid membs
 
         isHiding (ImportSpecList _ h _) = h
 
-format :: Int -> Int -> Import -> Text
-format maxModLen maxAsLenM4 imp =
-  Text.stripEnd $ "import " <> qual <> " " <> paddedMod <> formattedAs <> formattedMembs
+format :: Bool -> Int -> Int -> Import -> Text
+format anyQual maxModLen maxAsLenM4 imp =
+  Text.stripEnd
+    $ "import "
+    <> qual
+    <> paddedMod
+    <> formattedAs
+    <> mHiding
+    <> formattedMembs
   where paddedMod = pad maxModLen (importedModule imp)
-        qual      = if qualified imp
-                      then "qualified"
-                      else "         "
+        qual
+          | qualified imp = "qualified "
+          | anyQual       = "          "
+          | otherwise     = ""
         formattedAs    = pad maxAsLen . maybe "" (" as " <>) . asClause $ imp
-        formattedMembs = mHiding <> formatMembers isHiding maxAsLen maxModLen membs
+        formattedMembs = formatMembers qual isHiding maxAsLen maxModLen membs
         membs          = members imp
         mHiding        = bool "" " hiding " isHiding
         isHiding       = hiding imp
@@ -59,8 +66,8 @@ format maxModLen maxAsLenM4 imp =
 asLength :: Import -> Int
 asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
-formatMembers :: Bool -> Int -> Int -> Maybe [Member] -> Text
-formatMembers isHiding maxAsLen maxModLen = maybe "" f
+formatMembers :: Text -> Bool -> Int -> Int -> Maybe [Member] -> Text
+formatMembers qual isHiding maxAsLen maxModLen = maybe "" f
   where f ms    = " ( "
                     <> (Text.intercalate sep . map (Member.render sep) $ ms)
                     <> lastPadding
@@ -72,7 +79,7 @@ formatMembers isHiding maxAsLen maxModLen = maybe "" f
         sep     = "\n" <> padding <> ", "
         hideLen = bool 0 8 isHiding
         padding = Text.replicate n " "
-          where n = 1 + maxAsLen + maxModLen + hideLen + Text.length "import qualified "
+          where n = 1 + maxAsLen + maxModLen + hideLen + Text.length ("import " <> qual)
 
 renderModName :: ModuleName a -> Text
 renderModName (ModuleName _ name) = Text.pack name

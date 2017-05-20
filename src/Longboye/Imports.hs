@@ -1,12 +1,13 @@
 module Longboye.Imports ( clean ) where
 
-import           Prelude                      hiding ( readFile
-                                                     , writeFile
-                                                     )
+import           Prelude                             hiding  ( readFile
+                                                             , writeFile
+                                                             )
+
 import           Control.Monad                       ( void )
+import           Data.List                           ( sortBy )
 import           Data.Maybe                          ( fromMaybe )
 import           Data.Monoid                         ( (<>) )
-import           Data.List                           ( sortBy )
 import           Data.Ord                            ( comparing )
 import           Data.Text                           ( Text
                                                      , unpack
@@ -19,8 +20,7 @@ import           Longboye.Import                     ( Import )
 import qualified Longboye.Import          as Import
 import           Longboye.Imports.Cracker            ( Cracked( NoImports
                                                               , WithImports
-                                                              )
-                                                     )
+                                                              ) )
 import qualified Longboye.Imports.Cracker as Cracker
 import           Longboye.Imports.Verify             ( VerifiedTempPath )
 import qualified Longboye.Imports.Verify  as Verify
@@ -64,7 +64,9 @@ cleanText prefix imports suffix =
   formatPrefix prefix <> formatImports finalImports <> formatSuffix suffix
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
         formatSuffix  = ("\n" <>)   . Text.stripStart
-        formatImports = Text.unlines . sep . map (Import.format maxModLen maxAsLen)
+        formatImports = Text.unlines . sep . map fmt
+        fmt           = Import.format anyQual maxModLen maxAsLen
+        anyQual       = any Import.qualified imports
         maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
         maxAsLen      = maximum . map Import.asLength                       $ imports
         finalImports  = sortBy (comparing sortDetails) imports
@@ -74,7 +76,7 @@ cleanText prefix imports suffix =
                           then is
                           else mconcat [pos, space, rest]
                             where (pos, rest) = splitAt npo is
-                                  space       = ["\n"]
+                                  space       = [""]
         sortDetails i = fromMaybe (im, q) prioritySortValue
                         where
                           prioritySortValue
