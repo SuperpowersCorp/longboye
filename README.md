@@ -40,6 +40,10 @@ file in the same directory.
   - [ ] BUG: Handle extra indenting for global hiding resolution
   - [ ] Even as is, hiding should be in the as column, but let's just figure out
         condensing rules instead and let that sort out the rest.
+    - [ ] Condense qualified if there are no qualified
+    - [ ] Condense as column if there are no as
+    - [ ] Line up ops at end up asCol (as is) plus any extra space any hiding's
+          need (if any)
 
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
