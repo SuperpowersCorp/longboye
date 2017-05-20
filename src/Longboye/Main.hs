@@ -3,8 +3,6 @@ module Longboye.Main ( main ) where
 
 import           Control.Monad                    ( when )
 import qualified Longboye.Imports      as Imports
-import           System.Environment               ( getArgs )
-import           System.Exit                      ( exitSuccess )
 import           System.Console.Docopt            ( Docopt
                                                   , argument
                                                   , command
@@ -15,6 +13,8 @@ import           System.Console.Docopt            ( Docopt
                                                   , longOption
                                                   , parseArgsOrExit
                                                   )
+import           System.Environment               ( getArgs )
+import           System.Exit                      ( exitSuccess )
 
 patterns :: Docopt
 patterns = [docoptFile|USAGE.txt|]

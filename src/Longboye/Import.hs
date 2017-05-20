@@ -10,8 +10,8 @@ import           Data.Monoid                     ( (<>) )
 import           Data.Text                       ( Text )
 import qualified Data.Text             as Text
 import           Language.Haskell.Exts           ( ImportDecl
-                                                 , ImportSpecList( ImportSpecList)
-                                                 , ModuleName( ModuleName)
+                                                 , ImportSpecList( ImportSpecList )
+                                                 , ModuleName( ModuleName )
                                                  , SrcSpanInfo
                                                  , importAs
                                                  , importModule

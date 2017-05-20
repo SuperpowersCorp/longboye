@@ -12,7 +12,6 @@ import           Language.Haskell.Exts                  ( Module( Module
                                                                 , XmlHybrid
                                                                 , XmlPage
                                                                 )
-                                                       
                                                         , SrcSpanInfo
                                                         , srcSpanEndLine
                                                         , srcSpanStartLine
@@ -22,7 +21,6 @@ import           Language.Haskell.Exts                  ( Module( Module
 import           Language.Haskell.Exts.Parser           ( ParseResult( ParseOk
                                                                      , ParseFailed
                                                                      )
-                                                       
                                                         , defaultParseMode
                                                         , parseFilename
                                                         )

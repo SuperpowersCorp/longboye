@@ -1,30 +1,39 @@
 module Longboye.Imports ( clean ) where
 
-import           Prelude                      hiding ( readFile
-                                                     , writeFile
-                                                     )
+import           Prelude                         hiding ( readFile
+                                                        , writeFile
+                                                        )
 
-import           Control.Monad                       ( void )
-import           Data.List                           ( sortBy )
-import           Data.Maybe                          ( fromMaybe )
-import           Data.Monoid                         ( (<>) )
-import           Data.Ord                            ( comparing )
-import           Data.Text                           ( Text
-                                                     , unpack
-                                                     )
-import qualified Data.Text          as Text
-import           Data.Text.IO                        ( readFile
-                                                     , writeFile
-                                                     )
-import           Longboye.Import                     ( Import )
-import qualified Longboye.Import    as Import
-import           Longboye.Parser                     ( Parsed( NoImports
-                                                             , WithImports
-                                                             )
-                                                     )
-import qualified Longboye.Parser    as Parser
-import           System.Directory                    ( removeFile )
-import           System.Posix.Files                  ( rename )
+import           Control.Monad                          ( foldM
+                                                        , void
+                                                        )
+import           Data.List                              ( isPrefixOf
+                                                        , sortBy
+                                                        )
+import           Data.Maybe                             ( fromMaybe )
+import           Data.Monoid                            ( (<>) )
+import           Data.Ord                               ( comparing )
+import           Data.Text                              ( Text
+                                                        , unpack
+                                                        )
+import qualified Data.Text             as Text
+import           Data.Text.IO                           ( readFile
+                                                        , writeFile
+                                                        )
+import           Longboye.Import                        ( Import )
+import qualified Longboye.Import       as Import
+import           Longboye.Parser                        ( Parsed( NoImports
+                                                                , WithImports
+                                                                ) )
+import qualified Longboye.Parser       as Parser
+import           System.Directory                       ( listDirectory
+                                                        , removeFile
+                                                        )
+import           System.FilePath.Posix                  ( joinPath )
+import           System.Posix.Files                     ( getFileStatus
+                                                        , isDirectory
+                                                        , rename
+                                                        )
 
 clean :: [FilePath] -> IO ()
 clean []           = return ()
