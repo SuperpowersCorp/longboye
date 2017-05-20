@@ -29,15 +29,18 @@ file in the same directory.
 
 ## TODOs
 
-- [x] Basic Formatting
+- [X] Basic Formatting
+- [X] Sort Imports (with Prelude at top)
+- [X] BUG: Bad handling of closing paren of opList
+      - I think this is fixed, I don't see it anymore...
 - [ ] BUG: Handle extra indenting for global hiding resolution
-- [ ] BUG: Bad handling of closing paren of opList
-- [ ] Sort Imports (with Prelude at top)
+      - maybe be reworked to support Condensing, so maybe move that up?
+- [ ] Condensing
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
 - [ ] Examples
-- [ ] License
 - [ ] Solicit Feedback
+- [ ] License
 
 ## Examples
 

@@ -1,10 +1,14 @@
 module Longboye.Imports ( clean ) where
 
+import qualified Debug
+
 import           Prelude                             hiding  ( readFile
                                                              , writeFile
                                                              )
 import           Control.Monad                               ( void )
 import           Data.Monoid                                 ( (<>) )
+import           Data.List                                   ( sortBy )
+import           Data.Ord                                    ( comparing )
 import           Data.Text                                   ( Text
                                                              , unpack
                                                              )
@@ -59,9 +63,12 @@ swap vtp path = rename src dst
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
-  formatPrefix prefix <> formatImports imports <> formatSuffix suffix
+  formatPrefix prefix <> formatImports sortedImports <> formatSuffix suffix
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
         formatSuffix  = ("\n" <>)   . Text.stripStart
         formatImports = Text.unlines . map (Import.format maxModLen maxAsLen)
         maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
         maxAsLen      = maximum . map Import.asLength                       $ imports
+        sortedImports = Debug.log "post-sorted" . sort $ Debug.log "pre-sorted" imports
+        sort          = sortBy (comparing sortDetails)
+        sortDetails i = (Import.importedModule i, Import.qualified $ i)
