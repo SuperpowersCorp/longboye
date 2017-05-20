@@ -31,11 +31,13 @@ file in the same directory.
 
 - [X] Basic Formatting
 - [X] Sort Imports (with Prelude at top)
-- [ ] Prelude to the top (also maybe Overture?)
+- [X] Prelude to the top (also maybe Overture?)
+  - [X] space between them and the rest if either is present
+- [ ] Condensing
 - [ ] BUG: Handle extra indenting for global hiding resolution
       - maybe be reworked to support Condensing, so maybe move that up?
-- [ ] BUG: in current version Prelude hding (some, shit) wraps across lines wrong (mayb be fixed in above)
-- [ ] Condensing
+- [ ] BUG: in current version Prelude HIDING (some, shit) wraps across lines
+      wrong (mayb be fixed by above)
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
 - [ ] Examples

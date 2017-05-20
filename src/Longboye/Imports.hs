@@ -1,7 +1,5 @@
 module Longboye.Imports ( clean ) where
 
-import qualified Debug
-
 import           Prelude                             hiding  ( readFile
                                                              , writeFile
                                                              )
@@ -63,12 +61,31 @@ swap vtp path = rename src dst
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
-  formatPrefix prefix <> formatImports sortedImports <> formatSuffix suffix
+  formatPrefix prefix <> formatImports finalImports <> formatSuffix suffix
   where formatPrefix  = (<> "\n\n") . Text.stripEnd
         formatSuffix  = ("\n" <>)   . Text.stripStart
-        formatImports = Text.unlines . map (Import.format maxModLen maxAsLen)
+        formatImports = Text.unlines . sep . map (Import.format maxModLen maxAsLen)
         maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
         maxAsLen      = maximum . map Import.asLength                       $ imports
-        sortedImports = Debug.log "post-sorted" . sort $ Debug.log "pre-sorted" imports
-        sort          = sortBy (comparing sortDetails)
-        sortDetails i = (Import.importedModule i, Import.qualified $ i)
+        finalImports  = sortBy (comparing sortDetails) imports
+        npo           = length . filter isPreludish $ finalImports
+        isPreludish i = im == "Prelude" || im == "Overture"
+          where im = Import.importedModule i
+        sep is        = if npo <= 0
+                          then is
+                          else mconcat [pos, space, rest]
+                            where (pos, rest) = splitAt npo is
+                                  space       = ["\n"]
+        -- crack         = span isOverture
+        -- isOverture i  = im == "Prelude" || im == "Overture"
+        --   where im = Import.importedModule i
+        sortDetails i = case prioritySortValue of
+                          Just v  -> v
+                          Nothing -> (im, q)
+                        where
+                          prioritySortValue
+                            | im == "Prelude"  = Just ("30", q)
+                            | im == "Overture" = Just ("60", q)
+                            | otherwise  = Nothing
+                          im = Import.importedModule i
+                          q  = Import.qualified i
