@@ -78,9 +78,9 @@ formatMembers qual isHiding maxAsLen maxModLen = maybe "" f
                   | length ms == 1 = " "
                   | otherwise      = "\n" <> padding
         sep     = "\n" <> padding <> ", "
-        hideLen = bool 0 8 isHiding
+        hideLen = bool 0 7 isHiding
         padding = Text.replicate n " "
-          where n = maxAsLen + maxModLen + hideLen + Text.length ("import " <> qual)
+          where n = 1 + maxAsLen + maxModLen + hideLen + Text.length ("import " <> qual)
 
 renderModName :: ModuleName a -> Text
 renderModName (ModuleName _ name) = Text.pack name
