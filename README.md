@@ -31,10 +31,10 @@ file in the same directory.
 
 - [X] Basic Formatting
 - [X] Sort Imports (with Prelude at top)
-- [X] BUG: Bad handling of closing paren of opList
-      - I think this is fixed, I don't see it anymore...
+- [ ] Prelude to the top (also maybe Overture?)
 - [ ] BUG: Handle extra indenting for global hiding resolution
       - maybe be reworked to support Condensing, so maybe move that up?
+- [ ] BUG: in current version Prelude hding (some, shit) wraps across lines wrong (mayb be fixed in above)
 - [ ] Condensing
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
