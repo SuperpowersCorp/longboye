@@ -27,12 +27,9 @@ point, you can find the original contents of the file in the temporary
 
 ## TODOs
 
-- [ ] Sub-directory traversal
 - [ ] Examples
 - [ ] Solicit Feedback
 - [ ] License
-- [ ] Adding extra space to Main.hs, which means we're replacing it even though we
-      crashed?
 - [ ] Clean up UX/ergonomics/polish.  eg. something better than "Processing file: ..."
 
 ## Examples
