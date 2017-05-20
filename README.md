@@ -33,11 +33,14 @@ file in the same directory.
 - [X] Sort Imports (with Prelude at top)
 - [X] Prelude to the top (also maybe Overture?)
   - [X] space between them and the rest if either is present
-- [ ] Condensing
-- [ ] BUG: Handle extra indenting for global hiding resolution
-      - maybe be reworked to support Condensing, so maybe move that up?
-- [ ] BUG: in current version Prelude HIDING (some, shit) wraps across lines
+- [X] BUG: in current version Prelude HIDING (some, shit) wraps across lines
       wrong (mayb be fixed by above)
+
+- [ ] Condensing
+  - [ ] BUG: Handle extra indenting for global hiding resolution
+  - [ ] Even as is, hiding should be in the as column, but let's just figure out
+        condensing rules instead and let that sort out the rest.
+
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
 - [ ] Examples

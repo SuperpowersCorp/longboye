@@ -48,8 +48,10 @@ format maxModLen maxAsLenM4 imp =
                       then "qualified"
                       else "         "
         formattedAs    = pad maxAsLen . maybe "" (" as " <>) . asClause $ imp
-        formattedMembs = mHiding <> formatMembers maxAsLen maxModLen (members imp)
-        mHiding        = bool "" " hiding " (hiding imp) -- TODO: Fix this
+        formattedMembs = mHiding <> formatMembers isHiding maxAsLen maxModLen membs
+        membs          = members imp
+        mHiding        = bool "" " hiding " isHiding
+        isHiding       = hiding imp
         maxAsLen       = maxAsLenM4 + 4
         pad n s        = s <> padding
           where padding = Text.replicate (n - Text.length s) " "
@@ -57,8 +59,8 @@ format maxModLen maxAsLenM4 imp =
 asLength :: Import -> Int
 asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
-formatMembers :: Int -> Int -> Maybe [Member] -> Text
-formatMembers maxAsLen maxModLen = maybe "" f
+formatMembers :: Bool -> Int -> Int -> Maybe [Member] -> Text
+formatMembers isHiding maxAsLen maxModLen = maybe "" f
   where f ms    = " ( "
                     <> (Text.intercalate sep . map (Member.render sep) $ ms)
                     <> lastPadding
@@ -68,8 +70,9 @@ formatMembers maxAsLen maxModLen = maybe "" f
                   | length ms == 1 = " "
                   | otherwise      = "\n" <> padding
         sep     = "\n" <> padding <> ", "
+        hideLen = bool 0 8 isHiding
         padding = Text.replicate n " "
-          where n = 1 + maxAsLen + maxModLen + Text.length "import qualified "
+          where n = 1 + maxAsLen + maxModLen + hideLen + Text.length "import qualified "
 
 renderModName :: ModuleName a -> Text
 renderModName (ModuleName _ name) = Text.pack name
