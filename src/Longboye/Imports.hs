@@ -28,9 +28,25 @@ import           System.Posix.Files                  ( rename )
 
 clean :: [FilePath] -> IO ()
 clean []           = return ()
-clean (path:paths) = cleanFile path >>= either abort continue
+clean (path:paths) = cleanPath path >>= either abort continue
   where abort err  = error $ "An error occured: " ++ unpack err
         continue   = const $ clean paths
+
+cleanPath :: FilePath -> IO (Either Text ())
+cleanPath path = do
+  putStrLn $ "checking status of path: " ++ path
+  stat <- getFileStatus path
+  if isDirectory stat
+    then cleanDir path
+    else cleanFile path
+
+cleanDir :: FilePath -> IO (Either Text ())
+cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
+  where f (Right ()) file = do
+          result <- cleanPath (joinPath [path, file])
+          return result
+        f err _ = return err
+        hidden = ("." `isPrefixOf`)
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do

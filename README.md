@@ -27,9 +27,6 @@ point, you can find the original contents of the file in the temporary
 
 ## TODOs
 
-- [X] extra space in between parens when no ops (just imported for instances)
-- [X] extra newline and spaces being inserted after ops list
-- [X] Closing paren on single member op needs space
 - [ ] Sub-directory traversal
 - [ ] Examples
 - [ ] Solicit Feedback
