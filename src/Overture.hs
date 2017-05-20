@@ -8,12 +8,12 @@ module Overture
        , show_
        ) where
 
-import           Prelude                hiding  ( getLine )
+import           Prelude                hiding ( getLine )
 
-import           Data.Text              ( Text )
+import           Data.Text                     ( Text )
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as TextIO
-import           Safe                   ( headMay )
+import           Safe                          ( headMay )
 
 (|>) :: a -> (a -> c) -> c
 (|>) = flip ($)
