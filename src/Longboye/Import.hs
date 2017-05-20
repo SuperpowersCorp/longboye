@@ -5,7 +5,6 @@ module Longboye.Import
        , fromDecl
        ) where
 
-import           Data.Bool                       ( bool )
 import           Data.Maybe                      ( fromMaybe )
 import           Data.Monoid                     ( (<>) )
 import           Data.Text                       ( Text )
@@ -40,8 +39,8 @@ fromDecl decl = Import qual modName asC hid membs
 
         isHiding (ImportSpecList _ h _) = h
 
-format :: Bool -> Int -> Int -> Import -> Text
-format anyQual maxModLen maxAsLen imp =
+format :: Bool -> Bool -> Int -> Int -> Import -> Text
+format anyQual anyHiding maxModLen maxAsLen imp =
   Text.stripEnd
     $ "import "
     <> qual
@@ -55,9 +54,12 @@ format anyQual maxModLen maxAsLen imp =
           | anyQual       = "          "
           | otherwise     = ""
         formattedAs    = pad maxAsLenPad $ maybe "" (" as " <>) (asClause imp)
-        formattedMembs = formatMembers qual isHiding maxAsLenPad maxModLen membs
+        formattedMembs = formatMembers qual anyHiding maxAsLenPad maxModLen membs
         membs          = members imp
-        mHiding        = if isHiding then " hiding " else " "
+        mHiding
+          | isHiding  = " hiding "
+          | anyHiding = "        "
+          | otherwise = " "
         isHiding       = hiding imp
         maxAsLenPad    = maxAsLen + asPad
         asPad          = if maxAsLen == 0 then 0 else 4
@@ -68,7 +70,7 @@ asLength :: Import -> Int
 asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
 formatMembers :: Text -> Bool -> Int -> Int -> Maybe [Member] -> Text
-formatMembers qual isHiding maxAsLen maxModLen = maybe "" f
+formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
   where f ms    = "( "
                     <> (Text.intercalate sep . map (Member.render sep) $ ms)
                     <> lastPadding
@@ -78,7 +80,7 @@ formatMembers qual isHiding maxAsLen maxModLen = maybe "" f
                   | length ms == 1 = " "
                   | otherwise      = "\n" <> padding
         sep     = "\n" <> padding <> ", "
-        hideLen = bool 0 7 isHiding
+        hideLen = if anyHiding then 7 else 0
         padding = Text.replicate n " "
           where n = 1 + maxAsLen + maxModLen + hideLen + Text.length ("import " <> qual)
 
