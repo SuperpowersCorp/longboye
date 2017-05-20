@@ -42,7 +42,7 @@ point, you can find the original contents of the file in the temporary
     - [X] Condense as column if there are no as
     - [X] Line up ops at end up asCol (as is) plus any extra space any hiding's
           need (if any) (not doing this exactly for now, will seek feedback)
-- [ ] Dangling parens are not let dangle eg. when dogfooding Longboye/Imports.hs
+- [X] Dangling parens are not let dangle eg. when dogfooding Longboye/Imports.hs
 - [ ] Adding extra space to Main.hs, which means we're replacing it even though we
       crashed?
 - [ ] Atomic file swapping

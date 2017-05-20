@@ -49,13 +49,17 @@ render _   (OpMember name [])   = name
 render _   (OpMember name [op]) = name <> renderedOps
   where renderedOps = "( " <> op <> ")"
 render sep (OpMember name ops) = name <> renderedOps
-  where renderedOps = "( " <> Text.intercalate sep' ops <> lastPadding <> ")"
+  where renderedOps = "( " <> Text.intercalate sep' ops <> lastPadding <> ")" <> mNl
         sep'        = "\n" <> Text.replicate n " " <> Text.tail sep
-        n           = 2 + Text.length name
+        sep''       = Text.tail . Text.init . Text.init $ sep'
+        sep'''      = "\n" <> Text.drop (nameLength + 3) sep''
+        n           = 2 + nameLength
+        nameLength  = Text.length name
+        mNl         = if length ops >= 2 then sep''' else ""
         lastPadding
           | null ops        = ""
           | length ops == 1 = " "
-          | otherwise       = "\n" <> (Text.tail . Text.init . Text.init) sep'
+          | otherwise       = "\n" <> sep''
 
 renderName :: Name a -> Text
 renderName (Ident _ n)  = Text.pack n
