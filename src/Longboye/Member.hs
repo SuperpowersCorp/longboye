@@ -11,7 +11,7 @@ import qualified Data.Text             as Text
 import           Language.Haskell.Exts         ( CName( ConName
                                                       , VarName
                                                       )
-                                               , ImportSpecList( ImportSpecList)
+                                               , ImportSpecList( ImportSpecList )
                                                , ImportSpec( IAbs
                                                            , IThingAll
                                                            , IThingWith
@@ -48,9 +48,11 @@ render :: Text -> Member -> Text
 render _   (NamedMember name)   = name
 render _   (OpMember name [])   = name
 render _   (OpMember name [op]) = name <> renderedOps
-  where renderedOps = "( " <> op <> ")"
+  where renderedOps = "( " <> op <> " )"
 render sep (OpMember name ops) = name <> renderedOps
-  where renderedOps = "( " <> Text.intercalate sep' ops <> lastPadding <> ")"
+  where renderedOps = if null ops
+                        then ""
+                        else "( " <> Text.intercalate sep' ops <> lastPadding <> ")"
         sep'        = "\n" <> Text.replicate n " " <> Text.tail sep
         sep''       = Text.tail . Text.init . Text.init $ sep'
         n           = 2 + nameLength
