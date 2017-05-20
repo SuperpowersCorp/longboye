@@ -41,7 +41,7 @@ fromDecl decl = Import qual modName asC hid membs
         isHiding (ImportSpecList _ h _) = h
 
 format :: Bool -> Int -> Int -> Import -> Text
-format anyQual maxModLen maxAsLenM4 imp =
+format anyQual maxModLen maxAsLen imp =
   Text.stripEnd
     $ "import "
     <> qual
@@ -54,12 +54,13 @@ format anyQual maxModLen maxAsLenM4 imp =
           | qualified imp = "qualified "
           | anyQual       = "          "
           | otherwise     = ""
-        formattedAs    = pad maxAsLen . maybe "" (" as " <>) . asClause $ imp
-        formattedMembs = formatMembers qual isHiding maxAsLen maxModLen membs
+        formattedAs    = pad maxAsLenPad $ maybe "" (" as " <>) (asClause imp)
+        formattedMembs = formatMembers qual isHiding maxAsLenPad maxModLen membs
         membs          = members imp
-        mHiding        = bool "" " hiding " isHiding
+        mHiding        = if isHiding then " hiding " else ""
         isHiding       = hiding imp
-        maxAsLen       = maxAsLenM4 + 4
+        maxAsLenPad    = maxAsLen + asPad
+        asPad          = if maxAsLen == 0 then 0 else 4
         pad n s        = s <> padding
           where padding = Text.replicate (n - Text.length s) " "
 
