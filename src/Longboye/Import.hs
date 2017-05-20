@@ -57,7 +57,7 @@ format anyQual maxModLen maxAsLen imp =
         formattedAs    = pad maxAsLenPad $ maybe "" (" as " <>) (asClause imp)
         formattedMembs = formatMembers qual isHiding maxAsLenPad maxModLen membs
         membs          = members imp
-        mHiding        = if isHiding then " hiding " else ""
+        mHiding        = if isHiding then " hiding " else " "
         isHiding       = hiding imp
         maxAsLenPad    = maxAsLen + asPad
         asPad          = if maxAsLen == 0 then 0 else 4
@@ -69,7 +69,7 @@ asLength = fromMaybe 0 . (Text.length <$>) . asClause
 
 formatMembers :: Text -> Bool -> Int -> Int -> Maybe [Member] -> Text
 formatMembers qual isHiding maxAsLen maxModLen = maybe "" f
-  where f ms    = " ( "
+  where f ms    = "( "
                     <> (Text.intercalate sep . map (Member.render sep) $ ms)
                     <> lastPadding
                     <> ")"

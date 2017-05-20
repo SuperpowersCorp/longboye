@@ -35,6 +35,7 @@ file in the same directory.
   - [X] space between them and the rest if either is present
 - [X] BUG: in current version Prelude HIDING (some, shit) wraps across lines
       wrong (mayb be fixed by above)
+- [X] Extra spacing at end of hiding
 
 - [ ] Condensing
   - [ ] BUG: Handle extra indenting for global hiding resolution
