@@ -37,14 +37,14 @@ file in the same directory.
       wrong (mayb be fixed by above)
 - [X] Extra spacing at end of hiding
 
-- [ ] Condensing
-  - [ ] BUG: Handle extra indenting for global hiding resolution
-  - [ ] Even as is, hiding should be in the as column, but let's just figure out
+- [X] Condensing
+  - [X] BUG: Handle extra indenting for global hiding resolution
+  - [X] Even as is, hiding should be in the as column, but let's just figure out
         condensing rules instead and let that sort out the rest.
     - [X] Condense qualified if there are no qualified
     - [X] Condense as column if there are no as
-    - [ ] Line up ops at end up asCol (as is) plus any extra space any hiding's
-          need (if any)
+    - [X] Line up ops at end up asCol (as is) plus any extra space any hiding's
+          need (if any) (not doing this exactly for now, will seek feedback)
 
 - [ ] Atomic file swapping
 - [ ] Sub-directory traversal
