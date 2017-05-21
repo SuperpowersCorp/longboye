@@ -5,11 +5,16 @@
 > "Dogs are better than human beings because they know but do not tell."
 > - Emily Dickinson
 
-Longboye is a Haskell import statement prettifier.
+Longboye is currently a Haskell import statement prettifier.
 
 Pass it one or more paths to filenames or directories on the command line and
-it will process each file (when given paths to files), or each `.hs` file in
-each directory (recursively, when given paths to directories).
+it will process each file (when given files), or each `.hs` file in each
+directory (recursively, when given directories).
+
+The [examples/](examples/) directory shows an example of many different imports
+pulled from open source projects.  For examples of real-life layout in context
+in one project, see the Longboye source code.  Longboye eats it's own dog
+food. 🐶
 
 ## Data Integrity
 
@@ -20,22 +25,19 @@ The operations are performed by:
 - atomically swapping the temporary file into place
 - deleting the backup file
 
-This provides a high degree of safety.  Of course cosmic rays do flip bits
-occasionally, so if somehow Longboye detects any problems or crashes at any
-point, you can find the original contents of the file in the temporary
-`.longboye.bak` file in the same directory.
+This should provide a relativel high degree of safety.  If Longboye does detect
+an error it will abort all operations leaving the backup file in the same
+directory with a `.longboye.bak` extension.
 
 ## TODOs
 
-- [ ] Examples
+- [ ] Bonus as/hiding/other collapses
 - [ ] Solicit Feedback
-- [ ] License
 - [ ] Clean up UX/ergonomics/polish.  eg. something better than "Processing file: ..."
-
-## Examples
-
-    TODO: Add examples.
+  - [ ] add -q to prevent output other than errors
 
 ## License
 
-    TODO: License.
+Longboye is licensed under the BSD3 open source license.  See LICENSE file.
+
+Copyright Superpowers Corp © 2017.
