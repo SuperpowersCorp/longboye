@@ -35,7 +35,6 @@ main_ argv = do
 
   when (opts `isPresent` command "imports") $ do
     let paths = opts `getAllArgs` argument "path"
-    putStrLn $ "paths: " ++ show paths
     case paths of
       ["-"] -> Imports.interact
       ps
