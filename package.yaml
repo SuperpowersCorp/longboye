@@ -48,11 +48,21 @@ executables:
 tests:
   longboye-test:
     main: Spec.hs
-    source-dirs: test
+    source-dirs:
+    - src
+    - test
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - base
+    - directory
+    - filepath
     - longboye
+    - haskell-src-exts
+    - hspec
+    - QuickCheck
+    - safe
+    - text
+    - unix

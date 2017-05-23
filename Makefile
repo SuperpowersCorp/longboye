@@ -21,10 +21,8 @@ run:
 setup:
 	stack setup
 
-test: build
-	cp src/Longboye/Parser.hs /tmp/foo.hs
-	stack exec longboye -- imports /tmp/foo.hs
-	head -30 /tmp/foo.hs
+test:
+	stack test
 
 b: build
 hl: hlint
@@ -33,3 +31,4 @@ r: run
 s: setup
 t: test
 
+.PHONY: test

@@ -1,4 +1,4 @@
-module Longboye.Imports ( clean, interact ) where
+module Longboye.Imports ( clean, interact, interactS ) where
 
 import           Prelude                         hiding ( readFile
                                                         , interact
@@ -67,17 +67,14 @@ cleanFile path = do
     Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
 
 interact :: IO ()
-interact = Prelude.interact f
-  where path = "<interactive>"
-        f :: String -> String
-        f contents = Text.unpack result
-          where result =
-                  case Parser.parseE path textContents of
-                    Left _              -> Text.pack contents
-                    Right (NoImports s) -> s
-                    Right (WithImports (prefix, imports, suffix)) ->
-                      cleanText prefix imports suffix
-                textContents = Text.pack contents
+interact = Prelude.interact interactS
+
+interactS :: String -> String
+interactS contents = Text.unpack $
+  case Parser.parseE "<interactive>" (Text.pack contents) of
+    Left _                                        -> Text.pack contents
+    Right (NoImports s)                           -> s
+    Right (WithImports (prefix, imports, suffix)) -> cleanText prefix imports suffix
 
 doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
 doCleaning path contents (prefix, imports, suffix) = do

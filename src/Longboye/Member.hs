@@ -27,16 +27,16 @@ import           Language.Haskell.Exts         ( CName( ConName
                                                )
 
 data Member
-  = NamedMember Text
+  = NamedMember Text Bool
   | OpMember Text [Text]
   deriving (Eq, Ord, Read, Show)
 
 fromDecl :: ImportSpecList SrcSpanInfo -> [Member]
 fromDecl (ImportSpecList _ _ specs) = map fromSpec specs
-  where fromSpec (IVar _ name)              = NamedMember (renderName name)
-        fromSpec (IThingAll _ name)         = NamedMember (renderName name)
+  where fromSpec (IVar _ name)              = NamedMember (renderName name) False
+        fromSpec (IThingAll _ name)         = NamedMember (renderName name) True
         fromSpec (IThingWith _ name cnames) = OpMember (renderName name) (map cnameText cnames)
-        fromSpec (IAbs _ ns name)           = NamedMember $ nsPre <> renderName name
+        fromSpec (IAbs _ ns name)           = NamedMember (nsPre <> renderName name) False
           where nsPre =
                   case ns of
                     NoNamespace _      -> ""
@@ -44,9 +44,10 @@ fromDecl (ImportSpecList _ _ specs) = map fromSpec specs
                     PatternNamespace _ -> "[PATT_NS]." -- TODO: PatternNamespace
 
 render :: Text -> Member -> Text
-render _   (NamedMember name)   = name
-render _   (OpMember name [])   = name
-render sep (OpMember name ops) = name <> renderedOps
+render _   (NamedMember name False) = name
+render _   (NamedMember name True)  = name <> "(..)"
+render _   (OpMember name [])       = name
+render sep (OpMember name ops)      = name <> renderedOps
   where renderedOps = if null ops
                         then ""
                         else "( " <> Text.intercalate sep' ops <> lastPadding <> ")"
