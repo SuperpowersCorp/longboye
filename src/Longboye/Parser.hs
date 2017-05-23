@@ -6,28 +6,31 @@ module Longboye.Parser
 
 import           Overture
 
-import           Data.Text                              ( Text )
-import qualified Data.Text                    as Text
-import           Language.Haskell.Exts                  ( Module( Module
-                                                                , XmlHybrid
-                                                                , XmlPage
-                                                                )
-                                                        , SrcSpanInfo
-                                                        , srcSpanEndLine
-                                                        , srcSpanStartLine
-                                                        , srcInfoSpan
-                                                        , importAnn
-                                                        )
-import           Language.Haskell.Exts.Parser           ( ParseResult( ParseOk
-                                                                     , ParseFailed
-                                                                     )
-                                                        , defaultParseMode
-                                                        , parseFilename
-                                                        )
-import qualified Language.Haskell.Exts.Parser as Parser
-import           Language.Haskell.Exts.Syntax           ( ImportDecl )
-import           Longboye.Import                        ( Import )
-import qualified Longboye.Import              as Import
+import           Data.Text                                 ( Text )
+import qualified Data.Text                       as Text
+import           Language.Haskell.Exts                     ( Module( Module
+                                                                   , XmlHybrid
+                                                                   , XmlPage
+                                                                   )
+                                                           , SrcSpanInfo
+                                                           , srcSpanEndLine
+                                                           , srcSpanStartLine
+                                                           , srcInfoSpan
+                                                           , importAnn
+                                                           , parseFileContentsWithMode
+                                                           )
+import           Language.Haskell.Exts.Extension           ( Language( Haskell2010 ) )
+import           Language.Haskell.Exts.Parser              ( ParseResult( ParseOk
+                                                                        , ParseFailed
+                                                                        )
+                                                           , baseLanguage
+                                                           , defaultParseMode
+                                                           , ignoreLanguagePragmas
+                                                           , parseFilename
+                                                           )
+import           Language.Haskell.Exts.Syntax              ( ImportDecl )
+import           Longboye.Import                           ( Import )
+import qualified Longboye.Import                 as Import
 
 data Parsed
   = NoImports Text
@@ -38,7 +41,7 @@ parse :: FilePath -> Text -> Maybe Parsed
 parse path = eitherToMaybe . parseE path
 
 parseE :: FilePath -> Text -> Either Text Parsed
-parseE path source = case Parser.parseModuleWithMode parseMode sourceText of
+parseE path source = case parseFileContentsWithMode parseMode sourceText of
   ParseOk parsedMod ->
     if null imports
       then Right . NoImports   $ source
@@ -48,7 +51,10 @@ parseE path source = case Parser.parseModuleWithMode parseMode sourceText of
           suffix  = extractSuffix parsedMod source
   ParseFailed srcLoc err ->
     Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
-  where parseMode  = defaultParseMode { parseFilename = path }
+  where parseMode  = defaultParseMode { baseLanguage  = Haskell2010
+                                      , ignoreLanguagePragmas = False
+                                      , parseFilename = path
+                                      }
         sourceText = Text.unpack source
 
 extractPrefix :: Module SrcSpanInfo -> Text -> Text
