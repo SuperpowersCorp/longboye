@@ -2,6 +2,7 @@ Longboye
 
 Usage:
   longboye imports <path>...
+  longboye imports -
   longboye -h | --help
   longboye --version
 

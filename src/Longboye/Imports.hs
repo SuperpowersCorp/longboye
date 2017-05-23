@@ -1,8 +1,10 @@
-module Longboye.Imports ( clean ) where
+module Longboye.Imports ( clean, interact ) where
 
 import           Prelude                         hiding ( readFile
+                                                        , interact
                                                         , writeFile
                                                         )
+import qualified Prelude
 
 import           Control.Monad                          ( foldM
                                                         , void
@@ -51,10 +53,8 @@ cleanPath path = do
 
 cleanDir :: FilePath -> IO (Either Text ())
 cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
-  where f (Right ()) file = do
-          result <- cleanPath (joinPath [path, file])
-          return result
-        f err _ = return err
+  where f (Right ()) file = cleanPath (joinPath [path, file])
+        f err _           = return err
         hidden = ("." `isPrefixOf`)
 
 cleanFile :: FilePath -> IO (Either Text ())
@@ -65,6 +65,19 @@ cleanFile path = do
     Left err                    -> return . Left $ err
     Right (NoImports _)         -> return . Right $ ()
     Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
+
+interact :: IO ()
+interact = Prelude.interact f
+  where path = "<interactive>"
+        f :: String -> String
+        f contents = Text.unpack result
+          where result =
+                  case Parser.parseE path textContents of
+                    Left err                   -> error . Text.unpack $ err
+                    Right (NoImports s)        -> s
+                    Right (WithImports (prefix, imports, suffix)) ->
+                      cleanText prefix imports suffix
+                textContents = Text.pack contents
 
 doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
 doCleaning path contents (prefix, imports, suffix) = do

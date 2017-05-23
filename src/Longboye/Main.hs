@@ -30,10 +30,16 @@ main_ argv = do
     putStrLn $ "Longboye v" ++ version
     exitSuccess
 
-  when (opts `isPresent` longOption "help") $ exitWithUsage patterns
+  when (opts `isPresent` longOption "help") $
+    exitWithUsage patterns
 
   when (opts `isPresent` command "imports") $ do
     let paths = opts `getAllArgs` argument "path"
-    Imports.clean paths
-
+    putStrLn $ "paths: " ++ show paths
+    case paths of
+      ["-"] -> Imports.interact
+      ps
+        | "-" `elem` ps -> error cannotMixErr
+        | otherwise     -> Imports.clean ps
   where version      = "0.0.0.1"
+        cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."
