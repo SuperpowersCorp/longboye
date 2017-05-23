@@ -41,5 +41,14 @@ main_ argv = do
       ps
         | "-" `elem` ps -> error cannotMixErr
         | otherwise     -> Imports.clean ps
+
+  when (opts `isPresent` command "modules") $ do
+    let paths = opts `getAllArgs` argument "path"
+    case paths of
+      ["-"] -> Modules.interact
+      ps
+        | "-" `elem` ps -> error cannotMixErr
+        | otherwise     -> Modules.clean ps
+
   where version      = "0.0.0.1"
         cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."
