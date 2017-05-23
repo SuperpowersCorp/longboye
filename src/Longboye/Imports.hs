@@ -73,8 +73,8 @@ interact = Prelude.interact f
         f contents = Text.unpack result
           where result =
                   case Parser.parseE path textContents of
-                    Left err                   -> error . Text.unpack $ err
-                    Right (NoImports s)        -> s
+                    Left _              -> Text.pack contents
+                    Right (NoImports s) -> s
                     Right (WithImports (prefix, imports, suffix)) ->
                       cleanText prefix imports suffix
                 textContents = Text.pack contents

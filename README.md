@@ -32,6 +32,8 @@ directory with a `.longboye.bak` extension.
 ## TODOs
 
 - [ ] Bonus as/hiding/other collapses
+- [ ] Add 'modules' command for cleaning up module declarations
+- [ ] Add automatic and/or option for removal of trailing whitespace (per line)
 - [ ] Solicit Feedback
 - [ ] Clean up UX/ergonomics/polish.  eg. something better than "Processing file: ..."
   - [ ] add -q to prevent output other than errors
