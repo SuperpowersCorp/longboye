@@ -5,7 +5,9 @@
 > "Dogs are better than human beings because they know but do not tell."
 > - Emily Dickinson
 
-Longboye is currently a Haskell import statement prettifier.
+Longboye is a Haskell source prettifier.
+
+Currently it only touches `import` statements.
 
 Pass it one or more paths to filenames or directories on the command line and
 it will process each file (when given files), or each `.hs` file in each
@@ -15,6 +17,30 @@ The [examples/](examples/) directory shows an example of many different imports
 pulled from open source projects.  For examples of real-life layout in context
 in one project, see the Longboye source code.  Longboye eats it's own dog
 food. 🐶
+
+## Emacs Integration
+
+```elisp
+  (defun longboyeee ()
+    (interactive "r")
+    (when (eq major-mode 'haskell-mode)
+      (let ((start    1)
+            (end      (+ 1 (buffer-size)))
+            (program "longboye"))
+        (let ((saved-cursor-position (point)))
+            (call-process-region start
+                                 end
+                                 program
+                                 t         ;; delete
+                                 t         ;; destination
+                                 nil       ;; display
+                                 "imports"
+                                 "-"
+                                 )
+            (goto-char saved-cursor-position)))))
+
+  (add-hook 'before-save-hook #'longboyeee)
+```
 
 ## Data Integrity
 
