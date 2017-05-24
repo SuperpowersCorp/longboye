@@ -22,12 +22,13 @@ eats it's own dog food. 🐶
 ## Features
 
 - [X] Aligns all imports in normalized Goodboye™ format with patented
-  insta-collapse feature
-- [X] Sorts import statements
+      insta-collapse
+  - [X] Sorts import statements
   - [X] Sorts members within import statements
-- [X] Removes duplicate import statements
-- [X] Normalizes whitespace between module statement and import statements
-- [X] Normalizes import statements and definitions
+  - [X] Removes duplicate import statements
+  - [X] Normalizes whitespace between module statement and import statements
+  - [X] Normalizes import statements and definitions
+  - [X] Normalizes whitespace between import statements and module body
 - [X] Emacs integration
 - [X] Is a good boy.
   - [X] Yes he is.
@@ -35,17 +36,27 @@ eats it's own dog food. 🐶
 ## Coming Soon
 
 - [ ] [#7](/../../issues/7) - Longboye will find and read `.cabal` files to load default extensions
-- [ ] [#5](/../../issues/5) - Better treatment of comments
-- [ ] [#6](/../../issues/6) - Better error handling in editor integration
 - [ ] [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
 - [ ] [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
-- [ ] Bonus as/hiding/other collapses
-- [ ] `modules` sub-command for cleaning up module declarations
-- [ ] `pragmas` sub-command for cleaning up LANGUAGE pragmas
-- [ ] Automatic and/or option for removal of trailing whitespace (per line)
-- [ ] Clear documention of any unfixed known issues
-  - [ ] Comment removal
-  - [ ] Cursor jumping around in emacs
+- [ ] [#11](/../../issues/11) - Automatic removal of per-line trailing whitespace
+- [ ] [#12](/../../issues/12) - Automatic removal of per-file trailing whitespace
+- [ ] [#13](/../../issues/13) - `modules` sub-command for cleaning up module declarations
+- [ ] [#14](/../../issues/14) - `pragmas` sub-command for cleaning up LANGUAGE pragmas
+- [ ] [#15](/../../issues/15) - CLI combinators for `imports` / `modules` / `pragmas` commands.
+- [ ] [#5](/../../issues/5) - Better treatment of comments
+- [ ] [#6](/../../issues/6) - Better error handling in editor integration
+- [ ] Possibly further bonus collapsing as/hiding/etc.
+
+We love feedback, so feel free to chime in on any of the issues.
+
+## Caveats and Emptors*
+
+- Any comments that appear between the first uncommented import statement and
+  the last uncommented import statement will be removed.
+- Using the current emacs integration function will cause your cursor to move
+  jump around on save in some situations.
+
+* Emptors are Functors over expectations.
 
 ## Installation
 
