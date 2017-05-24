@@ -72,10 +72,10 @@ and put it in the `:init` section of your `haskell-mode` package declaration.
             (call-process-region start
                                  end
                                  program
-                                 t         ;; delete
-                                 t         ;; destination
-                                 nil       ;; display
-                                 "imports" "-")
+                                 t                   ;; delete
+                                 t                   ;; destination
+                                 nil                 ;; display
+                                 "imports" "-")      ;; additional args
             (goto-char saved-cursor-position)))))
 
   (add-hook 'before-save-hook #'longboyeee)
