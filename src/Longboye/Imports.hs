@@ -10,6 +10,7 @@ import           Control.Monad                          ( foldM
                                                         , void
                                                         )
 import           Data.List                              ( isPrefixOf
+                                                        , nub
                                                         , sortBy
                                                         )
 import           Data.Maybe                             ( fromMaybe )
@@ -98,7 +99,7 @@ cleanText prefix imports suffix =
         anyHiding     = any Import.hiding imports
         maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
         maxAsLen      = maximum . map Import.asLength                       $ imports
-        finalImports  = sortBy (comparing sortDetails) imports
+        finalImports  = nub . sortBy (comparing sortDetails) $ imports
         npo           = length . filter isPreludish $ finalImports
         isPreludish   = flip any ["Prelude", "Overture"] . (==) . Import.importedModule
         sep is        = if npo <= 0
