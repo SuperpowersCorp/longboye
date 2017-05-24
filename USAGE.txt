@@ -11,6 +11,7 @@ Longboye
 
 Usage:
   longboye imports <path>...
+  longboye pragmas <path>...
   longboye -h | --help
   longboye --version
 
