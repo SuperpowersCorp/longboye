@@ -40,8 +40,9 @@ fromDecl (ImportSpecList _ _ specs) = map fromSpec specs
           where nsPre =
                   case ns of
                     NoNamespace _      -> ""
-                    TypeNamespace _    -> "[TYPE_NS]." -- TODO: TypeNamespace
-                    PatternNamespace _ -> "[PATT_NS]." -- TODO: PatternNamespace
+                    TypeNamespace _    -> notSupported "TypeNamespace"
+                    PatternNamespace _ -> notSupported "PatternNamespace"
+                notSupported x = error $ x ++ " not supported yet."
 
 render :: Text -> Member -> Text
 render _   (NamedMember name False) = name
