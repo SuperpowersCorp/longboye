@@ -27,7 +27,8 @@ main_ argv = do
   opts <- parseArgsOrExit patterns argv
 
   when (opts `isPresent` longOption "version") $ do
-    putStrLn $ "Longboye v" ++ version
+    --           v-- mind the invisible unicode doggo
+    putStrLn $ "🐕 Longboye v" ++ version
     exitSuccess
 
   when (opts `isPresent` longOption "help") $

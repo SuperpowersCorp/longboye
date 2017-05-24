@@ -60,7 +60,7 @@ cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Righ
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
-  putStrLn $ cuteMsg ++ "... " ++ path ++ " 🐶"
+  putStrLn $ cuteMsg ++ "... " ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
   contents <- readFile path
   case Parser.parseE path contents of
     Left err                    -> return . Left $ err
