@@ -15,7 +15,7 @@ it will process each file (when given files), or each `.hs` file in each
 directory recursively (when given directories).
 
 For examples of Goodboye™ format, see the Longboye source code,
-[eg. Longboye/Imports.hs](/../tree/master/src/Longboye/Imports.hs).  Longboye
+[eg. Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs).  Longboye
 eats it's own dog food. 🐶
 
 ## Features
