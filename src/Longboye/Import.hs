@@ -74,7 +74,7 @@ formatMembers :: Text -> Bool -> Int -> Int -> Maybe [Member] -> Text
 formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
   where f ms    = "("
                     <> firstPadding
-                    <> (Text.intercalate sep . map (Member.render sep) . sort $ ms)
+                    <> (Text.intercalate sep . map (Member.render sep) . Member.sort $ ms)
                     <> lastPadding
                     <> ")"
           where firstPadding = if null ms then "" else " "

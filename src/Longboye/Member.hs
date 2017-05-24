@@ -2,6 +2,7 @@ module Longboye.Member
        ( Member(..)
        , fromDecl
        , render
+       , sort
        ) where
 
 import           Data.Monoid                   ( (<>) )
@@ -68,3 +69,10 @@ renderName (Symbol _ n) = "(" <> Text.pack n <> ")"
 cnameText :: CName a -> Text
 cnameText (VarName _ name) = renderName name
 cnameText (ConName _ name) = renderName name
+
+sort :: [Member] -> [Member]
+sort = sortBy (comparing sortKey)
+  where sortKey (NamedMember name b) =
+          name <> (if b then "(..)" else "")
+        sortKey (OpMember name ms) =
+          name <> (if null ms then "" else Text.intercalate ", " ms)
