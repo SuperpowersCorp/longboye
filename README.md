@@ -15,9 +15,9 @@ it will process each file (when given files), or each `.hs` file in each
 directory recursively (when given directories).
 
 The [examples/](examples/) directory shows an example of many different imports
-pulled from open source projects.  For examples of real-life layout in context
-in one project, see the Longboye source code.  Longboye eats it's own dog
-food. 🐶
+pulled from open source projects.  For examples see the Longboye source code,
+[eg. Longboye/Imports.hs](/../tree/master/src/Longboye/Imports.hs).  Longboye
+eats it's own dog food. 🐶
 
 ## Features
 
@@ -40,8 +40,8 @@ food. 🐶
 - [ ] [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
 - [ ] [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
 - [ ] Bonus as/hiding/other collapses
-- [ ] `modules` command for cleaning up module declarations
-- [ ] `pragmas` command for cleaning up LANGUAGE pragmas
+- [ ] `modules` sub-command for cleaning up module declarations
+- [ ] `pragmas` sub-command for cleaning up LANGUAGE pragmas
 - [ ] Automatic and/or option for removal of trailing whitespace (per line)
 - [ ] Clear documention of any unfixed known issues
   - [ ] Comment removal
