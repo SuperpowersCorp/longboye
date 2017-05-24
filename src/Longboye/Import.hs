@@ -5,6 +5,7 @@ module Longboye.Import
        , fromDecl
        ) where
 
+import           Data.List                       ( sort )
 import           Data.Maybe                      ( fromMaybe )
 import           Data.Monoid                     ( (<>) )
 import           Data.Text                       ( Text )
@@ -73,7 +74,7 @@ formatMembers :: Text -> Bool -> Int -> Int -> Maybe [Member] -> Text
 formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
   where f ms    = "("
                     <> firstPadding
-                    <> (Text.intercalate sep . map (Member.render sep) $ ms)
+                    <> (Text.intercalate sep . map (Member.render sep) . sort $ ms)
                     <> lastPadding
                     <> ")"
           where firstPadding = if null ms then "" else " "
