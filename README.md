@@ -7,7 +7,7 @@
 
 Longboye is a Haskell source prettifier.
 
-Currently it only touches `import` statements but I plan to give the module
+Currently it only touches `import` statements but we plan to give the module
 statement and language pragmas a similar treatment.
 
 Pass it one or more paths to filenames or directories on the command line and
