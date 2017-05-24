@@ -87,6 +87,9 @@ directory with a `.longboye.bak` extension.
 - [ ] Solicit Feedback
 - [ ] Clean up UX/ergonomics/polish.  eg. something better than "Processing file: ..."
   - [ ] add -q to prevent output other than errors
+- [ ] Document any unfixed known issues
+  - [ ] Comment removal
+  - [ ] Cursor jumping around in emacs
 
 ## License
 
