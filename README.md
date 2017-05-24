@@ -33,16 +33,17 @@ food. 🐶
 
 ## Coming Soon
 
+- [ ] Handle `TypeNamespace` and `PatternNamespace`
 - [ ] Sorting of members within parens
-- [ ] Longboye will find and read .cabal file to load default extensions
+- [ ] Longboye will find and read `.cabal` files to load default extensions
 - [ ] Better treatment of comments
-  - [ ] (?) "--preserve-comments" flag that lumps them all together at the top
+  - [ ] (?) `--preserve-comments` flag that lumps them all together at the top
 - [ ] Better error handling in editor integration
-  - [ ] (?) "--error-comments" flag that puts errors in comments at ... top of file?
+  - [ ] (?) `--error-comments` flag that puts errors in comments at ... top of file?
 - [ ] Bonus as/hiding/other collapses
-- [ ] 'modules' command for cleaning up module declarations
-- [ ] 'pragmas' command for cleaning up LANGUAGE pragmas
-- [ ] '-q' option to prevent output other than errors
+- [ ] `modules` command for cleaning up module declarations
+- [ ] `pragmas` command for cleaning up LANGUAGE pragmas
+- [ ] `-q` option to prevent output other than errors
 - [ ] Automatic and/or option for removal of trailing whitespace (per line)
 - [ ] Clear documention of any unfixed known issues
   - [ ] Comment removal
