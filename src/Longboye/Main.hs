@@ -28,7 +28,7 @@ main_ argv = do
 
   when (opts `isPresent` longOption "version") $ do
     --           v-- mind the invisible unicode doggo
-    putStrLn $ "🐕 Longboye v" ++ version
+    putStrLn $ "🐕  Longboye v" ++ version
     exitSuccess
 
   when (opts `isPresent` longOption "help") $
