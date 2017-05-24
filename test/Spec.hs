@@ -7,8 +7,8 @@ import Test.Hspec
 -- import Test.QuickCheck
 
 main :: IO ()
-main = hspec $ do
-  describe "Imports.interact" $ do
+main = hspec $
+  describe "Imports.interact" $
     it "handles (:<|>)(..) correctly" $ do
       let sscce = "import Foo ( (:<|>)(..) )"
-      (interactS sscce) `shouldBe` ("\n\n" <> sscce <> "\n\n")
+      interactS sscce `shouldBe` ("\n\n" <> sscce <> "\n\n")

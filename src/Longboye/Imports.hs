@@ -68,7 +68,7 @@ cleanFile path = do
     Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
   where pseudoRandomN = sum . map ord $ path
         cuteMsg = cuteMessages !! randIndex
-        randIndex = pseudoRandomN `mod` (length cuteMessages)
+        randIndex = pseudoRandomN `mod` length cuteMessages
         cuteMessages = [ "Licking"
                        , "Chewing"
                        , "Biting"
