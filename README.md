@@ -75,9 +75,7 @@ and put it in the `:init` section of your `haskell-mode` package declaration.
                                  t         ;; delete
                                  t         ;; destination
                                  nil       ;; display
-                                 "imports"
-                                 "-"
-                                 )
+                                 "imports" "-")
             (goto-char saved-cursor-position)))))
 
   (add-hook 'before-save-hook #'longboyeee)
