@@ -52,6 +52,11 @@ food. 🐶
     $ make build install
     $ longboye --help
 
+## Installation
+
+    $ make build install
+    $ longboye --help
+
 ## Emacs Integration
 
 Put something like this in the appropriate spot in your
