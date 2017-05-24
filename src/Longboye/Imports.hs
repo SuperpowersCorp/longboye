@@ -1,23 +1,18 @@
 module Longboye.Imports ( interactS ) where
 
-import           Prelude                   hiding ( interact
-                                                  , readFile
-                                                  , writeFile
-                                                  )
-
-import           Data.List                        ( nub
-                                                  , sortBy
-                                                  )
-import           Data.Maybe                       ( fromMaybe )
-import           Data.Monoid                      ( (<>) )
-import           Data.Ord                         ( comparing )
-import           Data.Text                        ( Text )
+import           Data.List                 ( nub
+                                           , sortBy
+                                           )
+import           Data.Maybe                ( fromMaybe )
+import           Data.Monoid               ( (<>) )
+import           Data.Ord                  ( comparing )
+import           Data.Text                 ( Text )
 import qualified Data.Text       as Text
-import           Longboye.Import                  ( Import )
+import           Longboye.Import           ( Import )
 import qualified Longboye.Import as Import
-import           Longboye.Parser                  ( Parsed( NoImports
-                                                          , WithImports
-                                                          ) )
+import           Longboye.Parser           ( Parsed( NoImports
+                                                   , WithImports
+                                                   ) )
 import qualified Longboye.Parser as Parser
 
 interactS :: String -> String
