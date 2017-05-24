@@ -14,8 +14,7 @@ Pass it one or more paths to filenames or directories on the command line and
 it will process each file (when given files), or each `.hs` file in each
 directory recursively (when given directories).
 
-The [examples/](examples/) directory shows an example of many different imports
-pulled from open source projects.  For examples see the Longboye source code,
+For examples of Goodboye™ format, see the Longboye source code,
 [eg. Longboye/Imports.hs](/../tree/master/src/Longboye/Imports.hs).  Longboye
 eats it's own dog food. 🐶
 
