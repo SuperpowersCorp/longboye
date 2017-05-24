@@ -15,7 +15,11 @@ Usage:
   longboye --version
 
 You may use "-" as a solitary path to have Longboye pipe from stdin to stdout.
-This cannot be mixed with other paths. (eg. "cat foo.hs | longboye imports -")
+This cannot be mixed with other paths.
+
+   eg. cat foo.hs | longboye imports -
+
+This can be especially helpful for editor integrations.
 
 Options:
   -h --help     Show this screen.
