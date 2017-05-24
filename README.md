@@ -31,6 +31,7 @@ food. 🐶
 ## TODOs
 
 - [ ] Sort members
+- [ ] Find and read .cabal file to identify default extensions
 - [ ] Better treatment of comments
   - [ ] (?) "--preserve-comments" flag that lumps them all together at the top
 - [ ] Better error handling in editor integration
