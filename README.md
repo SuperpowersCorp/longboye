@@ -7,7 +7,8 @@
 
 Longboye is a Haskell source prettifier.
 
-Currently it only touches `import` statements.
+Currently it only touches `import` statements but I plan to give the module
+statement and language pragmas a similar treatment.
 
 Pass it one or more paths to filenames or directories on the command line and
 it will process each file (when given files), or each `.hs` file in each
@@ -17,6 +18,23 @@ The [examples/](examples/) directory shows an example of many different imports
 pulled from open source projects.  For examples of real-life layout in context
 in one project, see the Longboye source code.  Longboye eats it's own dog
 food. 🐶
+
+## Features
+
+- [X] Aligns all imports in normalized Goodboye(tm) format with insta-collapse
+- [X] Sorts import statements
+- [X] Removes duplicate import statements
+- [X] Normalizes whitespace between module statement and import statements
+- [X] Normalizes import statements and definitions
+- [X] Emacs integration
+
+## TODOs
+
+- [ ] Sort members
+- [ ] Better treatment of comments
+  - [ ] (?) "--preserve-comments" flag that lumps them all together at the top
+- [ ] Better error handling in editor integration
+  - [ ] (?) "--error-comments" flag that puts errors in comments at ... top of file?
 
 ## Emacs Integration
 
