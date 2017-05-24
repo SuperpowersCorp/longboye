@@ -12,7 +12,7 @@ statement and language pragmas a similar treatment.
 
 Pass it one or more paths to filenames or directories on the command line and
 it will process each file (when given files), or each `.hs` file in each
-directory (recursively, when given directories).
+directory recursively (when given directories).
 
 The [examples/](examples/) directory shows an example of many different imports
 pulled from open source projects.  For examples of real-life layout in context
