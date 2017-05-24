@@ -1,85 +1,24 @@
-module Longboye.Imports ( clean, interact, interactS ) where
+module Longboye.Imports ( interactS ) where
 
-import           Prelude                         hiding ( interact
-                                                        , readFile
-                                                        , writeFile
-                                                        )
-import qualified Prelude
+import           Prelude                   hiding ( interact
+                                                  , readFile
+                                                  , writeFile
+                                                  )
 
-import           Control.Monad                          ( foldM
-                                                        , void
-                                                        )
-import           Data.Char                              ( ord )
-import           Data.List                              ( isPrefixOf
-                                                        , nub
-                                                        , sortBy
-                                                        )
-import           Data.Maybe                             ( fromMaybe )
-import           Data.Monoid                            ( (<>) )
-import           Data.Ord                               ( comparing )
-import           Data.Text                              ( Text
-                                                        , unpack
-                                                        )
-import qualified Data.Text             as Text
-import           Data.Text.IO                           ( readFile
-                                                        , writeFile
-                                                        )
-import           Longboye.Import                        ( Import )
-import qualified Longboye.Import       as Import
-import           Longboye.Parser                        ( Parsed( NoImports
-                                                                , WithImports
-                                                                ) )
-import qualified Longboye.Parser       as Parser
-import           System.Directory                       ( listDirectory
-                                                        , removeFile
-                                                        )
-import           System.FilePath.Posix                  ( joinPath )
-import           System.Posix.Files                     ( getFileStatus
-                                                        , isDirectory
-                                                        , rename
-                                                        )
-
-clean :: [FilePath] -> IO ()
-clean []           = return ()
-clean (path:paths) = cleanPath path >>= either abort continue
-  where abort err  = error $ "An error occured: " ++ unpack err
-        continue   = const $ clean paths
-
-cleanPath :: FilePath -> IO (Either Text ())
-cleanPath path = do
-  stat <- getFileStatus path
-  if isDirectory stat
-    then cleanDir path
-    else cleanFile path
-
-cleanDir :: FilePath -> IO (Either Text ())
-cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
-  where f (Right ()) file = cleanPath (joinPath [path, file])
-        f err _           = return err
-        hidden = ("." `isPrefixOf`)
-
-cleanFile :: FilePath -> IO (Either Text ())
-cleanFile path = do
-  putStrLn $ cuteMsg ++ "... " ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
-  contents <- readFile path
-  case Parser.parseE path contents of
-    Left err                    -> return . Left $ err
-    Right (NoImports _)         -> return . Right $ ()
-    Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
-  where pseudoRandomN = sum . map ord $ path
-        cuteMsg = cuteMessages !! randIndex
-        randIndex = pseudoRandomN `mod` length cuteMessages
-        cuteMessages = [ "Licking"
-                       , "Chewing"
-                       , "Biting"
-                       , "Gnawing on"
-                       , "Borking"
-                       , "De-borking"
-                       , "Re-borking"
-                       ]
-
-interact :: IO ()
-interact = Prelude.interact interactS
+import           Data.List                        ( nub
+                                                  , sortBy
+                                                  )
+import           Data.Maybe                       ( fromMaybe )
+import           Data.Monoid                      ( (<>) )
+import           Data.Ord                         ( comparing )
+import           Data.Text                        ( Text )
+import qualified Data.Text       as Text
+import           Longboye.Import                  ( Import )
+import qualified Longboye.Import as Import
+import           Longboye.Parser                  ( Parsed( NoImports
+                                                          , WithImports
+                                                          ) )
+import qualified Longboye.Parser as Parser
 
 interactS :: String -> String
 interactS contents = Text.unpack $
@@ -87,16 +26,6 @@ interactS contents = Text.unpack $
     Left _                                        -> Text.pack contents
     Right (NoImports s)                           -> s
     Right (WithImports (prefix, imports, suffix)) -> cleanText prefix imports suffix
-
-doCleaning :: FilePath -> Text -> (Text, [Import], Text) -> IO ()
-doCleaning path contents (prefix, imports, suffix) = do
-  void $ writeFile backupPath contents
-  let cleaned = cleanText prefix imports suffix
-  writeFile tempPath cleaned
-  void $ rename tempPath path
-  void $ removeFile backupPath
-  where backupPath = path ++ ".longboye.bak"
-        tempPath   = path ++ ".longboye.tmp"
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =

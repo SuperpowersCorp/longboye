@@ -3,6 +3,8 @@ module Longboye.Main ( main ) where
 
 import           Control.Monad                    ( when )
 import qualified Longboye.Imports      as Imports
+import           Longboye.Interaction
+import qualified Longboye.Pragmas      as Pragmas
 import           System.Console.Docopt            ( Docopt
                                                   , argument
                                                   , command
@@ -36,10 +38,10 @@ main_ argv = do
 
   when (opts `isPresent` command "imports") $ do
     let paths = opts `getAllArgs` argument "path"
-    case paths of
-      ["-"] -> Imports.interact
-      ps
-        | "-" `elem` ps -> error cannotMixErr
-        | otherwise     -> Imports.clean ps
+    runInteraction Imports.interactS paths
+
+  when (opts `isPresent` command "pragmas") $ do
+    let paths = opts `getAllArgs` argument "path"
+    runInteraction Pragmas.interactS paths
+
   where version      = "0.0.0.1"
-        cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."
