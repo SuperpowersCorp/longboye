@@ -13,11 +13,11 @@ import           Language.Haskell.Exts                     ( Module( Module
                                                                    , XmlPage
                                                                    )
                                                            , SrcSpanInfo
-                                                           , srcSpanEndLine
-                                                           , srcSpanStartLine
-                                                           , srcInfoSpan
                                                            , importAnn
                                                            , parseFileContentsWithMode
+                                                           , srcInfoSpan
+                                                           , srcSpanEndLine
+                                                           , srcSpanStartLine
                                                            )
 import           Language.Haskell.Exts.Extension           ( Language( Haskell2010 ) )
 import           Language.Haskell.Exts.Parser              ( ParseResult( ParseOk

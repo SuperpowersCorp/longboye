@@ -5,18 +5,20 @@ module Longboye.Member
        , sort
        ) where
 
+import           Data.List                     ( sortBy )
 import           Data.Monoid                   ( (<>) )
+import           Data.Ord                      ( comparing )
 import           Data.Text                     ( Text )
 import qualified Data.Text             as Text
 import           Language.Haskell.Exts         ( CName( ConName
                                                       , VarName
                                                       )
-                                               , ImportSpecList( ImportSpecList )
                                                , ImportSpec( IAbs
                                                            , IThingAll
                                                            , IThingWith
                                                            , IVar
                                                            )
+                                               , ImportSpecList( ImportSpecList )
                                                , Name( Ident
                                                      , Symbol
                                                      )

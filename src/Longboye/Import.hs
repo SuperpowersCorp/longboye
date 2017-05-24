@@ -5,7 +5,6 @@ module Longboye.Import
        , fromDecl
        ) where
 
-import           Data.List                       ( sort )
 import           Data.Maybe                      ( fromMaybe )
 import           Data.Monoid                     ( (<>) )
 import           Data.Text                       ( Text )

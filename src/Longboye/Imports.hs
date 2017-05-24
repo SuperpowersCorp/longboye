@@ -1,7 +1,7 @@
 module Longboye.Imports ( clean, interact, interactS ) where
 
-import           Prelude                         hiding ( readFile
-                                                        , interact
+import           Prelude                         hiding ( interact
+                                                        , readFile
                                                         , writeFile
                                                         )
 import qualified Prelude
