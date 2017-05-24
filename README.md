@@ -21,12 +21,15 @@ food. 🐶
 
 ## Features
 
-- [X] Aligns all imports in normalized Goodboye™ format with insta-collapse
+- [X] Aligns all imports in normalized Goodboye™ format with patented
+  insta-collapse feature
 - [X] Sorts import statements
 - [X] Removes duplicate import statements
 - [X] Normalizes whitespace between module statement and import statements
 - [X] Normalizes import statements and definitions
 - [X] Emacs integration
+- [X] Is a good boy.
+  - [X] Yes he is.
 
 ## TODOs
 
