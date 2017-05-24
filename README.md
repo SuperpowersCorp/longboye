@@ -33,12 +33,12 @@ food. 🐶
 
 ## Coming Soon
 
-- [ ] #8 - Sorting of members within parens
-- [ ] #7 - Longboye will find and read `.cabal` files to load default extensions
-- [ ] #5 - Better treatment of comments
-- [ ] #6 - Better error handling in editor integration
-- [ ] #9 - Handle `TypeNamespace` and `PatternNamespace`
-- [ ] #10 - Add `-q` option to prevent output other than errors
+- [ ] [#8](/../../issues/8) - Sorting of members within parens
+- [ ] [#7](/../../issues/7) - Longboye will find and read `.cabal` files to load default extensions
+- [ ] [#5](/../../issues/5) - Better treatment of comments
+- [ ] [#6](/../../issues/6) - Better error handling in editor integration
+- [ ] [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
+- [ ] [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
 - [ ] Bonus as/hiding/other collapses
 - [ ] `modules` command for cleaning up module declarations
 - [ ] `pragmas` command for cleaning up LANGUAGE pragmas
