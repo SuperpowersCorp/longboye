@@ -39,6 +39,15 @@ food. 🐶
   - [ ] (?) "--preserve-comments" flag that lumps them all together at the top
 - [ ] Better error handling in editor integration
   - [ ] (?) "--error-comments" flag that puts errors in comments at ... top of file?
+- [ ] Bonus as/hiding/other collapses
+- [ ] Add 'modules' command for cleaning up module declarations
+- [ ] Add 'pragmas' command for cleaning up LANGUAGE pragmas
+- [ ] Add automatic and/or option for removal of trailing whitespace (per line)
+- [ ] Solicit external feedback
+- [ ] add -q to prevent output other than errors
+- [ ] Document any unfixed known issues
+  - [ ] Comment removal
+  - [ ] Cursor jumping around in emacs
 
 ## Installation
 
@@ -81,18 +90,6 @@ The operations are performed by:
 This should provide a relativel high degree of safety.  If Longboye does detect
 an error it will abort all operations leaving the backup file in the same
 directory with a `.longboye.bak` extension.
-
-## TODOs
-
-- [ ] Bonus as/hiding/other collapses
-- [ ] Add 'modules' command for cleaning up module declarations
-- [ ] Add automatic and/or option for removal of trailing whitespace (per line)
-- [ ] Solicit Feedback
-- [ ] Clean up UX/ergonomics/polish.  eg. something better than "Processing file: ..."
-  - [ ] add -q to prevent output other than errors
-- [ ] Document any unfixed known issues
-  - [ ] Comment removal
-  - [ ] Cursor jumping around in emacs
 
 ## License
 
