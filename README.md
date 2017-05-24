@@ -24,6 +24,7 @@ food. 🐶
 - [X] Aligns all imports in normalized Goodboye™ format with patented
   insta-collapse feature
 - [X] Sorts import statements
+  - [X] Sorts members within import statements
 - [X] Removes duplicate import statements
 - [X] Normalizes whitespace between module statement and import statements
 - [X] Normalizes import statements and definitions
