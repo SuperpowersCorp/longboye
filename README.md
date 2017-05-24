@@ -50,6 +50,7 @@ eats it's own dog food. 🐶
 ## Installation
 
     $ make build install
+    ...
     $ longboye --help
 
 ## Emacs Integration
