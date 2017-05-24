@@ -37,6 +37,11 @@ food. 🐶
 - [ ] Better error handling in editor integration
   - [ ] (?) "--error-comments" flag that puts errors in comments at ... top of file?
 
+## Installation
+
+    $ make build install
+    $ longboye --help
+
 ## Emacs Integration
 
 ```elisp
