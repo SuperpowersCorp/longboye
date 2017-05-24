@@ -56,6 +56,11 @@ food. 🐶
 
 ## Emacs Integration
 
+Put something like this in the appropriate spot in your
+[Emacs Init](https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html)
+file.  I suggest you use [use-package](https://github.com/jwiegley/use-package)
+and put it in the `:init` section of your `haskell-mode` package declaration.
+
 ```elisp
   (defun longboyeee ()
     (interactive "r")
