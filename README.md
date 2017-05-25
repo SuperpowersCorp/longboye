@@ -55,7 +55,7 @@ We love feedback, so feel free to chime in on any of the issues.
 - Using the current emacs integration function will cause your cursor to move
   jump around on save in some situations.
 
-* Emptors are Functors over expectations.
+`*` Emptors are Functors over expectations.
 
 ## Installation
 
