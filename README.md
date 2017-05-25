@@ -15,6 +15,8 @@ Pass the `longboye imports` command one or more paths to filenames or
 directories on the command line and it will process each file specified (or
 each `.hs` file found recursively in each directory specified).
 
+## Examples
+
 For real examples of Goodboye™ format, see the Longboye source code (Longboye
 eats it's own dog food):
 
@@ -22,8 +24,8 @@ eats it's own dog food):
 - [src/Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs) - a file with a lot of imports and a `hiding` statement
 - [test/Spec.hs](/../../tree/master/test/Spec.hs) - a simple mostly collapsed file
 
-It may take developers some time to get used to the exotic styling of the
-Goodboye™ format but those who have the fortitude to see it through will be
+It may take some developers a little time to get used to the exotic styling of
+the Goodboye™ format but those who have the fortitude to see it through will be
 rewarded with the bountiful gifts of clean code undreamed of by most of
 mankind.
 
