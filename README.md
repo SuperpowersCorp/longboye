@@ -18,7 +18,7 @@ each `.hs` file found recursively in each directory specified).
 ## Examples
 
 For real examples of Goodboye™ format, see the Longboye source code (Longboye
-eats it's own dog food):
+eats its own dog food):
 
 - [src/Longboye/Parser.hs](/../../tree/master/src/Longboye/Parser.hs) - a
   fairly typical example
