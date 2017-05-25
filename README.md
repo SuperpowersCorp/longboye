@@ -48,18 +48,18 @@ mankind.
 
 ## Coming Soon
 
-- [ ] [#1](/../../issues/1) - Second dangling closing paren is on the wrong line.
-- [ ] [#7](/../../issues/7) - Longboye will find and read `.cabal` files to load default extensions
-- [ ] [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
-- [ ] [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
-- [ ] [#11](/../../issues/11) - Automatic removal of per-line trailing whitespace
-- [ ] [#12](/../../issues/12) - Automatic removal of per-file trailing whitespace
-- [ ] [#13](/../../issues/13) - `modules` sub-command for cleaning up module declarations
-- [ ] [#14](/../../issues/14) - `pragmas` sub-command for cleaning up LANGUAGE pragmas
-- [ ] [#15](/../../issues/15) - CLI combinators for `imports` / `modules` / `pragmas` commands.
-- [ ] [#5](/../../issues/5) - Better treatment of comments
-- [ ] [#6](/../../issues/6) - Better error handling in editor integration
-- [ ] Possibly further bonus collapsing as/hiding/etc.
+- [#1](/../../issues/1) - Second dangling closing paren is on the wrong line.
+- [#7](/../../issues/7) - Longboye will find and read `.cabal` files to load default extensions
+- [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
+- [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
+- [#11](/../../issues/11) - Automatic removal of per-line trailing whitespace
+- [#12](/../../issues/12) - Automatic removal of per-file trailing whitespace
+- [#13](/../../issues/13) - `modules` sub-command for cleaning up module declarations
+- [#14](/../../issues/14) - `pragmas` sub-command for cleaning up LANGUAGE pragmas
+- [#15](/../../issues/15) - CLI combinators for `imports` / `modules` / `pragmas` commands.
+- [#5](/../../issues/5) - Better treatment of comments
+- [#6](/../../issues/6) - Better error handling in editor integration
+- Possibly further bonus collapsing as/hiding/etc.
 
 We love feedback, so feel free to chime in on any of the issues.
 
