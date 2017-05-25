@@ -11,9 +11,9 @@ Currently it only touches `import` statements but we plan to give the module
 statement and language pragmas a similar treatment as well adding as some
 whole-file touch-ups like hygenic whitespace management.
 
-Pass the `longboye imports` command one or more paths to filenames or
-directories on the command line and it will process each file specified (or
-each `.hs` file found recursively in each directory specified).
+Pass the `longboye imports` command one or more paths to files or directories
+on the command line and it will prettify each file specified (or each `.hs`
+file found recursively in each directory specified).
 
 ## Examples
 
