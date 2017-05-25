@@ -48,14 +48,14 @@ eats it's own dog food. 🐶
 
 We love feedback, so feel free to chime in on any of the issues.
 
-## Caveats and Emptors*
+## Caveats and Emptors<sup>[*](#emptors)</sup>
 
 - Any comments that appear between the first uncommented import statement and
   the last uncommented import statement will be removed.
 - Using the current emacs integration function will cause your cursor to move
   jump around on save in some situations.
 
-`*` Emptors are Functors over expectations.
+<a name="emptors">*</a>: Emptors are Functors over expectations.
 
 ## Installation
 
