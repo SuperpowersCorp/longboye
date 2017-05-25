@@ -48,6 +48,7 @@ mankind.
 
 ## Coming Soon
 
+- [ ] [#1](/../../issues/1) - Second dangling closing paren is on the wrong line.
 - [ ] [#7](/../../issues/7) - Longboye will find and read `.cabal` files to load default extensions
 - [ ] [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
 - [ ] [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
