@@ -16,8 +16,9 @@ directories on the command line and it will process each file specified (or
 each `.hs` file found recursively in each directory specified).
 
 For real examples of Goodboye™ format, see the Longboye source code,
-[eg. Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs).
-Longboye eats it's own dog food. 🐶
+(eg. [src/Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs) for
+a file with a lot of imports or [test/Spec.hs](/../../tree/master/test/Spec.hs)
+for a collapsed file) with Longboye eats it's own dog food. 🐶
 
 ## Features
 
