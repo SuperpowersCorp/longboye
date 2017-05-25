@@ -61,7 +61,8 @@ cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
   putStrLn $ msg ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
   contents <- readFile path
-  case Parser.parseE path contents of
+  foundExtensions <- Extensions.find path
+  case Parser.parseE foundExtensions path contents of
     Left err                    -> return . Left $ err
     Right (NoImports _)         -> return . Right $ ()
     Right (WithImports parsed) -> Right <$> doCleaning path contents parsed

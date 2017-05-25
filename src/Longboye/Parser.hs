@@ -6,30 +6,34 @@ module Longboye.Parser
 
 import           Overture
 
-import           Data.Text                                 ( Text )
+import           Data.Text                                     ( Text )
 import qualified Data.Text                       as Text
-import           Language.Haskell.Exts                     ( Module( Module
-                                                                   , XmlHybrid
-                                                                   , XmlPage
-                                                                   )
-                                                           , SrcSpanInfo
-                                                           , importAnn
-                                                           , parseFileContentsWithMode
-                                                           , srcInfoSpan
-                                                           , srcSpanEndLine
-                                                           , srcSpanStartLine
-                                                           )
-import           Language.Haskell.Exts.Extension           ( Language( Haskell2010 ) )
-import           Language.Haskell.Exts.Parser              ( ParseResult( ParseOk
-                                                                        , ParseFailed
-                                                                        )
-                                                           , baseLanguage
-                                                           , defaultParseMode
-                                                           , ignoreLanguagePragmas
-                                                           , parseFilename
-                                                           )
-import           Language.Haskell.Exts.Syntax              ( ImportDecl )
-import           Longboye.Import                           ( Import )
+import           Language.Haskell.Exts                         ( Module( Module
+                                                                       , XmlHybrid
+                                                                       , XmlPage
+                                                                       )
+                                                               , SrcSpanInfo
+                                                               , importAnn
+                                                               , parseFileContentsWithMode
+                                                               , srcInfoSpan
+                                                               , srcSpanEndLine
+                                                               , srcSpanStartLine
+                                                               )
+import           Language.Haskell.Exts.Extension               ( Extension
+                                                               , Language( Haskell2010 )
+                                                               )
+import           Language.Haskell.Exts.Parser                  ( ParseResult( ParseOk
+                                                                            , ParseFailed
+                                                                            )
+                                                               , baseLanguage
+                                                               , defaultParseMode
+                                                               , extensions
+                                                               , ignoreLanguagePragmas
+                                                               , parseFilename
+                                                               )
+import           Language.Haskell.Exts.Syntax                  ( ImportDecl )
+import qualified Longboye.Extensions             as Extensions
+import           Longboye.Import                               ( Import )
 import qualified Longboye.Import                 as Import
 
 data Parsed
@@ -37,11 +41,11 @@ data Parsed
   | WithImports (Text, [Import], Text)
   deriving (Eq, Ord, Read, Show)
 
-parse :: FilePath -> Text -> Maybe Parsed
-parse path = eitherToMaybe . parseE path
+parse :: [Extension] -> FilePath -> Text -> Maybe Parsed
+parse foundExtensions path = eitherToMaybe . (parseE foundExtensions path)
 
-parseE :: FilePath -> Text -> Either Text Parsed
-parseE path source = case parseFileContentsWithMode parseMode sourceText of
+parseE :: [Extension] -> FilePath -> Text -> Either Text Parsed
+parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
   ParseOk parsedMod ->
     if null imports
       then Right . NoImports   $ source
@@ -51,11 +55,13 @@ parseE path source = case parseFileContentsWithMode parseMode sourceText of
           suffix  = extractSuffix parsedMod source
   ParseFailed srcLoc err ->
     Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
-  where parseMode  = defaultParseMode { baseLanguage  = Haskell2010
-                                      , ignoreLanguagePragmas = False
-                                      , parseFilename = path
-                                      }
-        sourceText = Text.unpack source
+  where parseMode = defaultParseMode { baseLanguage          = Haskell2010
+                                     , ignoreLanguagePragmas = False
+                                     , extensions            = configuredExtensions
+                                     , parseFilename         = path
+                                     }
+        configuredExtensions = (extensions defaultParseMode) ++ foundExtensions
+        sourceText           = Text.unpack source
 
 extractPrefix :: Module SrcSpanInfo -> Text -> Text
 extractPrefix XmlPage {}                        _ = notSupported "XmlPage"
