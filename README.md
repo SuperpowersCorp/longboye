@@ -8,15 +8,16 @@
 Longboye is a Haskell source prettifier.
 
 Currently it only touches `import` statements but we plan to give the module
-statement and language pragmas a similar treatment.
+statement and language pragmas a similar treatment as well as some whole-file
+touch-ups like hygenic whitespace management.
 
 Pass it one or more paths to filenames or directories on the command line and
-it will process each file (when given files), or each `.hs` file in each
-directory recursively (when given directories).
+it will process each file specified (or each `.hs` file found recursively in
+each directory specified).
 
-For examples of Goodboye™ format, see the Longboye source code,
-[eg. Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs).  Longboye
-eats it's own dog food. 🐶
+For real examples of Goodboye™ format, see the Longboye source code,
+[eg. Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs).
+Longboye eats it's own dog food. 🐶
 
 ## Features
 
@@ -55,7 +56,7 @@ We love feedback, so feel free to chime in on any of the issues.
 - Using the current emacs integration function will cause your cursor to move
   jump around on save in some situations.
 
-<a name="emptors">*</a>: Emptors are Functors over expectations.
+<a name="emptors">*</a> Emptors are Functors over expectations.
 
 ## Installation
 
