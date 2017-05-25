@@ -16,9 +16,10 @@ directories on the command line and it will process each file specified (or
 each `.hs` file found recursively in each directory specified).
 
 For real examples of Goodboye™ format, see the Longboye source code
-(eg. [src/Longboye/](/../../tree/master/src/Longboye/Parser.hs) for a typical
-example, [src/Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs)
-for a file with a lot of imports and a `hiding` statement or
+(eg. [src/Longboye/Parser.hs](/../../tree/master/src/Longboye/Parser.hs) for a
+typical example,
+[src/Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs) for a
+file with a lot of imports and a `hiding` statement or
 [test/Spec.hs](/../../tree/master/test/Spec.hs) for a mostly collapsed file).
 Longboye eats it's own dog food. 🐶
 
@@ -61,8 +62,8 @@ We love feedback, so feel free to chime in on any of the issues.
 
 - Any comments that appear between the first uncommented import statement and
   the last uncommented import statement will be removed.
-- Using the current emacs integration function will cause your cursor to move
-  jump around on save in some situations.
+- Using the current emacs integration function will cause your cursor to jump
+  around on save in some situations.
 
 <a name="emptors">*</a> Emptors are Functors over expectations.
 
