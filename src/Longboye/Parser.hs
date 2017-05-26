@@ -6,34 +6,33 @@ module Longboye.Parser
 
 import           Overture
 
-import           Data.Text                                     ( Text )
+import           Data.Text                                 ( Text )
 import qualified Data.Text                       as Text
-import           Language.Haskell.Exts                         ( Module( Module
-                                                                       , XmlHybrid
-                                                                       , XmlPage
-                                                                       )
-                                                               , SrcSpanInfo
-                                                               , importAnn
-                                                               , parseFileContentsWithMode
-                                                               , srcInfoSpan
-                                                               , srcSpanEndLine
-                                                               , srcSpanStartLine
-                                                               )
-import           Language.Haskell.Exts.Extension               ( Extension
-                                                               , Language( Haskell2010 )
-                                                               )
-import           Language.Haskell.Exts.Parser                  ( ParseResult( ParseOk
-                                                                            , ParseFailed
-                                                                            )
-                                                               , baseLanguage
-                                                               , defaultParseMode
-                                                               , extensions
-                                                               , ignoreLanguagePragmas
-                                                               , parseFilename
-                                                               )
-import           Language.Haskell.Exts.Syntax                  ( ImportDecl )
-import qualified Longboye.Extensions             as Extensions
-import           Longboye.Import                               ( Import )
+import           Language.Haskell.Exts                     ( Module( Module
+                                                                   , XmlHybrid
+                                                                   , XmlPage
+                                                                   )
+                                                           , SrcSpanInfo
+                                                           , importAnn
+                                                           , parseFileContentsWithMode
+                                                           , srcInfoSpan
+                                                           , srcSpanEndLine
+                                                           , srcSpanStartLine
+                                                           )
+import           Language.Haskell.Exts.Extension           ( Extension
+                                                           , Language( Haskell2010 )
+                                                           )
+import           Language.Haskell.Exts.Parser              ( ParseResult( ParseOk
+                                                                        , ParseFailed
+                                                                        )
+                                                           , baseLanguage
+                                                           , defaultParseMode
+                                                           , extensions
+                                                           , ignoreLanguagePragmas
+                                                           , parseFilename
+                                                           )
+import           Language.Haskell.Exts.Syntax              ( ImportDecl )
+import           Longboye.Import                           ( Import )
 import qualified Longboye.Import                 as Import
 
 data Parsed

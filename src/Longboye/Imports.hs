@@ -1,42 +1,44 @@
 module Longboye.Imports ( clean, interact, interactS ) where
 
-import           Prelude                         hiding ( interact
-                                                        , readFile
-                                                        , writeFile
-                                                        )
+import           Prelude                                       hiding ( interact
+                                                                      , readFile
+                                                                      , writeFile
+                                                                      )
 import qualified Prelude
 
-import           Control.Monad                          ( foldM
-                                                        , void
-                                                        )
-import           Data.List                              ( isPrefixOf
-                                                        , nub
-                                                        , sortBy
-                                                        )
-import           Data.Maybe                             ( fromMaybe )
-import           Data.Monoid                            ( (<>) )
-import           Data.Ord                               ( comparing )
-import           Data.Text                              ( Text
-                                                        , unpack
-                                                        )
-import qualified Data.Text             as Text
-import           Data.Text.IO                           ( readFile
-                                                        , writeFile
-                                                        )
-import           Longboye.Import                        ( Import )
-import qualified Longboye.Import       as Import
-import           Longboye.Parser                        ( Parsed( NoImports
-                                                                , WithImports
-                                                                ) )
-import qualified Longboye.Parser       as Parser
-import           System.Directory                       ( listDirectory
-                                                        , removeFile
-                                                        )
-import           System.FilePath.Posix                  ( joinPath )
-import           System.Posix.Files                     ( getFileStatus
-                                                        , isDirectory
-                                                        , rename
-                                                        )
+import           Control.Monad                                        ( foldM
+                                                                      , void
+                                                                      )
+import           Data.List                                            ( isPrefixOf
+                                                                      , nub
+                                                                      , sortBy
+                                                                      )
+import           Data.Maybe                                           ( fromMaybe )
+import           Data.Monoid                                          ( (<>) )
+import           Data.Ord                                             ( comparing )
+import           Data.Text                                            ( Text
+                                                                      , unpack
+                                                                      )
+import qualified Data.Text                       as Text
+import           Data.Text.IO                                         ( readFile
+                                                                      , writeFile
+                                                                      )
+import           Language.Haskell.Exts.Extension                      ( Extension )
+import qualified Longboye.Extensions             as Extensions
+import           Longboye.Import                                      ( Import )
+import qualified Longboye.Import                 as Import
+import           Longboye.Parser                                      ( Parsed( NoImports
+                                                                              , WithImports
+                                                                              ) )
+import qualified Longboye.Parser                 as Parser
+import           System.Directory                                     ( listDirectory
+                                                                      , removeFile
+                                                                      )
+import           System.FilePath.Posix                                ( joinPath )
+import           System.Posix.Files                                   ( getFileStatus
+                                                                      , isDirectory
+                                                                      , rename
+                                                                      )
 
 clean :: [FilePath] -> IO ()
 clean []           = return ()
@@ -69,11 +71,13 @@ cleanFile path = do
   where msg = "Gnawing on... "
 
 interact :: IO ()
-interact = Prelude.interact interactS
+interact = do
+    foundExtensions <- Extensions.find "."
+    Prelude.interact (interactS foundExtensions)
 
-interactS :: String -> String
-interactS contents = Text.unpack $
-  case Parser.parseE "<interactive>" (Text.pack contents) of
+interactS :: [Extension] -> String -> String
+interactS extensions contents = Text.unpack $
+  case Parser.parseE extensions "<interactive>" (Text.pack contents) of
     Left _                                        -> Text.pack contents
     Right (NoImports s)                           -> s
     Right (WithImports (prefix, imports, suffix)) -> cleanText prefix imports suffix
