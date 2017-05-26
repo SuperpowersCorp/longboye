@@ -71,9 +71,7 @@ cleanFile path = do
   where msg = "Gnawing on... "
 
 interact :: IO ()
-interact = do
-    foundExtensions <- Extensions.find "."
-    Prelude.interact (interactS foundExtensions)
+interact = Extensions.find "." >>= Prelude.interact . interactS
 
 interactS :: [Extension] -> String -> String
 interactS extensions contents = Text.unpack $

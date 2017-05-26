@@ -2,7 +2,8 @@ module Longboye.Extensions ( find )  where
 
 import           Overture
 
-import           Data.List                                       ( isSuffixOf
+import           Data.List                                       ( elemIndices
+                                                                 , isSuffixOf
                                                                  , nub
                                                                  )
 import           Data.Map.Strict                                 ( Map )
@@ -13,12 +14,15 @@ import qualified Distribution.PackageDescription.Parse as Cabal
 import qualified Distribution.Verbosity                as Cabal
 import qualified Language.Haskell.Extension            as Cabal
 import qualified Language.Haskell.Exts.Extension       as Source
+import           Safe                                            ( lastMay )
 import           System.Directory                                ( canonicalizePath
                                                                  , doesDirectoryExist
                                                                  , doesFileExist
                                                                  , listDirectory
                                                                  )
-import           System.FilePath.Posix                           ( joinPath )
+import           System.FilePath.Posix                           ( joinPath
+                                                                 , pathSeparator
+                                                                 )
 
 -- TODO: memoize
 
@@ -50,10 +54,16 @@ findCandidates inPath = do
                 else if parent == p
                        then return []
                        else findCandidates parent
-        addParent p f    = joinPath [p, f]
-        handleFile       = (findCandidates =<<) . containingDir
-        containingDir _p = undefined
-        doesNotExist     = error $ "The path '" ++ inPath ++ "' could not be found."
+        addParent p f   = joinPath [p, f]
+        handleFile      = findCandidates . containingDir
+        -- this assumes p has been canonicalized by the time it gets to containingDir
+        -- TODO: deal with `pathSeparators` instead of just `pathSeparator`
+        containingDir p = p
+                          |> elemIndices pathSeparator
+                          |> lastMay
+                          |> withDefault (length p)
+                          |> flip take p
+        doesNotExist    = error $ "The path '" ++ inPath ++ "' could not be found."
 
 readAllExtensions :: [FilePath] -> IO [Source.Extension]
 readAllExtensions = (concat <$>) . mapM readExtensions
