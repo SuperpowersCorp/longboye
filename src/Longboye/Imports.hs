@@ -40,6 +40,8 @@ import           System.Posix.Files                                   ( getFileS
                                                                       , rename
                                                                       )
 
+-- TODO: Memoize appropriately
+
 clean :: [FilePath] -> IO ()
 clean []           = return ()
 clean (path:paths) = cleanPath path >>= either abort continue

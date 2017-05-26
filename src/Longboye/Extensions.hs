@@ -24,8 +24,6 @@ import           System.FilePath.Posix                           ( joinPath
                                                                  , pathSeparator
                                                                  )
 
--- TODO: memoize
-
 -- TODO: more comprehensive search for/testing of extension sets, eg. handling
 --       multiple candidate .cabal files being found, etc.
 
