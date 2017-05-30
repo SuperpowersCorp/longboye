@@ -105,6 +105,9 @@ and put it in the `:init` section of your `haskell-mode` package declaration.
   (add-hook 'before-save-hook #'longboyeee)
 ```
 
+See [issue 20](https://github.com/SuperpowersCorp/longboye/issues/20) for
+details of the issue of the cursor jumping around.
+
 ## Data Integrity
 
 The operations are performed by:
