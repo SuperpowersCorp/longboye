@@ -9,6 +9,7 @@ import           Data.List                            ( isPrefixOf )
 import           Data.Text                            ( Text )
 import qualified Data.Text             as Text
 import qualified Data.Text.IO          as TextIO
+import           Longboye.Extensions   as Extensions
 import           Longboye.Import                      ( Import )
 import           Longboye.Parser                      ( Parsed( NoImports
                                                               , WithImports
@@ -27,16 +28,17 @@ import           System.Posix.Files                   ( getFileStatus
 
 runInteraction :: Transformer -> [FilePath] -> IO ()
 runInteraction xform ["-"] = TextIO.interact f
+  where f = error "runInteraction not implemented."
   -- let context = Transformer.context "<stdin>" contents prefix imports suffix
   --     xformed = xform context
-  where f contents =
-          where (prefix, imports, suffix) =
-                  case Parser.parseE path contents of
-                    Left err                   -> error ..
-                    Right (NoImports _)        -> return . Right $ ()
-                    Right (WithImports parsed) -> parsed
+  -- where f contents = error "finish implementing me."
+  --         where (prefix, imports, suffix) =
+  --                 case Parser.parseE path contents of
+  --                   Left err                   -> error err
+  --                   Right (NoImports _)        -> return . Right $ ()
+  --                   Right (WithImports parsed) -> parsed
+  --               context = Transformer.context "<stdin>" contents prefix imports suffix
 
-                context = Transformer.context "<stdin>" contents prefix imports suffix
 runInteraction xform paths =
   if "-" `elem` paths
     then error cannotMixErr
@@ -66,7 +68,9 @@ cleanFile :: Transformer -> FilePath -> IO (Either Text ())
 cleanFile xform path = do
   putStrLn $ cuteMsg ++ "... " ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
   contents <- TextIO.readFile path
-  case Parser.parseE path contents of
+  -- TODO: memoize
+  let extensions = Extensions.find path
+  case Parser.parseE extensions path contents of
     Left err                   -> return . Left $ err
     Right (NoImports _)        -> return . Right $ ()
     Right (WithImports parsed) -> applyCleanF xform path contents parsed
@@ -82,8 +86,7 @@ cleanFile xform path = do
                         , "Re-borking"
                         ]
 
-applyCleanF :: Transformer -> FilePath -> Text -> (Text, [Import], Text)
-            -> IO (Either Text ())
+applyCleanF :: Transformer -> FilePath -> Text -> (Text, [Import], Text) -> IO (Either Text ())
 applyCleanF xform path contents (prefix, imports, suffix) = do
   void $ TextIO.writeFile backupPath contents
   let context = Transformer.context path contents prefix imports suffix

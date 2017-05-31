@@ -67,7 +67,7 @@ cleanFile path = do
   case Parser.parseE foundExtensions path contents of
     Left err                    -> return . Left $ err
     Right (NoImports _)         -> return . Right $ ()
-    Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
+    Right (WithImports parsed) -> Right <$> applyCleanF path contents parsed
   where msg = "Gnawing on... "
 
 interact :: IO ()

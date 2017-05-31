@@ -44,16 +44,17 @@ parse :: [Extension] -> FilePath -> Text -> Maybe Parsed
 parse foundExtensions path = eitherToMaybe . (parseE foundExtensions path)
 
 parseE :: [Extension] -> FilePath -> Text -> Either Text Parsed
-parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
-  ParseOk parsedMod ->
-    if null imports
-      then Right . NoImports   $ source
-      else Right . WithImports $ (prefix, imports, suffix)
-    where imports = getImports parsedMod
-          prefix  = extractPrefix parsedMod source
-          suffix  = extractSuffix parsedMod source
-  ParseFailed srcLoc err ->
-    Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
+parseE foundExtensions path source =
+  case parseFileContentsWithMode parseMode sourceText of
+    ParseOk parsedMod ->
+      if null imports
+        then Right . NoImports   $ source
+        else Right . WithImports $ (prefix, imports, suffix)
+      where imports = getImports parsedMod
+            prefix  = extractPrefix parsedMod source
+            suffix  = extractSuffix parsedMod source
+    ParseFailed srcLoc err ->
+      Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
   where parseMode = defaultParseMode { baseLanguage          = Haskell2010
                                      , ignoreLanguagePragmas = False
                                      , extensions            = configuredExtensions
