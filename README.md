@@ -8,48 +8,74 @@
 Longboye is a Haskell source prettifier.
 
 Currently it only touches `import` statements but we plan to give the module
-statement and language pragmas a similar treatment.
+statement and language pragmas a similar treatment as well adding as some
+whole-file touch-ups like hygenic whitespace management.
 
-Pass it one or more paths to filenames or directories on the command line and
-it will process each file (when given files), or each `.hs` file in each
-directory recursively (when given directories).
+Pass the `longboye imports` command one or more paths to files or directories
+on the command line and it will prettify each file specified and each `.hs`
+file found recursively in each directory specified.
 
-The [examples/](examples/) directory shows an example of many different imports
-pulled from open source projects.  For examples of real-life layout in context
-in one project, see the Longboye source code.  Longboye eats it's own dog
-food. 🐶
+## Examples
+
+For real examples of Goodboye™ format, see the Longboye source code (Longboye
+eats its own dog food):
+
+- [src/Longboye/Parser.hs](/../../tree/master/src/Longboye/Parser.hs) - a
+  fairly typical example
+- [src/Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs) - a
+  file with a lot of imports and a `hiding` statement
+- [test/Spec.hs](/../../tree/master/test/Spec.hs) - a simple (mostly collapsed)
+  file
+
+It may take some developers a little time to get used to the exotic styling of
+the Goodboye™ format but those who have the fortitude to see it through will be
+rewarded with the bountiful gifts of clean code undreamed of by most of
+mankind.
 
 ## Features
 
 - [X] Aligns all imports in normalized Goodboye™ format with patented
-  insta-collapse feature
-- [X] Sorts import statements
+      insta-collapse
+  - [X] Sorts import statements
   - [X] Sorts members within import statements
-- [X] Removes duplicate import statements
-- [X] Normalizes whitespace between module statement and import statements
-- [X] Normalizes import statements and definitions
+  - [X] Removes duplicate import statements
+  - [X] Normalizes whitespace between module statement and import statements
+  - [X] Normalizes import statements and definitions
+  - [X] Normalizes whitespace between import statements and module body
+  - [X] Longboye will find and read `.cabal` files to load default extensions
 - [X] Emacs integration
 - [X] Is a good boy.
   - [X] Yes he is.
 
 ## Coming Soon
 
-- [ ] [#7](/../../issues/7) - Longboye will find and read `.cabal` files to load default extensions
-- [ ] [#5](/../../issues/5) - Better treatment of comments
-- [ ] [#6](/../../issues/6) - Better error handling in editor integration
-- [ ] [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
-- [ ] [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
-- [ ] Bonus as/hiding/other collapses
-- [ ] `modules` command for cleaning up module declarations
-- [ ] `pragmas` command for cleaning up LANGUAGE pragmas
-- [ ] Automatic and/or option for removal of trailing whitespace (per line)
-- [ ] Clear documention of any unfixed known issues
-  - [ ] Comment removal
-  - [ ] Cursor jumping around in emacs
+- [#1](/../../issues/1) - Second dangling closing paren is on the wrong line.
+- [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
+- [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
+- [#11](/../../issues/11) - Automatic removal of per-line trailing whitespace
+- [#12](/../../issues/12) - Automatic removal of per-file trailing whitespace
+- [#13](/../../issues/13) - `modules` sub-command for cleaning up module declarations
+- [#14](/../../issues/14) - `pragmas` sub-command for cleaning up LANGUAGE pragmas
+- [#15](/../../issues/15) - CLI combinators for `imports` / `modules` / `pragmas` commands.
+- [#5](/../../issues/5) - Better treatment of comments
+- [#6](/../../issues/6) - Better error handling in editor integration
+- Possibly further bonus collapsing as/hiding/etc.
+
+We love feedback, so feel free to chime in on any of the issues.
+
+## Caveats and Emptors<sup>[*](#emptors)</sup>
+
+- Any comments that appear between the first uncommented import statement and
+  the last uncommented import statement will be removed.
+- Using the current emacs integration function will cause your cursor to jump
+  around on save in some situations.
+
+<a name="emptors">*</a> Emptors are Functors over expectations.
 
 ## Installation
 
     $ make build install
+    ...
     $ longboye --help
 
 ## Installation
@@ -83,6 +109,9 @@ and put it in the `:init` section of your `haskell-mode` package declaration.
 
   (add-hook 'before-save-hook #'longboyeee)
 ```
+
+See [issue 20](https://github.com/SuperpowersCorp/longboye/issues/20) for
+details of the issue of the cursor jumping around.
 
 ## Data Integrity
 

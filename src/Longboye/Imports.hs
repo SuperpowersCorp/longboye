@@ -1,23 +1,81 @@
-module Longboye.Imports ( interactS ) where
+module Longboye.Imports ( clean, interact, interactS ) where
 
-import           Data.List                 ( nub
-                                           , sortBy
-                                           )
-import           Data.Maybe                ( fromMaybe )
-import           Data.Monoid               ( (<>) )
-import           Data.Ord                  ( comparing )
-import           Data.Text                 ( Text )
-import qualified Data.Text       as Text
-import           Longboye.Import           ( Import )
-import qualified Longboye.Import as Import
-import           Longboye.Parser           ( Parsed( NoImports
-                                                   , WithImports
-                                                   ) )
-import qualified Longboye.Parser as Parser
+import           Prelude                                       hiding ( interact
+                                                                      , readFile
+                                                                      , writeFile
+                                                                      )
+import qualified Prelude
 
-interactS :: String -> String
-interactS contents = Text.unpack $
-  case Parser.parseE "<interactive>" (Text.pack contents) of
+import           Control.Monad                                        ( foldM
+                                                                      , void
+                                                                      )
+import           Data.List                                            ( isPrefixOf
+                                                                      , nub
+                                                                      , sortBy
+                                                                      )
+import           Data.Maybe                                           ( fromMaybe )
+import           Data.Monoid                                          ( (<>) )
+import           Data.Ord                                             ( comparing )
+import           Data.Text                                            ( Text
+                                                                      , unpack
+                                                                      )
+import qualified Data.Text                       as Text
+import           Data.Text.IO                                         ( readFile
+                                                                      , writeFile
+                                                                      )
+import           Language.Haskell.Exts.Extension                      ( Extension )
+import qualified Longboye.Extensions             as Extensions
+import           Longboye.Import                                      ( Import )
+import qualified Longboye.Import                 as Import
+import           Longboye.Parser                                      ( Parsed( NoImports
+                                                                              , WithImports
+                                                                              ) )
+import qualified Longboye.Parser                 as Parser
+import           System.Directory                                     ( listDirectory
+                                                                      , removeFile
+                                                                      )
+import           System.FilePath.Posix                                ( joinPath )
+import           System.Posix.Files                                   ( getFileStatus
+                                                                      , isDirectory
+                                                                      , rename
+                                                                      )
+
+clean :: [FilePath] -> IO ()
+clean []           = return ()
+clean (path:paths) = cleanPath path >>= either abort continue
+  where abort err  = error $ "An error occured: " ++ unpack err
+        continue   = const $ clean paths
+
+cleanPath :: FilePath -> IO (Either Text ())
+cleanPath path = do
+  stat <- getFileStatus path
+  if isDirectory stat
+    then cleanDir path
+    else cleanFile path
+
+cleanDir :: FilePath -> IO (Either Text ())
+cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
+  where f (Right ()) file = cleanPath (joinPath [path, file])
+        f err _           = return err
+        hidden = ("." `isPrefixOf`)
+
+cleanFile :: FilePath -> IO (Either Text ())
+cleanFile path = do
+  putStrLn $ msg ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
+  contents <- readFile path
+  foundExtensions <- Extensions.find path
+  case Parser.parseE foundExtensions path contents of
+    Left err                    -> return . Left $ err
+    Right (NoImports _)         -> return . Right $ ()
+    Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
+  where msg = "Gnawing on... "
+
+interact :: IO ()
+interact = Extensions.find "." >>= Prelude.interact . interactS
+
+interactS :: [Extension] -> String -> String
+interactS extensions contents = Text.unpack $
+  case Parser.parseE extensions "<interactive>" (Text.pack contents) of
     Left _                                        -> Text.pack contents
     Right (NoImports s)                           -> s
     Right (WithImports (prefix, imports, suffix)) -> cleanText prefix imports suffix

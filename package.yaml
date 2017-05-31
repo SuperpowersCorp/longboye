@@ -23,6 +23,8 @@ library:
   - Longboye
   dependencies:
   - base              >=4.7 && <5
+  - Cabal
+  - containers
   - directory
   - docopt
   - filepath
