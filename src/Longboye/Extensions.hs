@@ -64,10 +64,10 @@ findCandidates inPath = do
         doesNotExist    = error $ "The path '" ++ inPath ++ "' could not be found."
 
 readAllExtensions :: [FilePath] -> IO [Source.Extension]
-readAllExtensions = (concat <$>) . mapM readExtensions
+readAllExtensions = (concat <$>) . mapM unsafeReadExtensions
 
-readExtensions :: FilePath -> IO [Source.Extension]
-readExtensions path = do
+unsafeReadExtensions :: FilePath -> IO [Source.Extension]
+unsafeReadExtensions path = do
   genDesc <- Cabal.readPackageDescription Cabal.silent path
   let buildInfos = allBuildInfoForReal genDesc
       extensions = nub . mconcat . map Cabal.allExtensions $ buildInfos
