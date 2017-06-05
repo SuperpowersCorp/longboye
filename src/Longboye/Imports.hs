@@ -5,6 +5,7 @@ import           Prelude                                       hiding ( interact
                                                                       , writeFile
                                                                       )
 import qualified Prelude
+import           Overture
 
 import           Control.Monad                                        ( foldM
                                                                       , void
@@ -105,7 +106,19 @@ cleanText prefix imports suffix =
         maxAsLen      = maximum . map Import.asLength                       $ imports
         finalImports  = nub . sortBy (comparing sortDetails) $ imports
         npo           = length . filter isPreludish $ finalImports
-        isPreludish   = flip any ["Prelude", "Overture"] . (==) . Import.importedModule
+
+        isPreludish imp =
+          imp
+            |> Import.importedModule
+            |> modHead
+            |> (==)
+            |> flip any ["Prelude", "Overture"]
+
+        modHead modName =
+          modName
+            |> Text.splitOn "."
+            |> head
+
         sep is        = if npo <= 0
                           then is
                           else mconcat [pos, space, rest]
@@ -114,8 +127,8 @@ cleanText prefix imports suffix =
         sortDetails i = fromMaybe (im, q) prioritySortValue
                         where
                           prioritySortValue
-                            | im == "Prelude"  = Just ("30", q)
-                            | im == "Overture" = Just ("60", q)
+                            | modHead im == "Prelude"  = Just ("30", q)
+                            | modHead im == "Overture" = Just ("60", q)
                             | otherwise  = Nothing
                           im = Import.importedModule i
                           q  = Import.qualified i
