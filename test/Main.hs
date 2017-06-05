@@ -1,7 +1,4 @@
-module Spec
-       ( main
-       , spec
-       ) where
+module Main ( main, spec ) where
 
 import           Data.Monoid                         ( (<>) )
 import           Data.Text                           ( isInfixOf )

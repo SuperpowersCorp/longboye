@@ -56,7 +56,7 @@ executables:
 
 tests:
   longboye-test:
-    main: Spec.hs
+    main: Main.hs
     source-dirs:
     - src
     - test
