@@ -1,4 +1,7 @@
-module Main ( main, spec ) where
+module Main
+       ( main
+       , spec
+       ) where
 
 import           Data.Monoid                         ( (<>) )
 import           Data.Text                           ( isInfixOf )
@@ -24,7 +27,6 @@ spec = do
 
   describe "Imports.format" $
     it "Never stacks closing parens" $ property $ prop_neverStacksParensAcrossLines
-
 
 prop_neverStacksParensAcrossLines :: Bool -> Bool -> Int -> Int -> Import -> Bool
 prop_neverStacksParensAcrossLines anyQ anyH maxModLen maxAsLen imp =
