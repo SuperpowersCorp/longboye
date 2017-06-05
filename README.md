@@ -49,7 +49,6 @@ mankind.
 
 ## Coming Soon
 
-- [#1](/../../issues/1) - Second dangling closing paren is on the wrong line.
 - [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
 - [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
 - [#11](/../../issues/11) - Automatic removal of per-line trailing whitespace
