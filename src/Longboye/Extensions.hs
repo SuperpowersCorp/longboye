@@ -2,6 +2,9 @@ module Longboye.Extensions ( find )  where
 
 import           Overture
 
+import           Control.Exception                               ( SomeException
+                                                                 , catch
+                                                                 )
 import           Data.List                                       ( elemIndices
                                                                  , isSuffixOf
                                                                  , nub
@@ -64,7 +67,13 @@ findCandidates inPath = do
         doesNotExist    = error $ "The path '" ++ inPath ++ "' could not be found."
 
 readAllExtensions :: [FilePath] -> IO [Source.Extension]
-readAllExtensions = (concat <$>) . mapM unsafeReadExtensions
+readAllExtensions = (concat <$>) . mapM readExtensions
+
+readExtensions :: FilePath -> IO [Source.Extension]
+readExtensions path = (unsafeReadExtensions path) `catch` handler
+  where
+    handler :: SomeException -> IO [Source.Extension]
+    handler _ = return []
 
 unsafeReadExtensions :: FilePath -> IO [Source.Extension]
 unsafeReadExtensions path = do

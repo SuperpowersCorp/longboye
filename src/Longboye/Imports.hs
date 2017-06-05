@@ -29,7 +29,8 @@ import           Longboye.Import                                      ( Import )
 import qualified Longboye.Import                 as Import
 import           Longboye.Parser                                      ( Parsed( NoImports
                                                                               , WithImports
-                                                                              ) )
+                                                                              )
+                                                                      )
 import qualified Longboye.Parser                 as Parser
 import           System.Directory                                     ( listDirectory
                                                                       , removeFile
