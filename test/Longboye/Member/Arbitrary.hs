@@ -4,7 +4,8 @@ module Longboye.Member.Arbitrary () where
 import Data.Text.Arbitrary ()
 import Longboye.Member     ( Member( NamedMember
                                    , OpMember
-                                   ) )
+                                   )
+                           )
 import Test.QuickCheck     ( Arbitrary
                            , arbitrary
                            )
