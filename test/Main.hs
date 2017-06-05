@@ -30,6 +30,7 @@ spec = do
 
 prop_neverStacksParensAcrossLines :: Bool -> Bool -> Int -> Int -> Import -> Bool
 prop_neverStacksParensAcrossLines anyQ anyH maxModLen maxAsLen imp =
+  -- TODO: this should actually fail because of single line imports but it's not
   not $ ") )" `isInfixOf` (Import.format anyQ anyH maxModLen maxAsLen imp)
 
 _tmpTest :: IO ()
