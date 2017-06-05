@@ -2,6 +2,9 @@ module Longboye.Extensions ( find )  where
 
 import           Overture
 
+import           Control.Exception                               ( SomeException
+                                                                 , catch
+                                                                 )
 import           Data.List                                       ( elemIndices
                                                                  , isSuffixOf
                                                                  , nub
@@ -67,7 +70,13 @@ readAllExtensions :: [FilePath] -> IO [Source.Extension]
 readAllExtensions = (concat <$>) . mapM readExtensions
 
 readExtensions :: FilePath -> IO [Source.Extension]
-readExtensions path = do
+readExtensions path = (unsafeReadExtensions path) `catch` handler
+  where
+    handler :: SomeException -> IO [Source.Extension]
+    handler _ = return []
+
+unsafeReadExtensions :: FilePath -> IO [Source.Extension]
+unsafeReadExtensions path = do
   genDesc <- Cabal.readPackageDescription Cabal.silent path
   let buildInfos = allBuildInfoForReal genDesc
       extensions = nub . mconcat . map Cabal.allExtensions $ buildInfos
