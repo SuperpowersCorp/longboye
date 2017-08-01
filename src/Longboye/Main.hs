@@ -3,6 +3,7 @@ module Longboye.Main ( main ) where
 
 import           Control.Monad                    ( when )
 import qualified Longboye.Imports      as Imports
+import qualified Longboye.Modules      as Modules
 import           System.Console.Docopt            ( Docopt
                                                   , argument
                                                   , command

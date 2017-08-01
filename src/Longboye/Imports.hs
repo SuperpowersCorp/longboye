@@ -28,11 +28,11 @@ import           Language.Haskell.Exts.Extension                      ( Extensio
 import qualified Longboye.Extensions             as Extensions
 import           Longboye.Import                                      ( Import )
 import qualified Longboye.Import                 as Import
-import           Longboye.Parser                                      ( Parsed( NoImports
+import           Longboye.ImportsParser                               ( Parsed( NoImports
                                                                               , WithImports
                                                                               )
                                                                       )
-import qualified Longboye.Parser                 as Parser
+import qualified Longboye.ImportsParser          as Parser
 import           System.Directory                                     ( listDirectory
                                                                       , removeFile
                                                                       )

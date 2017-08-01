@@ -1,4 +1,4 @@
-module Longboye.Parser
+module Longboye.ImportsParser
        ( Parsed(..)
        , parse
        , parseE
@@ -8,17 +8,7 @@ import           Overture
 
 import           Data.Text                                 ( Text )
 import qualified Data.Text                       as Text
-import           Language.Haskell.Exts                     ( Module( Module
-                                                                   , XmlHybrid
-                                                                   , XmlPage
-                                                                   )
-                                                           , SrcSpanInfo
-                                                           , importAnn
-                                                           , parseFileContentsWithMode
-                                                           , srcInfoSpan
-                                                           , srcSpanEndLine
-                                                           , srcSpanStartLine
-                                                           )
+import           Language.Haskell.Exts                     ( parseFileContentsWithMode )
 import           Language.Haskell.Exts.Extension           ( Extension
                                                            , Language( Haskell2010 )
                                                            )
@@ -31,9 +21,12 @@ import           Language.Haskell.Exts.Parser              ( ParseResult( ParseO
                                                            , ignoreLanguagePragmas
                                                            , parseFilename
                                                            )
-import           Language.Haskell.Exts.Syntax              ( ImportDecl )
+import qualified Longboye.Errors                 as Errors
 import           Longboye.Import                           ( Import )
-import qualified Longboye.Import                 as Import
+import           Longboye.SrcSpans                         ( extractPrefix
+                                                           , extractSuffix
+                                                           , getImports
+                                                           )
 
 data Parsed
   = NoImports Text
@@ -53,7 +46,7 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
           prefix  = extractPrefix parsedMod source
           suffix  = extractSuffix parsedMod source
   ParseFailed srcLoc err ->
-    Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
+    Left $ Errors.renderError srcLoc err
   where parseMode = defaultParseMode { baseLanguage          = Haskell2010
                                      , ignoreLanguagePragmas = False
                                      , extensions            = configuredExtensions
@@ -61,28 +54,3 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
                                      }
         configuredExtensions = (extensions defaultParseMode) ++ foundExtensions
         sourceText           = Text.unpack source
-
-extractPrefix :: Module SrcSpanInfo -> Text -> Text
-extractPrefix XmlPage {}                        _ = notSupported "XmlPage"
-extractPrefix XmlHybrid {}                      _ = notSupported "XmlHybrid"
-extractPrefix (Module _ _ _ importDecls _) source =
-  Text.unlines . take (n - 1) . Text.lines $ source
-  where n = srcSpanStartLine . srcInfoSpan . importAnn . head $ importDecls
-
-extractSuffix :: Module SrcSpanInfo -> Text -> Text
-extractSuffix XmlPage {}   _                      = notSupported "XmlPage"
-extractSuffix XmlHybrid {} _                      = notSupported "XmlHybrid"
-extractSuffix (Module _ _ _ importDecls _) source =
-  Text.unlines . drop n . Text.lines $ source
-  where n = srcSpanEndLine . srcInfoSpan . importAnn . last $ importDecls
-
-extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
-extractImports (Module _l _ _ decls _) = decls
-extractImports XmlHybrid {}            = notSupported "XmlHybrid"
-extractImports XmlPage {}              = notSupported "XmlPage"
-
-getImports :: Module SrcSpanInfo -> [Import]
-getImports = map Import.fromDecl <$> extractImports
-
-notSupported :: String -> a
-notSupported = error . (++ " modules not supported.")
