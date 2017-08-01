@@ -66,6 +66,14 @@ parseE foundExtensions path source =
     configuredExtensions = extensions defaultParseMode ++ foundExtensions
     sourceText           = Text.unpack source
 
+getImports :: Module SrcSpanInfo -> [Import]
+getImports = map Import.fromDecl <$> extractImports
+
+extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
+extractImports (Module _l _ _ decls _) = decls
+extractImports XmlHybrid {}            = notSupported "XmlHybrid"
+extractImports XmlPage {}              = notSupported "XmlPage"
+
 extractPrefix :: Module SrcSpanInfo -> Text -> Text
 extractPrefix XmlPage {}                        _ = notSupported "XmlPage"
 extractPrefix XmlHybrid {}                      _ = notSupported "XmlHybrid"
@@ -81,11 +89,3 @@ extractSuffix (Module _ _ _ importDecls _) source =
   Text.unlines . drop n . Text.lines $ source
   where
     n = srcSpanEndLine . srcInfoSpan . importAnn . last $ importDecls
-
-extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
-extractImports (Module _l _ _ decls _) = decls
-extractImports XmlHybrid {}            = notSupported "XmlHybrid"
-extractImports XmlPage {}              = notSupported "XmlPage"
-
-getImports :: Module SrcSpanInfo -> [Import]
-getImports = map Import.fromDecl <$> extractImports
