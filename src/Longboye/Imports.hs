@@ -1,43 +1,46 @@
 module Longboye.Imports ( clean, interact, interactS ) where
 
-import           Prelude                         hiding ( interact
-                                                        , readFile
-                                                        , writeFile
-                                                        )
+import           Prelude                                       hiding ( interact
+                                                                      , readFile
+                                                                      , writeFile
+                                                                      )
 import qualified Prelude
+import           Overture
 
-import           Control.Monad                          ( foldM
-                                                        , void
-                                                        )
-import           Data.Char                              ( ord )
-import           Data.List                              ( isPrefixOf
-                                                        , nub
-                                                        , sortBy
-                                                        )
-import           Data.Maybe                             ( fromMaybe )
-import           Data.Monoid                            ( (<>) )
-import           Data.Ord                               ( comparing )
-import           Data.Text                              ( Text
-                                                        , unpack
-                                                        )
-import qualified Data.Text             as Text
-import           Data.Text.IO                           ( readFile
-                                                        , writeFile
-                                                        )
-import           Longboye.Import                        ( Import )
-import qualified Longboye.Import       as Import
-import           Longboye.Parser                        ( Parsed( NoImports
-                                                                , WithImports
-                                                                ) )
-import qualified Longboye.Parser       as Parser
-import           System.Directory                       ( listDirectory
-                                                        , removeFile
-                                                        )
-import           System.FilePath.Posix                  ( joinPath )
-import           System.Posix.Files                     ( getFileStatus
-                                                        , isDirectory
-                                                        , rename
-                                                        )
+import           Control.Monad                                        ( foldM
+                                                                      , void
+                                                                      )
+import           Data.List                                            ( isPrefixOf
+                                                                      , nub
+                                                                      , sortBy
+                                                                      )
+import           Data.Maybe                                           ( fromMaybe )
+import           Data.Monoid                                          ( (<>) )
+import           Data.Ord                                             ( comparing )
+import           Data.Text                                            ( Text
+                                                                      , unpack
+                                                                      )
+import qualified Data.Text                       as Text
+import           Data.Text.IO                                         ( readFile
+                                                                      , writeFile
+                                                                      )
+import           Language.Haskell.Exts.Extension                      ( Extension )
+import qualified Longboye.Extensions             as Extensions
+import           Longboye.Import                                      ( Import )
+import qualified Longboye.Import                 as Import
+import           Longboye.Parser                                      ( Parsed( NoImports
+                                                                              , WithImports
+                                                                              )
+                                                                      )
+import qualified Longboye.Parser                 as Parser
+import           System.Directory                                     ( listDirectory
+                                                                      , removeFile
+                                                                      )
+import           System.FilePath.Posix                                ( joinPath )
+import           System.Posix.Files                                   ( getFileStatus
+                                                                      , isDirectory
+                                                                      , rename
+                                                                      )
 
 clean :: [FilePath] -> IO ()
 clean []           = return ()
@@ -60,30 +63,21 @@ cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Righ
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
-  putStrLn $ cuteMsg ++ "... " ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
+  putStrLn $ msg ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
   contents <- readFile path
-  case Parser.parseE path contents of
+  foundExtensions <- Extensions.find path
+  case Parser.parseE foundExtensions path contents of
     Left err                    -> return . Left $ err
     Right (NoImports _)         -> return . Right $ ()
     Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
-  where pseudoRandomN = sum . map ord $ path
-        cuteMsg = cuteMessages !! randIndex
-        randIndex = pseudoRandomN `mod` length cuteMessages
-        cuteMessages = [ "Licking"
-                       , "Chewing"
-                       , "Biting"
-                       , "Gnawing on"
-                       , "Borking"
-                       , "De-borking"
-                       , "Re-borking"
-                       ]
+  where msg = "Gnawing on... "
 
 interact :: IO ()
-interact = Prelude.interact interactS
+interact = Extensions.find "." >>= Prelude.interact . interactS
 
-interactS :: String -> String
-interactS contents = Text.unpack $
-  case Parser.parseE "<interactive>" (Text.pack contents) of
+interactS :: [Extension] -> String -> String
+interactS extensions contents = Text.unpack $
+  case Parser.parseE extensions "<interactive>" (Text.pack contents) of
     Left _                                        -> Text.pack contents
     Right (NoImports s)                           -> s
     Right (WithImports (prefix, imports, suffix)) -> cleanText prefix imports suffix
@@ -112,7 +106,19 @@ cleanText prefix imports suffix =
         maxAsLen      = maximum . map Import.asLength                       $ imports
         finalImports  = nub . sortBy (comparing sortDetails) $ imports
         npo           = length . filter isPreludish $ finalImports
-        isPreludish   = flip any ["Prelude", "Overture"] . (==) . Import.importedModule
+
+        isPreludish imp =
+          imp
+            |> Import.importedModule
+            |> modHead
+            |> (==)
+            |> flip any ["Prelude", "Overture"]
+
+        modHead modName =
+          modName
+            |> Text.splitOn "."
+            |> head
+
         sep is        = if npo <= 0
                           then is
                           else mconcat [pos, space, rest]
@@ -121,8 +127,8 @@ cleanText prefix imports suffix =
         sortDetails i = fromMaybe (im, q) prioritySortValue
                         where
                           prioritySortValue
-                            | im == "Prelude"  = Just ("30", q)
-                            | im == "Overture" = Just ("60", q)
+                            | modHead im == "Prelude"  = Just ("30", q)
+                            | modHead im == "Overture" = Just ("60", q)
                             | otherwise  = Nothing
                           im = Import.importedModule i
                           q  = Import.qualified i

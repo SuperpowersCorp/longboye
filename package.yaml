@@ -18,11 +18,16 @@ default-extensions:
 - OverloadedStrings
 
 library:
-  source-dirs: src
+  source-dirs:
+  - src
+  # damnit.
+  - test
   exposed-modules:
   - Longboye
   dependencies:
   - base              >=4.7 && <5
+  - Cabal
+  - containers
   - directory
   - docopt
   - filepath
@@ -32,6 +37,10 @@ library:
   - system-fileio
   - text
   - unix
+  # Damnit
+  - hspec
+  - QuickCheck
+  - quickcheck-text
 
 executables:
   longboye:
@@ -47,7 +56,7 @@ executables:
 
 tests:
   longboye-test:
-    main: Spec.hs
+    main: Main.hs
     source-dirs:
     - src
     - test
@@ -57,12 +66,15 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - base
+    - Cabal
+    - containers
     - directory
     - filepath
     - longboye
     - haskell-src-exts
     - hspec
     - QuickCheck
+    - quickcheck-text
     - safe
     - text
     - unix

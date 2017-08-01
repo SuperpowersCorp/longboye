@@ -1,6 +1,7 @@
 module Longboye.Member
        ( Member(..)
        , fromDecl
+       , opCount
        , render
        , sort
        ) where
@@ -33,6 +34,10 @@ data Member
   = NamedMember Text Bool
   | OpMember Text [Text]
   deriving (Eq, Ord, Read, Show)
+
+opCount :: Member -> Int
+opCount (NamedMember _ _) = 0
+opCount (OpMember _ xs)   = length xs
 
 fromDecl :: ImportSpecList SrcSpanInfo -> [Member]
 fromDecl (ImportSpecList _ _ specs) = map fromSpec specs
