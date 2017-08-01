@@ -36,5 +36,6 @@ prop_neverStacksParensAcrossLines anyQ anyH maxModLen maxAsLen imp =
 _tmpTest :: IO ()
 _tmpTest =
   QC.quickCheckWith args prop_neverStacksParensAcrossLines
-  where args = QC.stdArgs{QC.replay = Just (mkQCGen seed, 0)}
-        seed = 99666056
+  where
+    args = QC.stdArgs{QC.replay = Just (mkQCGen seed, 0)}
+    seed = 99666056

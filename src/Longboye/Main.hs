@@ -1,21 +1,21 @@
 {-# LANGUAGE QuasiQuotes     #-}
 module Longboye.Main ( main ) where
 
-import           Control.Monad                    ( when )
-import qualified Longboye.Imports      as Imports
-import qualified Longboye.Modules      as Modules
-import           System.Console.Docopt            ( Docopt
-                                                  , argument
-                                                  , command
-                                                  , docoptFile
-                                                  , exitWithUsage
-                                                  , getAllArgs
-                                                  , isPresent
-                                                  , longOption
-                                                  , parseArgsOrExit
-                                                  )
-import           System.Environment               ( getArgs )
-import           System.Exit                      ( exitSuccess )
+import           Control.Monad                                 ( when )
+import qualified Longboye.Imports          as Imports
+import qualified Longboye.ModuleStatements as ModuleStatements
+import           System.Console.Docopt                         ( Docopt
+                                                               , argument
+                                                               , command
+                                                               , docoptFile
+                                                               , exitWithUsage
+                                                               , getAllArgs
+                                                               , isPresent
+                                                               , longOption
+                                                               , parseArgsOrExit
+                                                               )
+import           System.Environment                            ( getArgs )
+import           System.Exit                                   ( exitSuccess )
 
 patterns :: Docopt
 patterns = [docoptFile|USAGE.txt|]
@@ -46,10 +46,11 @@ main_ argv = do
   when (opts `isPresent` command "modules") $ do
     let paths = opts `getAllArgs` argument "path"
     case paths of
-      ["-"] -> Modules.interact
+      ["-"] -> ModuleStatements.interact
       ps
         | "-" `elem` ps -> error cannotMixErr
-        | otherwise     -> Modules.clean ps
+        | otherwise     -> ModuleStatements.clean ps
 
-  where version      = "0.0.0.1"
-        cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."
+  where
+    version      = "0.0.0.1"
+    cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."

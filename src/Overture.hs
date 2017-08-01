@@ -6,6 +6,7 @@ module Overture
        , getLine
        , headMay
        , newLine
+       , notSupported
        , putLine
        , show_
        , withDefault
@@ -61,3 +62,8 @@ instance SchrödingerBox (Either a) b where
 
 withDefault :: SchrödingerBox m a => a -> m a -> a
 withDefault = (. value) . fromMaybe
+
+-- Not really appropriate for Overture but I don't want to create a Util module
+-- just for this one function.
+notSupported :: String -> a
+notSupported = error . (++ " modules not supported.")

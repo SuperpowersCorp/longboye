@@ -1,10 +1,12 @@
-module Longboye.Modules ( clean, interact ) where
+{-# LANGUAGE OverloadedStrings #-}
+module Longboye.ModuleStatements ( clean, interact ) where
 
 import           Prelude                                       hiding ( interact
                                                                       , readFile
                                                                       , writeFile
                                                                       )
 import qualified Prelude
+import           Overture
 
 import           Control.Monad                                        ( foldM
                                                                       , void
@@ -38,8 +40,9 @@ import           System.Posix.Files                                   ( getFileS
 clean :: [FilePath] -> IO ()
 clean []           = return ()
 clean (path:paths) = cleanPath path >>= either abort continue
-  where abort err  = error $ "An error occured: " ++ unpack err
-        continue   = const $ clean paths
+  where
+    abort err  = error $ "An error occured: " ++ unpack err
+    continue   = const $ clean paths
 
 cleanPath :: FilePath -> IO (Either Text ())
 cleanPath path = do
@@ -51,9 +54,11 @@ cleanPath path = do
 
 cleanDir :: FilePath -> IO (Either Text ())
 cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
-  where f (Right ()) file = cleanPath (joinPath [path, file])
-        f err _           = return err
-        hidden = ("." `isPrefixOf`)
+  where
+    f (Right ()) file = cleanPath (joinPath [path, file])
+    f err _           = return err
+
+    hidden            = ("." `isPrefixOf`)
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
@@ -72,9 +77,9 @@ doCleaning path contents (prefix, moduleStatement, suffix) = do
   writeFile tempPath cleaned
   void $ rename tempPath path
   void $ removeFile backupPath
-  where backupPath = path ++ ".longboye.bak"
-        tempPath   = path ++ ".longboye.tmp"
-
+  where
+    backupPath = path ++ ".longboye.bak"
+    tempPath   = path ++ ".longboye.tmp"
 
 interact :: IO ()
 interact = Extensions.find "." >>= Prelude.interact . interactS
@@ -93,6 +98,13 @@ cleanText :: Text -> ModuleStatement -> Text -> Text
 cleanText prefix moduleStatement suffix =
   formatPrefix prefix <> formatModuleStatement moduleStatement <> formatSuffix suffix
   where
-    formatPrefix          = error "Modules.cleanText.formatPrefix not implemented."
-    formatSuffix          = error "Modules.cleanText.formatSuffix not implemented."
-    formatModuleStatement = error "Modules.cleanText.formatModuleStatement not implemented."
+    formatPrefix s =
+      if Text.null s'
+        then s'
+        else s' <> "\n"
+      where
+        s' = Text.stripEnd s
+
+    formatSuffix s = "\n" <> s
+
+    formatModuleStatement ms = "[[[" <> show_ ms <> "]]]"

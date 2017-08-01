@@ -11,7 +11,7 @@ import           Data.List                                       ( elemIndices
                                                                  )
 import           Data.Map.Strict                                 ( Map )
 import qualified Data.Map.Strict                       as Map
-import           Data.Maybe                                      ( catMaybes )
+import           Data.Maybe                                      ( mapMaybe )
 import qualified Distribution.PackageDescription       as Cabal
 import qualified Distribution.PackageDescription.Parse as Cabal
 import qualified Distribution.Verbosity                as Cabal
@@ -46,31 +46,32 @@ findCandidates inPath = do
             then handleFile path
             else doesNotExist path
 
-  where handleDir parent p =
-          map (addParent p)
-            . filter (".cabal" `isSuffixOf`)
-            <$> listDirectory p >>= \files ->
-              if (not . null) files
-                then return files
-                else if parent == p
-                       then return []
-                       else findCandidates parent
-        addParent p f   = joinPath [p, f]
-        handleFile      = findCandidates . containingDir
-        -- this assumes p has been canonicalized by the time it gets to containingDir
-        -- TODO: deal with `pathSeparators` instead of just `pathSeparator`
-        containingDir p = p
-                          |> elemIndices pathSeparator
-                          |> lastMay
-                          |> withDefault (length p)
-                          |> flip take p
-        doesNotExist    = error $ "The path '" ++ inPath ++ "' could not be found."
+  where
+    handleDir parent p =
+      map (addParent p)
+        . filter (".cabal" `isSuffixOf`)
+        <$> listDirectory p >>= \files ->
+          if (not . null) files
+            then return files
+            else if parent == p
+                   then return []
+                   else findCandidates parent
+    addParent p f   = joinPath [p, f]
+    handleFile      = findCandidates . containingDir
+    -- this assumes p has been canonicalized by the time it gets to containingDir
+    -- TODO: deal with `pathSeparators` instead of just `pathSeparator`
+    containingDir p = p
+                      |> elemIndices pathSeparator
+                      |> lastMay
+                      |> withDefault (length p)
+                      |> flip take p
+    doesNotExist    = error $ "The path '" ++ inPath ++ "' could not be found."
 
 readAllExtensions :: [FilePath] -> IO [Source.Extension]
 readAllExtensions = (concat <$>) . mapM readExtensions
 
 readExtensions :: FilePath -> IO [Source.Extension]
-readExtensions path = (unsafeReadExtensions path) `catch` handler
+readExtensions path = unsafeReadExtensions path `catch` handler
   where
     handler :: SomeException -> IO [Source.Extension]
     handler _ = return []
@@ -84,17 +85,13 @@ unsafeReadExtensions path = do
   -- putStrLn $ "desc: " ++ show desc
   -- putStrLn $ "buildInfos: " ++ show buildInfos
   -- putStrLn $ "extensions: " ++ show extensions
-  return . catMaybes . map extToExt $ extensions
+  return . mapMaybe extToExt $ extensions
   where
     extToExt :: Cabal.Extension -> Maybe Source.Extension
     extToExt cabalExt = Map.lookup (show cabalExt) sourceExts
 
 sourceExts :: Map String Source.Extension
-sourceExts = foldr (Map.insert =<< show) Map.empty
-             . map Source.EnableExtension
-             $ knownExtensions
-  where firstKnownExt = Source.OverlappingInstances
-        knownExtensions = [firstKnownExt..]
+sourceExts = foldr ((Map.insert =<< show) . Source.EnableExtension) Map.empty [toEnum 0 ..]
 
 -- the built in allBuildInfo was behaving as `const []` for some reason, so
 -- we roll our own
