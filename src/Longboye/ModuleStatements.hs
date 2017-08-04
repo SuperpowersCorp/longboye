@@ -20,9 +20,28 @@ import qualified Data.Text                       as Text
 import           Data.Text.IO                                         ( readFile
                                                                       , writeFile
                                                                       )
+import           Language.Haskell.Exts                                ( ModuleName( ModuleName )
+                                                                      , QName( Qual
+                                                                             , UnQual
+                                                                             , Special
+                                                                             )
+                                                                      )
 import           Language.Haskell.Exts.Extension                      ( Extension )
+import           Language.Haskell.Exts.Syntax                         ( ExportSpec( EVar
+                                                                                  , EAbs
+                                                                                  , EThingWith
+                                                                                  , EModuleContents
+                                                                                  )
+                                                                      , ExportSpecList( ExportSpecList )
+                                                                      , Name( Ident
+                                                                            , Symbol
+                                                                            )
+                                                                      )
 import qualified Longboye.Extensions             as Extensions
-import           Longboye.ModuleStatement                             ( ModuleStatement )
+import           Longboye.ModuleStatement                             ( ModuleStatement
+                                                                      , exportSpecListMay
+                                                                      , modName
+                                                                      )
 import           Longboye.ModuleStatementParser                       ( Parsed( NoModuleStatement
                                                                               , WithModuleStatement
                                                                               )
@@ -107,4 +126,96 @@ cleanText prefix moduleStatement suffix =
 
     formatSuffix s = "\n" <> s
 
-    formatModuleStatement ms = "[[[" <> show_ ms <> "]]]"
+    formatModuleStatement :: ModuleStatement -> Text
+    formatModuleStatement ms = ("module "
+                                <> fullModuleName
+                                <> exportList
+                                <> " where\n"
+                                <> "\n----------------------------------------------------------------\n"
+                                <> debugModuleStatement ms
+                               )
+      where
+        fullModuleName :: Text
+        fullModuleName =
+          case modName ms of
+            ModuleName _ n -> Text.pack n
+
+        exportList :: Text
+        exportList =
+          case exportSpecListMay ms of
+            Nothing         -> "[NO EXPORT LISTS - REMOVE ME]"
+            Just (ExportSpecList _ [spec]) ->
+              " ( " <> renderExport spec <> " )"
+            Just (ExportSpecList _ specs) ->
+              (<> multiSuffix)
+              . (multiPrefix <>)
+              . Text.intercalate "\n       , "
+              . map renderExport
+              $ specs
+
+        multiPrefix = "\n       ( "
+        multiSuffix = "\n       )"
+
+        renderExport (EVar _ evar)              = renderEVar evar
+        renderExport (EAbs _ _ns _qn)           = error "[EAbs:NOT IMPL]"
+        renderExport (EThingWith _ _wc _qn _cn) = error "[EThingWith:NOT IMPL]"
+        renderExport (EModuleContents _ _mn)    = error "[EModuleContents:NOT IMPL]"
+
+renderEVar :: QName a -> Text
+renderEVar (Qual _ m n) =
+  "[RENDERED_EXPORT:EVar-Qual:m=" <> mm <> ":n=" <> nn <> "]"
+  where
+    mm = renderModName m
+    nn = renderName n
+renderEVar (UnQual _ n) = renderName n
+renderEVar (Special _ _sc) = error "[Special not impl!]"
+
+renderModName :: ModuleName a -> Text
+renderModName (ModuleName _ n') = "[MODNAME:" <> Text.pack n' <> "]"
+
+renderName :: Name a -> Text
+renderName (Ident _ n)  = Text.pack n
+renderName (Symbol _ s) = "(" <> Text.pack s <> ")"
+
+debugModuleStatement :: Show a => a -> Text
+debugModuleStatement ms = "[[[" <> show_ ms <> "]]]"
+
+-- ModuleStatement { modName = ModuleName (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 1 8 1 32
+--                                                     , srcInfoPoints = []
+--                                                     })
+--                   "Longboye.ModuleStatement"
+--                 , warningTextMay = Nothing
+--                 , exportSpecListMay = Just (ExportSpecList (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 8 4 9
+--                                                                         , srcInfoPoints = [ SrcSpan "/tmp/examples/ModuleStatement.hs" 2 8 2 9
+--                                                                                           , SrcSpan "/tmp/examples/ModuleStatement.hs" 3 8 3 9
+--                                                                                           , SrcSpan "/tmp/examples/ModuleStatement.hs" 4 8 4 9]
+--                                                                         })
+--                                             [ EThingWith (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 10 2 29
+--                                                                       , srcInfoPoints = [ SrcSpan "/tmp/examples/ModuleStatement.hs" 2 25 2 26
+--                                                                                         , SrcSpan "/tmp/examples/ModuleStatement.hs" 2 28 2 29]
+--                                                                       })
+--                                                 (EWildcard (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 26 2 28
+--                                                                         , srcInfoPoints = []
+--                                                                         }) 0)
+--                                                 (UnQual (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 10 2 25
+--                                                                      , srcInfoPoints = []
+--                                                                      })
+--                                                  (Ident (SrcSpanInfo {srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 10 2 25
+--                                                                      , srcInfoPoints = []
+--                                                                      })
+--                                                   "ModuleStatement")
+--                                                 )
+--                                               []
+--                                             , EVar (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 3 10 3 18
+--                                                                 , srcInfoPoints = []
+--                                                                 })
+--                                               (UnQual (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 3 10 3 18
+--                                                                    , srcInfoPoints = []
+--                                                                    })
+--                                                (Ident (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 3 10 3 18
+--                                                                    , srcInfoPoints = []
+--                                                                    })
+--                                                 "fromDecl"))
+--                                             ]
+--                                            )
+--                 }
