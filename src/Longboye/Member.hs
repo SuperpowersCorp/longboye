@@ -24,8 +24,8 @@ import           Language.Haskell.Exts         ( CName( ConName
                                                      , Symbol
                                                      )
                                                , Namespace( NoNamespace
-                                                          , TypeNamespace
                                                           , PatternNamespace
+                                                          , TypeNamespace
                                                           )
                                                , SrcSpanInfo
                                                )

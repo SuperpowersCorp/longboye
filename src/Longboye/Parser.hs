@@ -22,8 +22,8 @@ import           Language.Haskell.Exts                     ( Module( Module
 import           Language.Haskell.Exts.Extension           ( Extension
                                                            , Language( Haskell2010 )
                                                            )
-import           Language.Haskell.Exts.Parser              ( ParseResult( ParseOk
-                                                                        , ParseFailed
+import           Language.Haskell.Exts.Parser              ( ParseResult( ParseFailed
+                                                                        , ParseOk
                                                                         )
                                                            , baseLanguage
                                                            , defaultParseMode
