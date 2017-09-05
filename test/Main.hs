@@ -25,8 +25,41 @@ spec = do
           extensions = []
       interactS extensions sscce `shouldBe` ("\n\n" <> sscce <> "\n\n")
 
-  describe "Imports.format" $
+  describe "Imports.format" $ do
     it "Never stacks closing parens" $ property $ prop_neverStacksParensAcrossLines
+
+    it "sorts members" $ do
+      let imports      = "import Foo ( foo, bar, bif, baz )"
+          extensions   = []
+          expected     = unlines [ ""
+                                 , ""
+                                 , "import Foo ( bar"
+                                 , "           , baz"
+                                 , "           , bif"
+                                 , "           , foo"
+                                 , "           )"
+                                 , ""
+                                 ]
+      interactS extensions imports `shouldBe` expected
+
+
+    it "sorts sub-members" $ do
+      let imports      = "import Foo ( foo, Bar(c,b,d,a), bif, baz )"
+          extensions   = []
+          expected     = unlines [ ""
+                                 , ""
+                                 , "import Foo ( Bar( a"
+                                 , "                , b"
+                                 , "                , c"
+                                 , "                , d"
+                                 , "                )"
+                                 , "           , baz"
+                                 , "           , bif"
+                                 , "           , foo"
+                                 , "           )"
+                                 , ""
+                                 ]
+      interactS extensions imports `shouldBe` expected
 
 prop_neverStacksParensAcrossLines :: Bool -> Bool -> Int -> Int -> Import -> Bool
 prop_neverStacksParensAcrossLines anyQ anyH maxModLen maxAsLen imp =

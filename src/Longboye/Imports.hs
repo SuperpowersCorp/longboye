@@ -12,6 +12,7 @@ import           Control.Monad                                        ( foldM
                                                                       )
 import           Data.List                                            ( isPrefixOf
                                                                       , nub
+                                                                      , sort
                                                                       , sortBy
                                                                       )
 import           Data.Maybe                                           ( fromMaybe )
@@ -26,8 +27,14 @@ import           Data.Text.IO                                         ( readFile
                                                                       )
 import           Language.Haskell.Exts.Extension                      ( Extension )
 import qualified Longboye.Extensions             as Extensions
-import           Longboye.Import                                      ( Import )
+import           Longboye.Import                                      ( Import
+                                                                      , members
+                                                                      )
 import qualified Longboye.Import                 as Import
+import           Longboye.Member                                      ( Member( NamedMember
+                                                                              , OpMember
+                                                                              )
+                                                                      )
 import           Longboye.Parser                                      ( Parsed( NoImports
                                                                               , WithImports
                                                                               )
@@ -104,8 +111,16 @@ cleanText prefix imports suffix =
         anyHiding     = any Import.hiding imports
         maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
         maxAsLen      = maximum . map Import.asLength                       $ imports
-        finalImports  = nub . sortBy (comparing sortDetails) $ imports
+        finalImports  = nub . sortBy (comparing sortDetails) . map sortOps $ imports
         npo           = length . filter isPreludish $ finalImports
+
+        sortOps :: Import -> Import
+        sortOps i = i { members = map sortMember <$> members i }
+          where
+            sortMember m@(NamedMember _ _) = m
+            sortMember (OpMember s subs) = OpMember s subs'
+              where
+                subs' = sort subs
 
         isPreludish imp =
           imp
