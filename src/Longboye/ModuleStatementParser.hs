@@ -8,6 +8,7 @@ import           Overture
 
 import           Data.Text                                          ( Text )
 import qualified Data.Text                       as Text
+import qualified Debug.Trace                     as Debug
 import           Language.Haskell.Exts                              ( ModuleHead( ModuleHead )
                                                                     , Module( Module
                                                                             , XmlHybrid
@@ -15,6 +16,7 @@ import           Language.Haskell.Exts                              ( ModuleHead
                                                                             )
                                                                     , SrcSpanInfo
                                                                     , ann
+                                                                    , importAnn
                                                                     , parseFileContentsWithMode
                                                                     , srcInfoSpan
                                                                     , srcSpanEndLine
@@ -83,8 +85,15 @@ extractPrefix (Module _ modHeadMay _ _ _) source  =
 extractSuffix :: Module SrcSpanInfo -> Text -> Text
 extractSuffix XmlPage {}   _                      = notSupported "XmlPage"
 extractSuffix XmlHybrid {} _                      = notSupported "XmlHybrid"
-extractSuffix (Module _ modHeadMay _ _ _) source =
+extractSuffix xx@(Module _ modHeadMay _ idecls decls) source =
   Text.unlines . drop n . Text.lines $ source
   where
-    n = srcSpanEndLine . srcInfoSpan . ann $ modName'
+    n = Debug.trace ("------> " ++ debugInfo) n'
+    debugInfo = "nidecls=" ++ show (length idecls) ++ ", ndecls=" ++ show (length decls)
+    n' = Debug.trace ("=========> n IS " ++ show n'') n''
+    n'' = srcSpanEndLine . srcInfoSpan $ lastSrcSpan
+    lastSrcSpan
+      | null decls && null idecls = Debug.trace "FIRST" . ann $ modName'
+      | null decls                = Debug.trace "SECOND" . importAnn . last $ idecls
+      | otherwise                 = Debug.trace "THIRD" . ann $ modName'
     Just (ModuleHead _ modName' _ _) = modHeadMay

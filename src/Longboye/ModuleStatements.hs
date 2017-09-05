@@ -156,10 +156,11 @@ cleanText prefix moduleStatement suffix =
         multiPrefix = "\n       ( "
         multiSuffix = "\n       )"
 
-        renderExport (EVar _ evar)              = renderEVar evar
-        renderExport (EAbs _ _ns _qn)           = error "[EAbs:NOT IMPL]"
-        renderExport (EThingWith _ _wc _qn _cn) = error "[EThingWith:NOT IMPL]"
-        renderExport (EModuleContents _ _mn)    = error "[EModuleContents:NOT IMPL]"
+renderExport :: ExportSpec a -> Text
+renderExport (EVar _ evar)              = renderEVar evar
+renderExport (EAbs _ _ns _qn)           = error "[EAbs:NOT IMPL]"
+renderExport (EThingWith _ _wc _qn _cn) = error "[EThingWith:NOT IMPL]"
+renderExport (EModuleContents _ _mn)    = error "[EModuleContents:NOT IMPL]"
 
 renderEVar :: QName a -> Text
 renderEVar (Qual _ m n) =
@@ -179,43 +180,3 @@ renderName (Symbol _ s) = "(" <> Text.pack s <> ")"
 
 debugModuleStatement :: Show a => a -> Text
 debugModuleStatement ms = "[[[" <> show_ ms <> "]]]"
-
--- ModuleStatement { modName = ModuleName (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 1 8 1 32
---                                                     , srcInfoPoints = []
---                                                     })
---                   "Longboye.ModuleStatement"
---                 , warningTextMay = Nothing
---                 , exportSpecListMay = Just (ExportSpecList (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 8 4 9
---                                                                         , srcInfoPoints = [ SrcSpan "/tmp/examples/ModuleStatement.hs" 2 8 2 9
---                                                                                           , SrcSpan "/tmp/examples/ModuleStatement.hs" 3 8 3 9
---                                                                                           , SrcSpan "/tmp/examples/ModuleStatement.hs" 4 8 4 9]
---                                                                         })
---                                             [ EThingWith (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 10 2 29
---                                                                       , srcInfoPoints = [ SrcSpan "/tmp/examples/ModuleStatement.hs" 2 25 2 26
---                                                                                         , SrcSpan "/tmp/examples/ModuleStatement.hs" 2 28 2 29]
---                                                                       })
---                                                 (EWildcard (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 26 2 28
---                                                                         , srcInfoPoints = []
---                                                                         }) 0)
---                                                 (UnQual (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 10 2 25
---                                                                      , srcInfoPoints = []
---                                                                      })
---                                                  (Ident (SrcSpanInfo {srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 2 10 2 25
---                                                                      , srcInfoPoints = []
---                                                                      })
---                                                   "ModuleStatement")
---                                                 )
---                                               []
---                                             , EVar (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 3 10 3 18
---                                                                 , srcInfoPoints = []
---                                                                 })
---                                               (UnQual (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 3 10 3 18
---                                                                    , srcInfoPoints = []
---                                                                    })
---                                                (Ident (SrcSpanInfo { srcInfoSpan = SrcSpan "/tmp/examples/ModuleStatement.hs" 3 10 3 18
---                                                                    , srcInfoPoints = []
---                                                                    })
---                                                 "fromDecl"))
---                                             ]
---                                            )
---                 }
