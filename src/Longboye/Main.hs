@@ -1,4 +1,4 @@
-{-# LANGUAGE QuasiQuotes     #-}
+{-# LANGUAGE QuasiQuotes #-}
 module Longboye.Main ( main ) where
 
 import           Control.Monad                    ( when )
@@ -41,5 +41,7 @@ main_ argv = do
       ps
         | "-" `elem` ps -> error cannotMixErr
         | otherwise     -> Imports.clean ps
-  where version      = "0.0.0.1"
-        cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."
+
+  where
+    version      = "0.0.0.1"
+    cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."

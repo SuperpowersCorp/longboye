@@ -52,8 +52,9 @@ import           System.Posix.Files                                   ( getFileS
 clean :: [FilePath] -> IO ()
 clean []           = return ()
 clean (path:paths) = cleanPath path >>= either abort continue
-  where abort err  = error $ "An error occured: " ++ unpack err
-        continue   = const $ clean paths
+  where
+    abort err = error $ "An error occured: " ++ unpack err
+    continue  = const $ clean paths
 
 cleanPath :: FilePath -> IO (Either Text ())
 cleanPath path = do
@@ -64,9 +65,10 @@ cleanPath path = do
 
 cleanDir :: FilePath -> IO (Either Text ())
 cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
-  where f (Right ()) file = cleanPath (joinPath [path, file])
-        f err _           = return err
-        hidden = ("." `isPrefixOf`)
+  where
+    f (Right ()) file = cleanPath (joinPath [path, file])
+    f err _           = return err
+    hidden            = ("." `isPrefixOf`)
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
@@ -74,10 +76,11 @@ cleanFile path = do
   contents <- readFile path
   foundExtensions <- Extensions.find path
   case Parser.parseE foundExtensions path contents of
-    Left err                    -> return . Left $ err
-    Right (NoImports _)         -> return . Right $ ()
+    Left err                   -> return . Left $ err
+    Right (NoImports _)        -> return . Right $ ()
     Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
-  where msg = "Gnawing on... "
+  where
+    msg = "Gnawing on... "
 
 interact :: IO ()
 interact = Extensions.find "." >>= Prelude.interact . interactS
@@ -96,54 +99,54 @@ doCleaning path contents (prefix, imports, suffix) = do
   writeFile tempPath cleaned
   void $ rename tempPath path
   void $ removeFile backupPath
-  where backupPath = path ++ ".longboye.bak"
-        tempPath   = path ++ ".longboye.tmp"
+  where
+    backupPath = path ++ ".longboye.bak"
+    tempPath   = path ++ ".longboye.tmp"
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
   formatPrefix prefix <> formatImports finalImports <> formatSuffix suffix
-  where formatPrefix  = (<> "\n\n") . Text.stripEnd
-        formatSuffix  = (<> "\n") . Text.stripEnd . (suffixSep <>) . Text.stripStart
-        suffixSep     = if (Text.null . Text.strip) suffix then "" else "\n"
-        formatImports = Text.unlines . sep . map fmt
-        fmt           = Import.format anyQual anyHiding maxModLen maxAsLen
-        anyQual       = any Import.qualified imports
-        anyHiding     = any Import.hiding imports
-        maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
-        maxAsLen      = maximum . map Import.asLength                       $ imports
-        finalImports  = nub . sortBy (comparing sortDetails) . map sortOps $ imports
-        npo           = length . filter isPreludish $ finalImports
+  where
+    formatPrefix  = (<> "\n\n") . Text.stripEnd
+    formatSuffix  = (<> "\n") . Text.stripEnd . (suffixSep <>) . Text.stripStart
+    suffixSep     = if (Text.null . Text.strip) suffix then "" else "\n"
+    formatImports = Text.unlines . sep . map fmt
+    fmt           = Import.format anyQual anyHiding maxModLen maxAsLen
+    anyQual       = any Import.qualified imports
+    anyHiding     = any Import.hiding imports
+    maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
+    maxAsLen      = maximum . map Import.asLength                       $ imports
+    finalImports  = nub . sortBy (comparing sortDetails) . map sortOps $ imports
+    npo           = length . filter isPreludish $ finalImports
 
-        sortOps :: Import -> Import
-        sortOps i = i { members = map sortMember <$> members i }
-          where
-            sortMember m@(NamedMember _ _) = m
-            sortMember (OpMember s subs) = OpMember s subs'
-              where
-                subs' = sort subs
+    sortOps :: Import -> Import
+    sortOps i = i { members = map sortMember <$> members i }
+      where
+        sortMember m@(NamedMember _ _) = m
+        sortMember (OpMember s subs) = OpMember s (sort subs)
 
-        isPreludish imp =
-          imp
-            |> Import.importedModule
-            |> modHead
-            |> (==)
-            |> flip any ["Prelude", "Overture"]
+    isPreludish imp = imp
+      |> Import.importedModule
+      |> modHead
+      |> (==)
+      |> flip any ["Prelude", "Overture"]
 
-        modHead modName =
-          modName
-            |> Text.splitOn "."
-            |> head
+    modHead modName = modName
+      |> Text.splitOn "."
+      |> head
 
-        sep is        = if npo <= 0
-                          then is
-                          else mconcat [pos, space, rest]
-                            where (pos, rest) = splitAt npo is
-                                  space       = [""]
-        sortDetails i = fromMaybe (im, q) prioritySortValue
-                        where
-                          prioritySortValue
-                            | modHead im == "Prelude"  = Just ("30", q)
-                            | modHead im == "Overture" = Just ("60", q)
-                            | otherwise  = Nothing
-                          im = Import.importedModule i
-                          q  = Import.qualified i
+    sep is = if npo <= 0
+               then is
+               else mconcat [pos, space, rest]
+      where
+        (pos, rest) = splitAt npo is
+        space       = [""]
+
+    sortDetails i = fromMaybe (im, q) prioritySortValue
+      where
+        prioritySortValue
+          | modHead im == "Prelude"  = Just ("30", q)
+          | modHead im == "Overture" = Just ("60", q)
+          | otherwise                = Nothing
+        im = Import.importedModule i
+        q  = Import.qualified i
