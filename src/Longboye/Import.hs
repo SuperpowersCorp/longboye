@@ -8,6 +8,8 @@ module Longboye.Import
        , fromDecl
        ) where
 
+import           Longboye.Prelude
+
 import           Data.Maybe                      ( fromMaybe )
 import           Data.Monoid                     ( (<>) )
 import           Data.Text                       ( Text )
@@ -23,7 +25,6 @@ import           Language.Haskell.Exts           ( ImportDecl
                                                  )
 import           Longboye.Member                 ( Member )
 import qualified Longboye.Member       as Member
-import           Longboye.Prelude
 
 data Import = Import
   { qualified      :: Bool

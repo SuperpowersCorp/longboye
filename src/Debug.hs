@@ -7,6 +7,7 @@ module Debug
        ) where
 
 import Longboye.Prelude hiding ( log )
+
 import System.IO.Unsafe        ( unsafePerformIO )
 
 crash :: Text -> a

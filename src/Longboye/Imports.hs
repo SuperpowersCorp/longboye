@@ -4,6 +4,7 @@
 module Longboye.Imports ( clean, interact, interactS ) where
 
 import qualified Prelude
+import           Longboye.Prelude                              hiding ( interact )
 
 import           Control.Monad                                        ( foldM
                                                                       , void
@@ -38,7 +39,6 @@ import           Longboye.Parser                                      ( Parsed( 
                                                                               )
                                                                       )
 import qualified Longboye.Parser                 as Parser
-import           Longboye.Prelude                              hiding ( interact )
 import           System.Directory                                     ( listDirectory
                                                                       , removeFile
                                                                       )
@@ -124,20 +124,12 @@ cleanText prefix imports suffix =
         sortMember m@(NamedMember _ _) = m
         sortMember (OpMember s subs) = OpMember s (sort subs)
 
-    isPreludish imp = imp
-      |> Import.importedModule
-      |> modHead
-      |> (==)
-      |> flip any ["Prelude", "Overture"]
+    isPreludish = any (== "Prelude") . modComponents . Import.importedModule
 
-    modHead modName = modName
-      |> Text.splitOn "."
-      |> head
-      |> fromMaybe (panic "invalid module name")
+    modComponents :: Text -> [Text]
+    modComponents = Text.splitOn "."
 
-    sep is = if npo <= 0
-               then is
-               else mconcat [pos, space, rest]
+    sep is = if npo <= 0 then is else mconcat [pos, space, rest]
       where
         (pos, rest) = splitAt npo is
         space       = [""]
@@ -145,8 +137,8 @@ cleanText prefix imports suffix =
     sortDetails i = fromMaybe (im, q) prioritySortValue
       where
         prioritySortValue
-          | modHead im == "Prelude"  = Just ("30", q)
-          | modHead im == "Overture" = Just ("60", q)
-          | otherwise                = Nothing
+          | modComponents im == ["Prelude"]         = Just ("30", q)
+          | any (== "Prelude") . modComponents $ im = Just ("60", q)
+          | otherwise                               = Nothing
         im = Import.importedModule i
         q  = Import.qualified i

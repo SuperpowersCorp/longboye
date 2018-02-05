@@ -9,6 +9,8 @@ module Longboye.Member
        , sort
        ) where
 
+import           Longboye.Prelude              hiding ( sort )
+
 import           Data.List                            ( sortBy )
 import           Data.Monoid                          ( (<>) )
 import           Data.Ord                             ( comparing )
@@ -32,7 +34,6 @@ import           Language.Haskell.Exts                ( CName( ConName
                                                                  )
                                                       , SrcSpanInfo
                                                       )
-import           Longboye.Prelude              hiding ( sort )
 
 data Member
   = NamedMember Text Bool

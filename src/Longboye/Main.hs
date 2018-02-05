@@ -5,10 +5,10 @@
 module Longboye.Main ( main ) where
 
 import qualified Prelude
+import           Longboye.Prelude
 
 import           Control.Monad                    ( when )
 import qualified Longboye.Imports      as Imports
-import           Longboye.Prelude
 import           System.Console.Docopt            ( Docopt
                                                   , argument
                                                   , command

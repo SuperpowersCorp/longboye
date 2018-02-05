@@ -8,6 +8,7 @@ module Longboye.Parser
        ) where
 
 import qualified Prelude                         as P
+import           Longboye.Prelude
 
 import           Data.Text                                 ( Text )
 import qualified Data.Text                       as Text
@@ -37,7 +38,6 @@ import           Language.Haskell.Exts.Parser              ( ParseResult( ParseF
 import           Language.Haskell.Exts.Syntax              ( ImportDecl )
 import           Longboye.Import                           ( Import )
 import qualified Longboye.Import                 as Import
-import           Longboye.Prelude
 
 data Parsed
   = NoImports Text

@@ -3,6 +3,8 @@
 
 module Longboye.Extensions ( find )  where
 
+import           Longboye.Prelude                                hiding ( find )
+
 import           Data.List                                              ( elemIndices
                                                                         , isSuffixOf
                                                                         , nub
@@ -14,7 +16,6 @@ import qualified Distribution.PackageDescription.Parse as Cabal
 import qualified Distribution.Verbosity                as Cabal
 import qualified Language.Haskell.Extension            as Cabal
 import qualified Language.Haskell.Exts.Extension       as Source
-import           Longboye.Prelude                                hiding ( find )
 import           Safe                                                   ( lastMay )
 import           System.Directory                                       ( canonicalizePath
                                                                         , doesDirectoryExist
