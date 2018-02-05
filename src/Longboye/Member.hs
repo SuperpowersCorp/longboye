@@ -11,10 +11,6 @@ module Longboye.Member
 
 import           Longboye.Prelude              hiding ( sort )
 
-import           Data.List                            ( sortBy )
-import           Data.Monoid                          ( (<>) )
-import           Data.Ord                             ( comparing )
-import           Data.Text                            ( Text )
 import qualified Data.Text             as Text
 import           Language.Haskell.Exts                ( CName( ConName
                                                              , VarName

@@ -10,7 +10,6 @@ module Longboye.ImportsParser
 import qualified Prelude                         as P
 import           Longboye.Prelude
 
-import           Data.Text                                 ( Text )
 import qualified Data.Text                       as Text
 import           Language.Haskell.Exts                     ( Module( Module
                                                                    , XmlHybrid
