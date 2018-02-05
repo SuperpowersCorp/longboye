@@ -86,5 +86,6 @@ test-suite longboye-test
                     Longboye.Prelude
                     Longboye.Import.Arbitrary
                     Longboye.Member.Arbitrary
-                    LongboyeSpec
+                    ImportsSpec
+                    PragmasSpec
   default-language: Haskell2010
