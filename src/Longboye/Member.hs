@@ -24,8 +24,8 @@ import           Language.Haskell.Exts         ( CName( ConName
                                                      , Symbol
                                                      )
                                                , Namespace( NoNamespace
-                                                          , TypeNamespace
                                                           , PatternNamespace
+                                                          , TypeNamespace
                                                           )
                                                , SrcSpanInfo
                                                )
@@ -47,11 +47,10 @@ fromDecl (ImportSpecList _ _ specs) = map fromSpec specs
     fromSpec (IThingWith _ name cnames) = OpMember (renderName name) (map cnameText cnames)
     fromSpec (IAbs _ ns name)           = NamedMember (nsPre <> renderName name) False
       where
-        nsPre =
-          case ns of
-            NoNamespace _      -> ""
-            TypeNamespace _    -> notSupported "TypeNamespace"
-            PatternNamespace _ -> notSupported "PatternNamespace"
+        nsPre = case ns of
+          NoNamespace      _ -> ""
+          TypeNamespace    _ -> notSupported "TypeNamespace"
+          PatternNamespace _ -> notSupported "PatternNamespace"
         notSupported x = error $ x ++ " not supported yet."
 
 render :: Text -> Member -> Text
@@ -83,5 +82,7 @@ cnameText (ConName _ name) = renderName name
 sort :: [Member] -> [Member]
 sort = sortBy (comparing sortKey)
   where
-    sortKey (NamedMember name b) = name <> if b then "(..)" else ""
-    sortKey (OpMember name ms)   = name <> if null ms then "" else Text.intercalate ", " ms
+    sortKey (NamedMember name b) =
+      name <> if b then "(..)" else ""
+    sortKey (OpMember name ms) =
+      name <> if null ms then "" else Text.intercalate ", " ms

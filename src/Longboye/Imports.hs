@@ -12,6 +12,7 @@ import           Control.Monad                                        ( foldM
                                                                       )
 import           Data.List                                            ( isPrefixOf
                                                                       , nub
+                                                                      , sort
                                                                       , sortBy
                                                                       )
 import           Data.Maybe                                           ( fromMaybe )
@@ -26,13 +27,19 @@ import           Data.Text.IO                                         ( readFile
                                                                       )
 import           Language.Haskell.Exts.Extension                      ( Extension )
 import qualified Longboye.Extensions             as Extensions
-import           Longboye.Import                                      ( Import )
+import           Longboye.Import                                      ( Import
+                                                                      , members
+                                                                      )
 import qualified Longboye.Import                 as Import
-import           Longboye.ImportsParser                               ( Parsed( NoImports
+import qualified Longboye.ImportsParser          as Parser
+import           Longboye.Member                                      ( Member( NamedMember
+                                                                              , OpMember
+                                                                              )
+                                                                      )
+import           Longboye.Parser                                      ( Parsed( NoImports
                                                                               , WithImports
                                                                               )
                                                                       )
-import qualified Longboye.ImportsParser          as Parser
 import           System.Directory                                     ( listDirectory
                                                                       , removeFile
                                                                       )
@@ -61,7 +68,6 @@ cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Righ
   where
     f (Right ()) file = cleanPath (joinPath [path, file])
     f err _           = return err
-
     hidden            = ("." `isPrefixOf`)
 
 cleanFile :: FilePath -> IO (Either Text ())
@@ -70,8 +76,8 @@ cleanFile path = do
   contents <- readFile path
   foundExtensions <- Extensions.find path
   case Parser.parseE foundExtensions path contents of
-    Left err                    -> return . Left $ err
-    Right (NoImports _)         -> return . Right $ ()
+    Left err                   -> return . Left $ err
+    Right (NoImports _)        -> return . Right $ ()
     Right (WithImports parsed) -> Right <$> doCleaning path contents parsed
   where
     msg = "Gnawing on... "
@@ -110,32 +116,37 @@ cleanText prefix imports suffix =
     anyHiding     = any Import.hiding imports
     maxModLen     = maximum . map (Text.length . Import.importedModule) $ imports
     maxAsLen      = maximum . map Import.asLength                       $ imports
-    finalImports  = nub . sortBy (comparing sortDetails) $ imports
+    finalImports  = nub . sortBy (comparing sortDetails) . map sortOps $ imports
     npo           = length . filter isPreludish $ finalImports
 
-    isPreludish imp =
-      imp
-        |> Import.importedModule
-        |> modHead
-        |> (==)
-        |> flip any ["Prelude", "Overture"]
+    sortOps :: Import -> Import
+    sortOps i = i { members = map sortMember <$> members i }
+      where
+        sortMember m@(NamedMember _ _) = m
+        sortMember (OpMember s subs) = OpMember s (sort subs)
 
-    modHead modName =
-      modName
-        |> Text.splitOn "."
-        |> head
+    isPreludish imp = imp
+      |> Import.importedModule
+      |> modHead
+      |> (==)
+      |> flip any ["Prelude", "Overture"]
 
-    sep is        = if npo <= 0
-                      then is
-                      else mconcat [pos, space, rest]
-                        where
-                          (pos, rest) = splitAt npo is
-                          space       = [""]
+    modHead modName = modName
+      |> Text.splitOn "."
+      |> head
+
+    sep is = if npo <= 0
+               then is
+               else mconcat [pos, space, rest]
+      where
+        (pos, rest) = splitAt npo is
+        space       = [""]
+
     sortDetails i = fromMaybe (im, q) prioritySortValue
-                    where
-                      prioritySortValue
-                        | modHead im == "Prelude"  = Just ("30", q)
-                        | modHead im == "Overture" = Just ("60", q)
-                        | otherwise  = Nothing
-                      im = Import.importedModule i
-                      q  = Import.qualified i
+      where
+        prioritySortValue
+          | modHead im == "Prelude"  = Just ("30", q)
+          | modHead im == "Overture" = Just ("60", q)
+          | otherwise                = Nothing
+        im = Import.importedModule i
+        q  = Import.qualified i

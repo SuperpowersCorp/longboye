@@ -1,4 +1,4 @@
-{-# LANGUAGE QuasiQuotes     #-}
+{-# LANGUAGE QuasiQuotes #-}
 module Longboye.Main ( main ) where
 
 import           Control.Monad                                 ( when )

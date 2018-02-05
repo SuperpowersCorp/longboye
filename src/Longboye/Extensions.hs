@@ -61,10 +61,10 @@ findCandidates inPath = do
     -- this assumes p has been canonicalized by the time it gets to containingDir
     -- TODO: deal with `pathSeparators` instead of just `pathSeparator`
     containingDir p = p
-                      |> elemIndices pathSeparator
-                      |> lastMay
-                      |> withDefault (length p)
-                      |> flip take p
+      |> elemIndices pathSeparator
+      |> lastMay
+      |> withDefault (length p)
+      |> flip take p
     doesNotExist    = error $ "The path '" ++ inPath ++ "' could not be found."
 
 readAllExtensions :: [FilePath] -> IO [Source.Extension]
@@ -91,7 +91,11 @@ unsafeReadExtensions path = do
     extToExt cabalExt = Map.lookup (show cabalExt) sourceExts
 
 sourceExts :: Map String Source.Extension
-sourceExts = foldr ((Map.insert =<< show) . Source.EnableExtension) Map.empty [toEnum 0 ..]
+sourceExts =
+  foldr ((Map.insert =<< show) . Source.EnableExtension) Map.empty knownExtensions
+  where
+    firstKnownExt = Source.OverlappingInstances
+    knownExtensions = [firstKnownExt..]
 
 -- the built in allBuildInfo was behaving as `const []` for some reason, so
 -- we roll our own
