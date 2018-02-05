@@ -39,12 +39,16 @@ library
                   , unix
   exposed-modules:  Longboye
   other-modules:    Debug
+                    Longboye.Errors
                     Longboye.Extensions
                     Longboye.Import
                     Longboye.Imports
+                    Longboye.ImportsParser
                     Longboye.Main
                     Longboye.Member
-                    Longboye.Parser
+                    Longboye.ModuleStatement
+                    Longboye.ModuleStatementParser
+                    Longboye.ModuleStatements
                     Longboye.Prelude
   default-language: Haskell2010
 
@@ -77,12 +81,16 @@ test-suite longboye-test
                   , unix
   other-modules:    Debug
                     Longboye
+                    Longboye.Errors
                     Longboye.Extensions
                     Longboye.Import
                     Longboye.Imports
+                    Longboye.ImportsParser
                     Longboye.Main
                     Longboye.Member
-                    Longboye.Parser
+                    Longboye.ModuleStatement
+                    Longboye.ModuleStatementParser
+                    Longboye.ModuleStatements
                     Longboye.Prelude
                     Longboye.Import.Arbitrary
                     Longboye.Member.Arbitrary
