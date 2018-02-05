@@ -8,8 +8,6 @@ import           Longboye.Prelude                              hiding ( interact
 
 import           Data.List                                            ( isPrefixOf
                                                                       , nub
-                                                                      , sort
-                                                                      , sortBy
                                                                       )
 import           Data.Text                                            ( pack )
 import qualified Data.Text                       as Text

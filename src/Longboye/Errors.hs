@@ -1,8 +1,13 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Longboye.Errors ( renderError ) where
 
-import           Data.Text                            ( Text )
-import qualified Data.Text                    as Text
-import           Language.Haskell.Exts.SrcLoc         ( SrcLoc )
+import Longboye.Prelude             hiding ( SrcLoc
+                                           , srcLoc
+                                           )
 
-renderError :: SrcLoc -> String -> Text
-renderError srcLoc err = Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
+import Language.Haskell.Exts.SrcLoc        ( SrcLoc )
+
+renderError :: SrcLoc -> Text -> Text
+renderError srcLoc err = "ERROR at " <> show srcLoc <> ": " <> err

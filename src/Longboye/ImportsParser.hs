@@ -57,7 +57,7 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
       prefix  = extractPrefix parsedMod source
       suffix  = extractSuffix parsedMod source
   ParseFailed srcLoc' err ->
-    Left . Text.pack $ "ERROR at " ++ show srcLoc' ++ ": " ++ err
+    Left $ "ERROR at " <> show srcLoc' <> ": " <> show err
   where
     parseMode = defaultParseMode
       { baseLanguage          = Haskell2010

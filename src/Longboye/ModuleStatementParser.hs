@@ -10,7 +10,6 @@ module Longboye.ModuleStatementParser
 import qualified Prelude
 import           Longboye.Prelude
 
-import           Data.Text                                          ( Text )
 import qualified Data.Text                       as Text
 import qualified Debug.Trace                     as Debug
 import           Language.Haskell.Exts                              ( ModuleHead( ModuleHead )
@@ -64,13 +63,14 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
       suffix             = extractSuffix parsedMod source
 
   ParseFailed srcLoc' err ->
-    Left $ Errors.renderError srcLoc' err
+    Left $ Errors.renderError srcLoc' (Text.pack err)
   where
-    parseMode = defaultParseMode { baseLanguage          = Haskell2010
-                                 , ignoreLanguagePragmas = False
-                                 , extensions            = configuredExtensions
-                                 , parseFilename         = path
-                                 }
+    parseMode = defaultParseMode
+      { baseLanguage          = Haskell2010
+      , ignoreLanguagePragmas = False
+      , extensions            = configuredExtensions
+      , parseFilename         = path
+      }
     configuredExtensions = extensions defaultParseMode ++ foundExtensions
     sourceText = Text.unpack source
 

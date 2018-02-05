@@ -7,12 +7,6 @@ import           Longboye.Prelude                              hiding ( interact
                                                                       , writeFile
                                                                       )
 
-import           Control.Monad                                        ( foldM
-                                                                      , void
-                                                                      )
-import           Data.List                                            ( isPrefixOf )
-import           Data.Monoid                                          ( (<>) )
-import           Data.Text                                            ( Text )
 import qualified Data.Text                       as Text
 import           Data.Text.IO                                         ( readFile
                                                                       , writeFile

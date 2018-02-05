@@ -1,7 +1,11 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Longboye.ModuleStatement
        ( ModuleStatement(..)
        , fromDecl
        ) where
+
+import Longboye.Prelude
 
 import Language.Haskell.Exts ( ExportSpecList
                              , ModuleHead( ModuleHead )
