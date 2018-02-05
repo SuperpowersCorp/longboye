@@ -7,14 +7,13 @@ module LongboyeSpec
        ) where
 
 import qualified Prelude
+import           Longboye.Prelude
 
-import           Data.Monoid                         ( (<>) )
 import           Data.Text                           ( isInfixOf )
 import           Longboye.Import                     ( Import )
 import qualified Longboye.Import           as Import
 import           Longboye.Import.Arbitrary           ()
 import           Longboye.Imports                    ( interactS )
-import           Longboye.Prelude
 import           Test.Hspec
 import           Test.QuickCheck                     ( property )
 import qualified Test.QuickCheck           as QC
