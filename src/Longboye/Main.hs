@@ -7,7 +7,6 @@ module Longboye.Main ( main ) where
 import qualified Prelude
 import           Longboye.Prelude
 
-import           Control.Monad                                 ( when )
 import qualified Longboye.Imports          as Imports
 import qualified Longboye.ModuleStatements as ModuleStatements
 import           System.Console.Docopt                         ( Docopt
