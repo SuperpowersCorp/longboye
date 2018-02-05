@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude     #-}
@@ -7,6 +8,7 @@ module Longboye.Prelude
        , (|>)
        , eitherToMaybe
        , getLn
+       , notSupported
        , putLn
        , withDefault
        ) where
@@ -48,3 +50,6 @@ instance SchrödingerBox (Either a) b where
 
 withDefault :: SchrödingerBox m a => a -> m a -> a
 withDefault = (. value) . fromMaybe
+
+notSupported :: Text -> a
+notSupported = panic . (<> " not supported.")

@@ -91,6 +91,3 @@ extractImports XmlPage {}              = notSupported "XmlPage"
 
 getImports :: Module SrcSpanInfo -> [Import]
 getImports = map Import.fromDecl <$> extractImports
-
-notSupported :: Text -> a
-notSupported = panic . (<> " modules not supported.")
