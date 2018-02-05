@@ -6,20 +6,12 @@ module Longboye.Imports ( clean, interact, interactS ) where
 import qualified Prelude
 import           Longboye.Prelude                              hiding ( interact )
 
-import           Control.Monad                                        ( foldM
-                                                                      , void
-                                                                      )
 import           Data.List                                            ( isPrefixOf
                                                                       , nub
                                                                       , sort
                                                                       , sortBy
                                                                       )
-import           Data.Maybe                                           ( fromMaybe )
-import           Data.Monoid                                          ( (<>) )
-import           Data.Ord                                             ( comparing )
-import           Data.Text                                            ( Text
-                                                                      , pack
-                                                                      )
+import           Data.Text                                            ( pack )
 import qualified Data.Text                       as Text
 import           Data.Text.IO                                         ( readFile
                                                                       , writeFile

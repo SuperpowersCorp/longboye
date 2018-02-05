@@ -7,20 +7,11 @@ module Longboye.Prelude
        , (|>)
        , eitherToMaybe
        , getLn
-       -- , newLine
        , putLn
-       -- , show_
        , withDefault
        ) where
 
 import Protolude as Exports
-
--- import           Prelude                hiding ( getLine )
-
--- import           Data.Maybe                    ( fromMaybe )
--- import           Data.Text                     ( Text )
--- import qualified Data.Text    as Text
--- import qualified Data.Text.IO as TextIO
 
 (|>) :: a -> (a -> c) -> c
 (|>) = flip ($)
@@ -28,14 +19,8 @@ import Protolude as Exports
 getLn :: MonadIO m => m Text
 getLn = liftIO getLine
 
--- newLine :: IO ()
--- newLine = putLn ""
-
 putLn :: MonadIO m => Text -> m ()
 putLn = putStrLn
-
--- show_ :: Show a => a -> Text
--- show_ = Text.pack . show
 
 eitherToMaybe :: Either e a -> Maybe a
 eitherToMaybe = either (const Nothing) Just
