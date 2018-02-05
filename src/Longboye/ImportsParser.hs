@@ -1,10 +1,14 @@
-module Longboye.ImportsParser
-       ( Parsed(..)
-       , parse
-       , parseE
-       ) where
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
-import           Overture
+module Longboye.ImportsParser
+  ( Parsed(..)
+  , parse
+  , parseE
+  ) where
+
+import qualified Prelude                         as P
+import           Longboye.Prelude
 
 import           Data.Text                                 ( Text )
 import qualified Data.Text                       as Text
@@ -53,8 +57,8 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
       imports = getImports parsedMod
       prefix  = extractPrefix parsedMod source
       suffix  = extractSuffix parsedMod source
-  ParseFailed srcLoc err ->
-    Left . Text.pack $ "ERROR at " ++ show srcLoc ++ ": " ++ err
+  ParseFailed srcLoc' err ->
+    Left . Text.pack $ "ERROR at " ++ show srcLoc' ++ ": " ++ err
   where
     parseMode = defaultParseMode
       { baseLanguage          = Haskell2010
@@ -71,7 +75,7 @@ extractPrefix XmlHybrid {}                      _ = notSupported "XmlHybrid"
 extractPrefix (Module _ _ _ importDecls _) source =
   Text.unlines . take (n - 1) . Text.lines $ source
   where
-    n = srcSpanStartLine . srcInfoSpan . importAnn . head $ importDecls
+    n = srcSpanStartLine . srcInfoSpan . importAnn . P.head $ importDecls
 
 extractSuffix :: Module SrcSpanInfo -> Text -> Text
 extractSuffix XmlPage {}   _                      = notSupported "XmlPage"
@@ -79,7 +83,7 @@ extractSuffix XmlHybrid {} _                      = notSupported "XmlHybrid"
 extractSuffix (Module _ _ _ importDecls _) source =
   Text.unlines . drop n . Text.lines $ source
   where
-    n = srcSpanEndLine . srcInfoSpan . importAnn . last $ importDecls
+    n = srcSpanEndLine . srcInfoSpan . importAnn . P.last $ importDecls
 
 extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
 extractImports (Module _l _ _ decls _) = decls

@@ -1,20 +1,19 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Debug
        ( crash
        , log
        ) where
 
-import           Prelude                  hiding ( log )
-import           Overture
+import Longboye.Prelude hiding ( log )
 
-import           Data.Monoid                     ( (<>) )
-import           Data.Text                       ( Text )
-import qualified Data.Text        as Text
-import           System.IO.Unsafe                ( unsafePerformIO )
+import System.IO.Unsafe        ( unsafePerformIO )
 
 crash :: Text -> a
-crash msg = error . Text.unpack $ "Debug.crash: " <> msg
+crash msg = panic $ "Debug.crash: " <> msg
 
 log :: Show val => Text -> val -> val
 log msg val = unsafePerformIO $ do
-  putLine ("DEBUG: " <> msg <> " => " <> show_ val)
+  putLn $ "DEBUG: " <> msg <> " => " <> show val
   return val

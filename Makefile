@@ -27,6 +27,9 @@ test:
 watch:
 	stack exec -- ghcid -c 'stack ghci' --restart stack.yaml
 
+watch-test:
+	stack test --fast --file-watch
+
 b: build
 hl: hlint
 i: install
@@ -34,5 +37,6 @@ r: run
 s: setup
 t: test
 w: watch
+wt: watch-test
 
 .PHONY: test

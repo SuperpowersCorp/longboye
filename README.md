@@ -20,8 +20,8 @@ file found recursively in each directory specified.
 It's better seen than described, as in the next section ("Examples"), but the
 gist so far is:
 
-- Any `Prelude` (and `Overture`, see below) imports are moved to the top.
-- A blank line is added between any `Prelude` (and `Overture`) imports and the rest.
+- Any imports with a `Prelude` component are moved to the top.
+- A blank line is added between any `Prelude` imports and the rest.
 - Any extra blank lines between the first import and the top of the file are
   removed
 - Any comments between the first import and the last import are removed
@@ -40,7 +40,7 @@ gist so far is:
 For real examples of Goodboye™ format, see the Longboye source code (Longboye
 eats its own dog food):
 
-- [src/Longboye/Parser.hs](/../../tree/master/src/Longboye/Parser.hs) - a
+- [src/Longboye/ImportsParser.hs](/../../tree/master/src/Longboye/ImportsParser.hs) - a
   fairly typical example
 - [src/Longboye/Imports.hs](/../../tree/master/src/Longboye/Imports.hs) - a
   file with a lot of imports and a `hiding` statement
@@ -83,11 +83,6 @@ mankind.
 We love feedback, so feel free to chime in on any of the issues.
 
 ## Caveats and Emptors<sup>[*](#emptors)</sup>
-
-- We use `Overture` (and `Overture.*`) as a name for internal `Prelude` like
-  modules, so these modules are given the same treatement as any `Prelude`
-  modules (i.e being moved to the top and lumped in with `Prelude` rather than
-  the rest of the modules.
 
 - Any comments that appear between the first uncommented import statement and
   the last uncommented import statement will be removed.

@@ -1,10 +1,14 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Longboye.ModuleStatementParser
        ( Parsed(..)
        , parse
        , parseE
        ) where
 
-import           Overture
+import qualified Prelude
+import           Longboye.Prelude
 
 import           Data.Text                                          ( Text )
 import qualified Data.Text                       as Text
@@ -25,8 +29,8 @@ import           Language.Haskell.Exts                              ( ModuleHead
 import           Language.Haskell.Exts.Extension                    ( Extension
                                                                     , Language( Haskell2010 )
                                                                     )
-import           Language.Haskell.Exts.Parser                       ( ParseResult( ParseOk
-                                                                                 , ParseFailed
+import           Language.Haskell.Exts.Parser                       ( ParseResult( ParseFailed
+                                                                                 , ParseOk
                                                                                  )
                                                                     , baseLanguage
                                                                     , defaultParseMode
@@ -59,8 +63,8 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
       prefix             = extractPrefix parsedMod source
       suffix             = extractSuffix parsedMod source
 
-  ParseFailed srcLoc err ->
-    Left $ Errors.renderError srcLoc err
+  ParseFailed srcLoc' err ->
+    Left $ Errors.renderError srcLoc' err
   where
     parseMode = defaultParseMode { baseLanguage          = Haskell2010
                                  , ignoreLanguagePragmas = False
@@ -83,9 +87,9 @@ extractPrefix (Module _ modHeadMay _ _ _) source  =
     Just (ModuleHead _ modName' _ _) = modHeadMay
 
 extractSuffix :: Module SrcSpanInfo -> Text -> Text
-extractSuffix XmlPage {}   _                      = notSupported "XmlPage"
-extractSuffix XmlHybrid {} _                      = notSupported "XmlHybrid"
-extractSuffix xx@(Module _ modHeadMay _ idecls decls) source =
+extractSuffix XmlPage {}   _ = notSupported "XmlPage"
+extractSuffix XmlHybrid {} _ = notSupported "XmlHybrid"
+extractSuffix (Module _ modHeadMay _ idecls decls) source =
   Text.unlines . drop n . Text.lines $ source
   where
     n = Debug.trace ("------> " ++ debugInfo) n'
@@ -94,6 +98,6 @@ extractSuffix xx@(Module _ modHeadMay _ idecls decls) source =
     n'' = srcSpanEndLine . srcInfoSpan $ lastSrcSpan
     lastSrcSpan
       | null decls && null idecls = Debug.trace "FIRST" . ann $ modName'
-      | null decls                = Debug.trace "SECOND" . importAnn . last $ idecls
+      | null decls                = Debug.trace "SECOND" . importAnn . Prelude.last $ idecls
       | otherwise                 = Debug.trace "THIRD" . ann $ modName'
     Just (ModuleHead _ modName' _ _) = modHeadMay

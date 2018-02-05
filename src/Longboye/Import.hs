@@ -1,9 +1,14 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Longboye.Import
        ( Import(..)
        , asLength
        , format
        , fromDecl
        ) where
+
+import           Longboye.Prelude
 
 import           Data.Maybe                      ( fromMaybe )
 import           Data.Monoid                     ( (<>) )
@@ -86,7 +91,8 @@ formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
           | null membs      = ""
           | singleLineMembers = " "
           | otherwise         = "\n" <> padding
-        singleLineMembers = length membs == 1 && (Member.opCount . head $ membs) <= 1
+        singleLineMembers = length membs == 1 &&
+          (fromMaybe 0 .  (Member.opCount <$>) . head $ membs) <= 1
     sep     = "\n" <> padding <> ", "
     hideLen = if anyHiding then 7 else 0
     padding = Text.replicate n " "

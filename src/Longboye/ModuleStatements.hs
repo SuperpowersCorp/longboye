@@ -1,36 +1,33 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Longboye.ModuleStatements ( clean, interact ) where
 
-import           Prelude                                       hiding ( interact
+import qualified Prelude
+import           Longboye.Prelude                              hiding ( interact
                                                                       , readFile
                                                                       , writeFile
                                                                       )
-import qualified Prelude
-import           Overture
 
 import           Control.Monad                                        ( foldM
                                                                       , void
                                                                       )
 import           Data.List                                            ( isPrefixOf )
 import           Data.Monoid                                          ( (<>) )
-import           Data.Text                                            ( Text
-                                                                      , unpack
-                                                                      )
+import           Data.Text                                            ( Text )
 import qualified Data.Text                       as Text
 import           Data.Text.IO                                         ( readFile
                                                                       , writeFile
                                                                       )
 import           Language.Haskell.Exts                                ( ModuleName( ModuleName )
                                                                       , QName( Qual
-                                                                             , UnQual
                                                                              , Special
+                                                                             , UnQual
                                                                              )
                                                                       )
 import           Language.Haskell.Exts.Extension                      ( Extension )
-import           Language.Haskell.Exts.Syntax                         ( ExportSpec( EVar
-                                                                                  , EAbs
-                                                                                  , EThingWith
+import           Language.Haskell.Exts.Syntax                         ( ExportSpec( EAbs
                                                                                   , EModuleContents
+                                                                                  , EThingWith
+                                                                                  , EVar
                                                                                   )
                                                                       , ExportSpecList( ExportSpecList )
                                                                       , Name( Ident
@@ -60,7 +57,7 @@ clean :: [FilePath] -> IO ()
 clean []           = return ()
 clean (path:paths) = cleanPath path >>= either abort continue
   where
-    abort err  = error $ "An error occured: " ++ unpack err
+    abort err  = panic $ "An error occured: " <> err
     continue   = const $ clean paths
 
 cleanPath :: FilePath -> IO (Either Text ())
@@ -103,7 +100,7 @@ doCleaning path contents (prefix, moduleStatement, suffix) = do
 interact :: IO ()
 interact = Extensions.find "." >>= Prelude.interact . interactS
 
-interactS :: [Extension] -> String -> String
+interactS :: [Extension] -> Prelude.String -> Prelude.String
 interactS extensions contents = Text.unpack $
   case Parser.parseE extensions "<interactive>" (Text.pack contents) of
     Left _ ->
@@ -158,9 +155,9 @@ cleanText prefix moduleStatement suffix =
 
 renderExport :: ExportSpec a -> Text
 renderExport (EVar _ evar)              = renderEVar evar
-renderExport (EAbs _ _ns _qn)           = error "[EAbs:NOT IMPL]"
-renderExport (EThingWith _ _wc _qn _cn) = error "[EThingWith:NOT IMPL]"
-renderExport (EModuleContents _ _mn)    = error "[EModuleContents:NOT IMPL]"
+renderExport (EAbs _ _ns _qn)           = panic "[EAbs:NOT IMPL]"
+renderExport (EThingWith _ _wc _qn _cn) = panic "[EThingWith:NOT IMPL]"
+renderExport (EModuleContents _ _mn)    = panic "[EModuleContents:NOT IMPL]"
 
 renderEVar :: QName a -> Text
 renderEVar (Qual _ m n) =
@@ -169,7 +166,7 @@ renderEVar (Qual _ m n) =
     mm = renderModName m
     nn = renderName n
 renderEVar (UnQual _ n) = renderName n
-renderEVar (Special _ _sc) = error "[Special not impl!]"
+renderEVar (Special _ _sc) = panic "[Special not impl!]"
 
 renderModName :: ModuleName a -> Text
 renderModName (ModuleName _ n') = "[MODNAME:" <> Text.pack n' <> "]"
@@ -179,4 +176,4 @@ renderName (Ident _ n)  = Text.pack n
 renderName (Symbol _ s) = "(" <> Text.pack s <> ")"
 
 debugModuleStatement :: Show a => a -> Text
-debugModuleStatement ms = "[[[" <> show_ ms <> "]]]"
+debugModuleStatement ms = "[[[" <> show ms <> "]]]"
