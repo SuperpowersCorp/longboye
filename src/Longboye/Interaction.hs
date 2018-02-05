@@ -1,34 +1,34 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Longboye.Interaction ( runInteraction ) where
 
-import           Control.Monad                        ( foldM
-                                                      , void
-                                                      )
-import           Data.Char                            ( ord )
-import           Data.List                            ( isPrefixOf )
-import           Data.Text                            ( Text )
-import qualified Data.Text             as Text
-import qualified Data.Text.IO          as TextIO
-import           Longboye.Extensions   as Extensions
-import           Longboye.Import                      ( Import )
-import           Longboye.Parser                      ( Parsed( NoImports
-                                                              , WithImports
-                                                              )
-                                                      )
-import qualified Longboye.Parser       as Parser
-import           Longboye.Transformer                 ( Transformer )
-import qualified Longboye.Transformer  as Transformer
-import           System.Directory                     ( listDirectory
-                                                      , removeFile
-                                                      )
-import           System.FilePath.Posix                ( joinPath )
-import           System.Posix.Files                   ( getFileStatus
-                                                      , isDirectory
-                                                      , rename
-                                                      )
+import           Control.Monad                         ( foldM
+                                                       , void
+                                                       )
+import           Data.Char                             ( ord )
+import           Data.List                             ( isPrefixOf )
+import           Data.Text                             ( Text )
+import qualified Data.Text              as Text
+import qualified Data.Text.IO           as TextIO
+import           Longboye.Extensions    as Extensions
+import           Longboye.Import                       ( Import )
+import           Longboye.ImportsParser                ( Parsed( NoImports
+                                                               , WithImports
+                                                               )
+                                                       )
+import qualified Longboye.ImportsParser as Parser
+import           Longboye.Transformer                  ( Transformer )
+import qualified Longboye.Transformer   as Transformer
+import           System.Directory                      ( listDirectory
+                                                       , removeFile
+                                                       )
+import           System.FilePath.Posix                 ( joinPath )
+import           System.Posix.Files                    ( getFileStatus
+                                                       , isDirectory
+                                                       , rename
+                                                       )
 
 runInteraction :: Transformer -> [FilePath] -> IO ()
-runInteraction xform ["-"] = TextIO.interact f
+runInteraction _xform ["-"] = TextIO.interact f
   where f = error "runInteraction not implemented."
   -- let context = Transformer.context "<stdin>" contents prefix imports suffix
   --     xformed = xform context

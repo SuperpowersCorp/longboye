@@ -1,0 +1,90 @@
+name:           longboye
+version:        0.1.0.0
+category:       Web
+homepage:       https://github.com/superpowerscorp/longboye#readme
+bug-reports:    https://github.com/superpowerscorp/longboye/issues
+author:         John Evans
+maintainer:     ops@superpowerscorp.com
+copyright:      2017 Superpowers Corp
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/superpowerscorp/longboye
+
+library
+  hs-source-dirs:   src test
+  ghc-options:      -Wall -Werror
+  build-depends:    Cabal
+                  , QuickCheck
+                  , base >=4.7 && <5
+                  , containers
+                  , directory
+                  , docopt
+                  , filepath
+                  , haskell-src-exts
+                  , hspec
+                  , megaparsec
+                  , protolude
+                  , quickcheck-text
+                  , safe
+                  , system-fileio
+                  , text
+                  , unix
+  exposed-modules:  Longboye
+  other-modules:    Debug
+                    Longboye.Extensions
+                    Longboye.Import
+                    Longboye.Imports
+                    Longboye.ImportsParser
+                    Longboye.Main
+                    Longboye.Member
+                    Longboye.Prelude
+  default-language: Haskell2010
+
+executable longboye
+  main-is:          Main.hs
+  hs-source-dirs:   app
+  ghc-options:      -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+  build-depends:    base
+                  , longboye
+  default-language: Haskell2010
+
+test-suite longboye-test
+  type:             exitcode-stdio-1.0
+  main-is:          Spec.hs
+  hs-source-dirs:   src test
+  ghc-options:      -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+  build-depends:    Cabal
+                  , QuickCheck
+                  , base
+                  , containers
+                  , directory
+                  , filepath
+                  , haskell-src-exts
+                  , hspec
+                  , longboye
+                  , protolude
+                  , quickcheck-text
+                  , safe
+                  , text
+                  , unix
+  other-modules:    Debug
+                    Longboye
+                    Longboye.Extensions
+                    Longboye.Import
+                    Longboye.Imports
+                    Longboye.ImportsParser
+                    Longboye.Main
+                    Longboye.Member
+                    Longboye.Prelude
+                    Longboye.Import.Arbitrary
+                    Longboye.Member.Arbitrary
+                    LongboyeSpec
+  default-language: Haskell2010

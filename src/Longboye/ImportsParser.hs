@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Longboye.Parser
+module Longboye.ImportsParser
        ( Parsed(..)
        , parse
        , parseE

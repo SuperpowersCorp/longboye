@@ -9,8 +9,6 @@ import           Longboye.Prelude
 
 import           Control.Monad                    ( when )
 import qualified Longboye.Imports      as Imports
-import           Longboye.Interaction
-import qualified Longboye.Pragmas      as Pragmas
 import           System.Console.Docopt            ( Docopt
                                                   , argument
                                                   , command
