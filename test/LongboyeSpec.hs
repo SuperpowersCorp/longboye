@@ -1,7 +1,12 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module LongboyeSpec
        ( main
        , spec
        ) where
+
+import qualified Prelude
 
 import           Data.Monoid                         ( (<>) )
 import           Data.Text                           ( isInfixOf )
@@ -9,6 +14,7 @@ import           Longboye.Import                     ( Import )
 import qualified Longboye.Import           as Import
 import           Longboye.Import.Arbitrary           ()
 import           Longboye.Imports                    ( interactS )
+import           Longboye.Prelude
 import           Test.Hspec
 import           Test.QuickCheck                     ( property )
 import qualified Test.QuickCheck           as QC
@@ -31,34 +37,36 @@ spec = do
     it "sorts members" $ do
       let imports      = "import Foo ( foo, bar, bif, baz )"
           extensions   = []
-          expected     = unlines [ ""
-                                 , ""
-                                 , "import Foo ( bar"
-                                 , "           , baz"
-                                 , "           , bif"
-                                 , "           , foo"
-                                 , "           )"
-                                 , ""
-                                 ]
+          expected     = Prelude.unlines
+            [ ""
+            , ""
+            , "import Foo ( bar"
+            , "           , baz"
+            , "           , bif"
+            , "           , foo"
+            , "           )"
+            , ""
+            ]
       interactS extensions imports `shouldBe` expected
 
 
     it "sorts sub-members" $ do
       let imports      = "import Foo ( foo, Bar(c,b,d,a), bif, baz )"
           extensions   = []
-          expected     = unlines [ ""
-                                 , ""
-                                 , "import Foo ( Bar( a"
-                                 , "                , b"
-                                 , "                , c"
-                                 , "                , d"
-                                 , "                )"
-                                 , "           , baz"
-                                 , "           , bif"
-                                 , "           , foo"
-                                 , "           )"
-                                 , ""
-                                 ]
+          expected     = Prelude.unlines
+            [ ""
+            , ""
+            , "import Foo ( Bar( a"
+            , "                , b"
+            , "                , c"
+            , "                , d"
+            , "                )"
+            , "           , baz"
+            , "           , bif"
+            , "           , foo"
+            , "           )"
+            , ""
+            ]
       interactS extensions imports `shouldBe` expected
 
 prop_neverStacksParensAcrossLines :: Bool -> Bool -> Int -> Int -> Import -> Bool

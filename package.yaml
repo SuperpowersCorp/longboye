@@ -1,5 +1,5 @@
 name: longboye
-version: '0.1.0.0'
+version: "0.1.0.0"
 category: Web
 author: John Evans
 maintainer: ops@superpowerscorp.com
@@ -13,9 +13,6 @@ extra-source-files:
 ghc-options:
 - -Wall
 - -Werror
-
-default-extensions:
-- OverloadedStrings
 
 library:
   source-dirs:
@@ -33,6 +30,7 @@ library:
   - filepath
   - haskell-src-exts
   - megaparsec
+  - protolude
   - safe
   - system-fileio
   - text
@@ -56,7 +54,7 @@ executables:
 
 tests:
   longboye-test:
-    main: Main.hs
+    main: Spec.hs
     source-dirs:
     - src
     - test
@@ -71,6 +69,7 @@ tests:
     - directory
     - filepath
     - longboye
+    - protolude
     - haskell-src-exts
     - hspec
     - QuickCheck

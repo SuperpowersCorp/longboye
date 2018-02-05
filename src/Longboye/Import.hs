@@ -1,3 +1,6 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Longboye.Import
        ( Import(..)
        , asLength
@@ -20,6 +23,7 @@ import           Language.Haskell.Exts           ( ImportDecl
                                                  )
 import           Longboye.Member                 ( Member )
 import qualified Longboye.Member       as Member
+import           Longboye.Prelude
 
 data Import = Import
   { qualified      :: Bool
@@ -86,7 +90,8 @@ formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
           | null membs      = ""
           | singleLineMembers = " "
           | otherwise         = "\n" <> padding
-        singleLineMembers = length membs == 1 && (Member.opCount . head $ membs) <= 1
+        singleLineMembers = length membs == 1 &&
+          (fromMaybe 0 .  (Member.opCount <$>) . head $ membs) <= 1
     sep     = "\n" <> padding <> ", "
     hideLen = if anyHiding then 7 else 0
     padding = Text.replicate n " "

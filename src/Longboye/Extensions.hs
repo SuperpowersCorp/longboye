@@ -1,31 +1,29 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Longboye.Extensions ( find )  where
 
-import           Overture
-
-import           Control.Exception                               ( SomeException
-                                                                 , catch
-                                                                 )
-import           Data.List                                       ( elemIndices
-                                                                 , isSuffixOf
-                                                                 , nub
-                                                                 )
-import           Data.Map.Strict                                 ( Map )
+import           Data.List                                              ( elemIndices
+                                                                        , isSuffixOf
+                                                                        , nub
+                                                                        )
 import qualified Data.Map.Strict                       as Map
-import           Data.Maybe                                      ( mapMaybe )
+import           Data.Text                                              ( pack )
 import qualified Distribution.PackageDescription       as Cabal
 import qualified Distribution.PackageDescription.Parse as Cabal
 import qualified Distribution.Verbosity                as Cabal
 import qualified Language.Haskell.Extension            as Cabal
 import qualified Language.Haskell.Exts.Extension       as Source
-import           Safe                                            ( lastMay )
-import           System.Directory                                ( canonicalizePath
-                                                                 , doesDirectoryExist
-                                                                 , doesFileExist
-                                                                 , listDirectory
-                                                                 )
-import           System.FilePath.Posix                           ( joinPath
-                                                                 , pathSeparator
-                                                                 )
+import           Longboye.Prelude                                hiding ( find )
+import           Safe                                                   ( lastMay )
+import           System.Directory                                       ( canonicalizePath
+                                                                        , doesDirectoryExist
+                                                                        , doesFileExist
+                                                                        , listDirectory
+                                                                        )
+import           System.FilePath.Posix                                  ( joinPath
+                                                                        , pathSeparator
+                                                                        )
 
 -- TODO: more comprehensive search for/testing of extension sets, eg. handling
 --       multiple candidate .cabal files being found, etc.
@@ -65,7 +63,7 @@ findCandidates inPath = do
       |> lastMay
       |> withDefault (length p)
       |> flip take p
-    doesNotExist    = error $ "The path '" ++ inPath ++ "' could not be found."
+    doesNotExist    = panic $ "The path '" <> pack inPath <> "' could not be found."
 
 readAllExtensions :: [FilePath] -> IO [Source.Extension]
 readAllExtensions = (concat <$>) . mapM readExtensions
@@ -90,7 +88,7 @@ unsafeReadExtensions path = do
     extToExt :: Cabal.Extension -> Maybe Source.Extension
     extToExt cabalExt = Map.lookup (show cabalExt) sourceExts
 
-sourceExts :: Map String Source.Extension
+sourceExts :: Map Text Source.Extension
 sourceExts =
   foldr ((Map.insert =<< show) . Source.EnableExtension) Map.empty knownExtensions
   where

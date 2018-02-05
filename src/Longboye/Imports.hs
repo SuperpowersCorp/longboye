@@ -1,11 +1,9 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Longboye.Imports ( clean, interact, interactS ) where
 
-import           Prelude                                       hiding ( interact
-                                                                      , readFile
-                                                                      , writeFile
-                                                                      )
 import qualified Prelude
-import           Overture
 
 import           Control.Monad                                        ( foldM
                                                                       , void
@@ -19,7 +17,7 @@ import           Data.Maybe                                           ( fromMayb
 import           Data.Monoid                                          ( (<>) )
 import           Data.Ord                                             ( comparing )
 import           Data.Text                                            ( Text
-                                                                      , unpack
+                                                                      , pack
                                                                       )
 import qualified Data.Text                       as Text
 import           Data.Text.IO                                         ( readFile
@@ -40,6 +38,7 @@ import           Longboye.Parser                                      ( Parsed( 
                                                                               )
                                                                       )
 import qualified Longboye.Parser                 as Parser
+import           Longboye.Prelude                              hiding ( interact )
 import           System.Directory                                     ( listDirectory
                                                                       , removeFile
                                                                       )
@@ -53,7 +52,7 @@ clean :: [FilePath] -> IO ()
 clean []           = return ()
 clean (path:paths) = cleanPath path >>= either abort continue
   where
-    abort err = error $ "An error occured: " ++ unpack err
+    abort err = panic $ "An error occured: " <> err
     continue  = const $ clean paths
 
 cleanPath :: FilePath -> IO (Either Text ())
@@ -72,7 +71,7 @@ cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Righ
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
-  putStrLn $ msg ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
+  putLn $ msg <> pack path <> " 🐶" -- <- mind the invisible unicode doggo
   contents <- readFile path
   foundExtensions <- Extensions.find path
   case Parser.parseE foundExtensions path contents of
@@ -85,7 +84,7 @@ cleanFile path = do
 interact :: IO ()
 interact = Extensions.find "." >>= Prelude.interact . interactS
 
-interactS :: [Extension] -> String -> String
+interactS :: [Extension] -> Prelude.String -> Prelude.String
 interactS extensions contents = Text.unpack $
   case Parser.parseE extensions "<interactive>" (Text.pack contents) of
     Left _                                        -> Text.pack contents
@@ -134,6 +133,7 @@ cleanText prefix imports suffix =
     modHead modName = modName
       |> Text.splitOn "."
       |> head
+      |> fromMaybe (panic "invalid module name")
 
     sep is = if npo <= 0
                then is
