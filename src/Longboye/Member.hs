@@ -1,3 +1,6 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Longboye.Member
        ( Member(..)
        , fromDecl
@@ -6,29 +9,31 @@ module Longboye.Member
        , sort
        ) where
 
-import           Data.List                     ( sortBy )
-import           Data.Monoid                   ( (<>) )
-import           Data.Ord                      ( comparing )
-import           Data.Text                     ( Text )
+import           Longboye.Prelude              hiding ( sort )
+
+import           Data.List                            ( sortBy )
+import           Data.Monoid                          ( (<>) )
+import           Data.Ord                             ( comparing )
+import           Data.Text                            ( Text )
 import qualified Data.Text             as Text
-import           Language.Haskell.Exts         ( CName( ConName
-                                                      , VarName
+import           Language.Haskell.Exts                ( CName( ConName
+                                                             , VarName
+                                                             )
+                                                      , ImportSpec( IAbs
+                                                                  , IThingAll
+                                                                  , IThingWith
+                                                                  , IVar
+                                                                  )
+                                                      , ImportSpecList( ImportSpecList )
+                                                      , Name( Ident
+                                                            , Symbol
+                                                            )
+                                                      , Namespace( NoNamespace
+                                                                 , PatternNamespace
+                                                                 , TypeNamespace
+                                                                 )
+                                                      , SrcSpanInfo
                                                       )
-                                               , ImportSpec( IAbs
-                                                           , IThingAll
-                                                           , IThingWith
-                                                           , IVar
-                                                           )
-                                               , ImportSpecList( ImportSpecList )
-                                               , Name( Ident
-                                                     , Symbol
-                                                     )
-                                               , Namespace( NoNamespace
-                                                          , PatternNamespace
-                                                          , TypeNamespace
-                                                          )
-                                               , SrcSpanInfo
-                                               )
 
 data Member
   = NamedMember Text Bool
@@ -51,7 +56,7 @@ fromDecl (ImportSpecList _ _ specs) = map fromSpec specs
           NoNamespace      _ -> ""
           TypeNamespace    _ -> notSupported "TypeNamespace"
           PatternNamespace _ -> notSupported "PatternNamespace"
-        notSupported x = error $ x ++ " not supported yet."
+        notSupported x = panic $ x <> " not supported yet."
 
 render :: Text -> Member -> Text
 render _   (NamedMember name False) = name
