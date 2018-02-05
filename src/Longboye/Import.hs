@@ -10,9 +10,6 @@ module Longboye.Import
 
 import           Longboye.Prelude
 
-import           Data.Maybe                      ( fromMaybe )
-import           Data.Monoid                     ( (<>) )
-import           Data.Text                       ( Text )
 import qualified Data.Text             as Text
 import           Language.Haskell.Exts           ( ImportDecl
                                                  , ImportSpecList( ImportSpecList )
@@ -40,7 +37,7 @@ fromDecl decl = Import qual modName asC hid membs
     qual    = importQualified decl
     modName = renderModName . importModule $ decl
     asC     = renderModName <$> importAs decl
-    hid     = fromMaybe False (isHiding <$> importSpecs decl)
+    hid     = maybe False isHiding (importSpecs decl)
     membs   = Member.fromDecl <$> importSpecs decl
 
     isHiding (ImportSpecList _ h _) = h
@@ -75,7 +72,7 @@ format anyQual anyHiding maxModLen maxAsLen imp =
         padding = Text.replicate (n - Text.length s) " "
 
 asLength :: Import -> Int
-asLength = fromMaybe 0 . (Text.length <$>) . asClause
+asLength = maybe 0 Text.length . asClause
 
 formatMembers :: Text -> Bool -> Int -> Int -> Maybe [Member] -> Text
 formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
@@ -92,7 +89,7 @@ formatMembers qual anyHiding maxAsLen maxModLen = maybe "" f
           | singleLineMembers = " "
           | otherwise         = "\n" <> padding
         singleLineMembers = length membs == 1 &&
-          (fromMaybe 0 .  (Member.opCount <$>) . head $ membs) <= 1
+          (maybe 0 Member.opCount . head $ membs) <= 1
     sep     = "\n" <> padding <> ", "
     hideLen = if anyHiding then 7 else 0
     padding = Text.replicate n " "

@@ -124,13 +124,12 @@ cleanText prefix moduleStatement suffix =
     formatSuffix s = "\n" <> s
 
     formatModuleStatement :: ModuleStatement -> Text
-    formatModuleStatement ms = ("module "
+    formatModuleStatement ms = "module "
                                 <> fullModuleName
                                 <> exportList
                                 <> " where\n"
                                 <> "\n----------------------------------------------------------------\n"
                                 <> debugModuleStatement ms
-                               )
       where
         fullModuleName :: Text
         fullModuleName =
