@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module LongboyeSpec
+module ImportsSpec
        ( main
        , spec
        ) where
@@ -9,8 +9,6 @@ module LongboyeSpec
 import qualified Prelude
 import           Longboye.Prelude
 
-import           Data.Monoid                         ( (<>) )
-import qualified Data.String               as String
 import           Data.Text                           ( isInfixOf )
 import           Longboye.Import                     ( Import )
 import qualified Longboye.Import           as Import
@@ -26,11 +24,6 @@ main = hspec spec
 
 spec :: Spec
 spec = do
-  importsSpec
-  pragmasSpec
-
-importsSpec :: Spec
-importsSpec = do
   describe "Imports.interact" $
     it "handles (:<|>)(..) correctly" $ do
       let sscce      = "import Foo ( (:<|>)(..) )"
@@ -74,32 +67,6 @@ importsSpec = do
             , ""
             ]
       interactS extensions imports `shouldBe` expected
-
-pragmasSpec :: Spec
-pragmasSpec = do
-  describe "Pragmas.interact" $ do
-    it "basics" $ do
-      let sscce = String.unlines
-            [ "{-# LANGUAGE NoImplicitPrelude #-}"
-            , "{- # OPTIONS_GHC -fno-warn-foo #-}"
-            , "{- # LANGUAGE ScopedTypeVariables, LambdaCase #-}"
-            , "  {-#  LANGUAGE  FlexibleInstances    #-} "
-            , ""
-            , "module Foo where"
-            , "x = 5"
-            ]
-          extensions = []
-          expected = String.unlines
-            [ "{-# LANGUAGE NoImplicitPrelude   #-}"
-            , "{-# LANGUAGE FlexibleInstances   #-} "
-            , "{-# LANGUAGE LambdaCase          #-} "
-            , "{-# LANGUAGE ScopedTypeVariables #-} "
-            , "{- # OPTIONS_GHC -fno-warn-foo   #-}"
-            , ""
-            , "module Foo where"
-            , "x = 5"
-            ]
-      interactS extensions sscce `shouldBe` expected
 
 prop_neverStacksParensAcrossLines :: Bool -> Bool -> Int -> Int -> Import -> Bool
 prop_neverStacksParensAcrossLines anyQ anyH maxModLen maxAsLen imp =

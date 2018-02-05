@@ -3,10 +3,11 @@
 
 module Longboye.Import.Arbitrary () where
 
+import Longboye.Prelude
+
 import Data.Text.Arbitrary       ()
 import Longboye.Import           ( Import( Import ) )
 import Longboye.Member.Arbitrary ()
-import Longboye.Prelude
 import Test.QuickCheck           ( Arbitrary
                                  , arbitrary
                                  )
