@@ -1,4 +1,4 @@
-module Main
+module LongboyeSpec
        ( main
        , spec
        ) where
