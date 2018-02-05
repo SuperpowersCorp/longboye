@@ -1,4 +1,4 @@
-{-# LANGUAGE QuasiQuotes     #-}
+{-# LANGUAGE QuasiQuotes #-}
 module Longboye.Main ( main ) where
 
 import           Control.Monad                    ( when )
@@ -37,11 +37,12 @@ main_ argv = do
     exitWithUsage patterns
 
   when (opts `isPresent` command "imports") $ do
-    let paths = opts `getAllArgs` argument "path"
-    runInteraction Imports.interactS paths
+    case opts `getAllArgs` argument "path" of
+      ["-"] -> Imports.interact
+      ps
+        | "-" `elem` ps -> error cannotMixErr
+        | otherwise     -> Imports.clean ps
 
-  when (opts `isPresent` command "pragmas") $ do
-    let paths = opts `getAllArgs` argument "path"
-    runInteraction Pragmas.interactS paths
-
-  where version      = "0.0.0.1"
+  where
+    version      = "0.0.0.1"
+    cannotMixErr = "you cannot mix stdin (-) with files.  try one or the other."

@@ -15,6 +15,26 @@ Pass the `longboye imports` command one or more paths to files or directories
 on the command line and it will prettify each file specified and each `.hs`
 file found recursively in each directory specified.
 
+## The Format
+
+It's better seen than described, as in the next section ("Examples"), but the
+gist so far is:
+
+- Any `Prelude` (and `Overture`, see below) imports are moved to the top.
+- A blank line is added between any `Prelude` (and `Overture`) imports and the rest.
+- Any extra blank lines between the first import and the top of the file are
+  removed
+- Any comments between the first import and the last import are removed
+- Imports are sorted
+- All imports are aligned in columns for `qualified`, the module name, `as`
+  clause, and `hiding` clauses.
+- Any imports with 0-1 members with 0-1 operators is left on the same line
+  (eg. `import Foo ( Bar( baz ) )`).
+- Any imports with 2 or more members or 2 or more operators are split across
+  lines.
+- A blank line is added between the last import and the rest of the file.
+- Any extra blank lines between the last import and rest of the file are removed
+
 ## Examples
 
 For real examples of Goodboye™ format, see the Longboye source code (Longboye
@@ -49,7 +69,6 @@ mankind.
 
 ## Coming Soon
 
-- [#1](/../../issues/1) - Second dangling closing paren is on the wrong line.
 - [#9](/../../issues/9) - Handle `TypeNamespace` and `PatternNamespace`
 - [#10](/../../issues/10) - Add `-q` option to prevent output other than errors
 - [#11](/../../issues/11) - Automatic removal of per-line trailing whitespace
@@ -65,8 +84,14 @@ We love feedback, so feel free to chime in on any of the issues.
 
 ## Caveats and Emptors<sup>[*](#emptors)</sup>
 
+- We use `Overture` (and `Overture.*`) as a name for internal `Prelude` like
+  modules, so these modules are given the same treatement as any `Prelude`
+  modules (i.e being moved to the top and lumped in with `Prelude` rather than
+  the rest of the modules.
+
 - Any comments that appear between the first uncommented import statement and
   the last uncommented import statement will be removed.
+
 - Using the current emacs integration function will cause your cursor to jump
   around on save in some situations.
 

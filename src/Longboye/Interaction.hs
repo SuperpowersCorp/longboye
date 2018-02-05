@@ -13,7 +13,8 @@ import           Longboye.Extensions   as Extensions
 import           Longboye.Import                      ( Import )
 import           Longboye.Parser                      ( Parsed( NoImports
                                                               , WithImports
-                                                              ) )
+                                                              )
+                                                      )
 import qualified Longboye.Parser       as Parser
 import           Longboye.Transformer                 ( Transformer )
 import qualified Longboye.Transformer  as Transformer
@@ -69,7 +70,7 @@ cleanFile xform path = do
   putStrLn $ cuteMsg ++ "... " ++ path ++ " 🐶" -- <- mind the invisible unicode doggo
   contents <- TextIO.readFile path
   -- TODO: memoize
-  let extensions = Extensions.find path
+  extensions <- Extensions.find path
   case Parser.parseE extensions path contents of
     Left err                   -> return . Left $ err
     Right (NoImports _)        -> return . Right $ ()
