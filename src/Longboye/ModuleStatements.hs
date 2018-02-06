@@ -1,111 +1,35 @@
+{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Longboye.ModuleStatements ( clean, interact, interactS ) where
 
-import qualified Prelude
-import           Longboye.Prelude                              hiding ( interact
-                                                                      , readFile
-                                                                      , writeFile
-                                                                      )
+module Longboye.ModuleStatements ( cleanText ) where
 
-import qualified Data.Text                       as Text
-import           Data.Text.IO                                         ( readFile
-                                                                      , writeFile
-                                                                      )
+import           Longboye.Prelude                     hiding ( interact
+                                                             , readFile
+                                                             , writeFile
+                                                             )
+
+import qualified Data.Text                    as Text
 import qualified Debug
-import           Language.Haskell.Exts                                ( ModuleName( ModuleName )
-                                                                      , QName( Qual
-                                                                             , Special
-                                                                             , UnQual
-                                                                             )
-                                                                      )
-import           Language.Haskell.Exts.Extension                      ( Extension )
-import           Language.Haskell.Exts.Syntax                         ( ExportSpec( EAbs
-                                                                                  , EModuleContents
-                                                                                  , EThingWith
-                                                                                  , EVar
-                                                                                  )
-                                                                      , ExportSpecList( ExportSpecList )
-                                                                      , Name( Ident
-                                                                            , Symbol
-                                                                            )
-                                                                      )
-import qualified Longboye.Extensions             as Extensions
-import           Longboye.ModuleStatement                             ( ModuleStatement
-                                                                      , exportSpecListMay
-                                                                      , modName
-                                                                      )
-import           Longboye.ModuleStatementParser                       ( Parsed( NoModuleStatement
-                                                                              , WithModuleStatement
-                                                                              )
-                                                                      )
-import qualified Longboye.ModuleStatementParser  as Parser
-import           System.Directory                                     ( listDirectory
-                                                                      , removeFile
-                                                                      )
-import           System.FilePath.Posix                                ( joinPath )
-import           System.Posix.Files                                   ( getFileStatus
-                                                                      , isDirectory
-                                                                      , rename
-                                                                      )
-
-clean :: [FilePath] -> IO ()
-clean []           = return ()
-clean (path:paths) = cleanPath path >>= either abort continue
-  where
-    abort err = panic $ "An error occured: " <> err
-    continue  = const $ clean paths
-
-cleanPath :: FilePath -> IO (Either Text ())
-cleanPath path = do
-  putStrLn $ "checking status of path: " ++ path
-  stat <- getFileStatus path
-  if isDirectory stat
-    then cleanDir path
-    else cleanFile path
-
-cleanDir :: FilePath -> IO (Either Text ())
-cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
-  where
-    f (Right ()) file = cleanPath (joinPath [path, file])
-    f err _           = return err
-
-    hidden            = ("." `isPrefixOf`)
-
-cleanFile :: FilePath -> IO (Either Text ())
-cleanFile path = do
-  putLn $ msg <> Text.pack path <> " 🐶" -- <- mind the invisible unicode doggo
-  contents <- readFile path
-  foundExtensions <- Extensions.find path
-  case Parser.parseE foundExtensions path contents of
-    Left err                   -> return . Left $ err
-    Right (NoModuleStatement _)        -> return . Right $ ()
-    Right (WithModuleStatement parsed) -> Right <$> doCleaning path contents parsed
-  where
-    msg = "Gnawing on... "
-
-doCleaning :: FilePath -> Text -> (Text, ModuleStatement, Text) -> IO()
-doCleaning path contents (prefix, moduleStatement, suffix) = do
-  void $ writeFile backupPath contents
-  let cleaned = cleanText prefix moduleStatement suffix
-  writeFile tempPath cleaned
-  void $ rename tempPath path
-  void $ removeFile backupPath
-  where
-    backupPath = path ++ ".longboye.bak"
-    tempPath   = path ++ ".longboye.tmp"
-
-interact :: IO ()
-interact = Extensions.find "." >>= Prelude.interact . interactS
-
-interactS :: [Extension] -> Prelude.String -> Prelude.String
-interactS extensions contents = Text.unpack $
-  case Parser.parseE extensions "<interactive>" (Text.pack contents) of
-    Left _ ->
-      Text.pack contents
-    Right (NoModuleStatement s) ->
-      s
-    Right (WithModuleStatement (prefix, moduleStatement, suffix)) ->
-      cleanText prefix moduleStatement suffix
+import           Language.Haskell.Exts                       ( ModuleName( ModuleName )
+                                                             , QName( Qual
+                                                                    , Special
+                                                                    , UnQual
+                                                                    )
+                                                             )
+import           Language.Haskell.Exts.Syntax                ( ExportSpec( EAbs
+                                                                         , EModuleContents
+                                                                         , EThingWith
+                                                                         , EVar
+                                                                         )
+                                                             , ExportSpecList( ExportSpecList )
+                                                             , Name( Ident
+                                                                   , Symbol
+                                                                   )
+                                                             )
+import           Longboye.ModuleStatement                    ( ModuleStatement
+                                                             , exportSpecListMay
+                                                             , modName
+                                                             )
 
 cleanText :: Text -> ModuleStatement -> Text -> Text
 cleanText prefix moduleStatement suffix =

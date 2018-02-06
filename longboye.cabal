@@ -41,6 +41,7 @@ library
   other-modules:    Debug
                     Longboye.Errors
                     Longboye.Extensions
+                    Longboye.Files
                     Longboye.Import
                     Longboye.Imports
                     Longboye.ImportsParser

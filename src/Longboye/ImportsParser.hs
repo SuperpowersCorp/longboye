@@ -2,8 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Longboye.ImportsParser
-  ( Parsed(..)
-  , parse
+  ( parse
   , parseE
   ) where
 
@@ -35,23 +34,22 @@ import           Language.Haskell.Exts.Parser              ( ParseResult( ParseF
                                                            , parseFilename
                                                            )
 import           Language.Haskell.Exts.Syntax              ( ImportDecl )
+import           Longboye.Files                            ( Contents( WithSubject
+                                                                     , WithoutSubject
+                                                                     )
+                                                           )
 import           Longboye.Import                           ( Import )
 import qualified Longboye.Import                 as Import
 
-data Parsed
-  = NoImports Text
-  | WithImports (Text, [Import], Text)
-  deriving (Eq, Ord, Read, Show)
-
-parse :: [Extension] -> FilePath -> Text -> Maybe Parsed
+parse :: [Extension] -> FilePath -> Text -> Maybe (Contents [Import])
 parse foundExtensions path = eitherToMaybe . parseE foundExtensions path
 
-parseE :: [Extension] -> FilePath -> Text -> Either Text Parsed
+parseE :: [Extension] -> FilePath -> Text -> Either Text (Contents [Import])
 parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
   ParseOk parsedMod ->
     if null imports
-      then Right . NoImports   $ source
-      else Right . WithImports $ (prefix, imports, suffix)
+      then Right . WithoutSubject $ source
+      else Right . WithSubject $ (prefix, imports, suffix)
     where
       imports = getImports parsedMod
       prefix  = extractPrefix parsedMod source

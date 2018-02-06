@@ -1,7 +1,11 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Longboye.PragmasParser where
+module Longboye.PragmasParser
+  ( Pragma
+  , parse
+  , parseE
+  ) where
 
 import qualified Prelude
 import           Longboye.Prelude
@@ -31,23 +35,22 @@ import           Language.Haskell.Exts.Parser            ( ParseResult( ParseFai
                                                          , ignoreLanguagePragmas
                                                          , parseFilename
                                                          )
-
-data Parsed
-  = NoPragmas Text
-  | WithPragmas (Text, [Pragma], Text)
-  deriving (Eq, Ord, Show)
+import           Longboye.Files                          ( Contents( WithSubject
+                                                                   , WithoutSubject
+                                                                   )
+                                                         )
 
 type Pragma = ModulePragma SrcSpanInfo
 
-parse :: [Extension] -> FilePath -> Text -> Maybe Parsed
+parse :: [Extension] -> FilePath -> Text -> Maybe (Contents [Pragma])
 parse foundExtensions path = eitherToMaybe . parseE foundExtensions path
 
-parseE :: [Extension] -> FilePath -> Text -> Either Text Parsed
+parseE :: [Extension] -> FilePath -> Text -> Either Text (Contents [Pragma])
 parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
   ParseOk parsedMod ->
     if null pragmas
-      then Right . NoPragmas   $ source
-      else Right . WithPragmas $ (prefix, pragmas, suffix)
+      then Right . WithoutSubject $ source
+      else Right . WithSubject    $ (prefix, pragmas, suffix)
     where
       pragmas = getPragmas parsedMod
       prefix  = extractPrefix parsedMod source

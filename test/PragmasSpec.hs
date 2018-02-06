@@ -6,14 +6,22 @@ module PragmasSpec
        , spec
        ) where
 
-import Longboye.Prelude
+import qualified Prelude
+import           Longboye.Prelude
 
-import Data.String      ( unlines )
-import Longboye.Pragmas ( interactS )
-import Test.Hspec
+import           Data.String            ( unlines )
+import           Longboye.Files         ( mkInteractor )
+import           Longboye.Pragmas       ( cleanText )
+import           Longboye.PragmasParser ( parseE )
+import           Test.Hspec
 
 main :: IO ()
 main = hspec spec
+
+interactS :: Prelude.String -> Prelude.String
+interactS = mkInteractor parseE cleanText extensions
+  where
+    extensions = []
 
 spec :: Spec
 spec = do
@@ -30,7 +38,6 @@ spec = do
             , "module Foo where"
             , "x = 5"
             ]
-          extensions = []
           expected = unlines
             [ "{-# LANGUAGE FlexibleInstances   #-}"
             , "{-# LANGUAGE LambdaCase          #-}"
@@ -43,4 +50,4 @@ spec = do
             , "module Foo where"
             , "x = 5"
             ]
-      interactS extensions sscce `shouldBe` expected
+      interactS sscce `shouldBe` expected

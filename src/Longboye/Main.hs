@@ -7,21 +7,27 @@ module Longboye.Main ( main ) where
 import qualified Prelude
 import           Longboye.Prelude
 
-import qualified Longboye.Imports          as Imports
-import qualified Longboye.ModuleStatements as ModuleStatements
-import qualified Longboye.Pragmas          as Pragmas
-import           System.Console.Docopt                         ( Docopt
-                                                               , argument
-                                                               , command
-                                                               , docoptFile
-                                                               , exitWithUsage
-                                                               , getAllArgs
-                                                               , isPresent
-                                                               , longOption
-                                                               , parseArgsOrExit
-                                                               )
-import           System.Environment                            ( getArgs )
-import           System.Exit                                   ( exitSuccess )
+import           Longboye.Files                                          ( genericClean
+                                                                         , genericInteract
+                                                                         )
+import qualified Longboye.Imports               as Imports
+import qualified Longboye.ImportsParser         as ImportsParser
+import qualified Longboye.ModuleStatementParser as ModuleStatementParser
+import qualified Longboye.ModuleStatements      as ModuleStatements
+import qualified Longboye.Pragmas               as Pragmas
+import qualified Longboye.PragmasParser         as PragmasParser
+import           System.Console.Docopt                                   ( Docopt
+                                                                         , argument
+                                                                         , command
+                                                                         , docoptFile
+                                                                         , exitWithUsage
+                                                                         , getAllArgs
+                                                                         , isPresent
+                                                                         , longOption
+                                                                         , parseArgsOrExit
+                                                                         )
+import           System.Environment                                      ( getArgs )
+import           System.Exit                                             ( exitSuccess )
 
 patterns :: Docopt
 patterns = [docoptFile|USAGE.txt|]
@@ -41,27 +47,26 @@ main_ argv = do
   when (opts `isPresent` longOption "help") $
     exitWithUsage patterns
 
-  when (opts `isPresent` command "imports") $ do
+  when (opts `isPresent` command "imports") $
     case opts `getAllArgs` argument "path" of
-      ["-"] -> Imports.interact
+      ["-"] -> genericInteract ImportsParser.parseE Imports.cleanText
       ps
         | "-" `elem` ps -> panic cannotMixErr
-        | otherwise     -> Imports.clean ps
+        | otherwise     -> genericClean ImportsParser.parseE Imports.cleanText ps
 
-  when (opts `isPresent` command "modules") $ do
-    let paths = opts `getAllArgs` argument "path"
-    case paths of
-      ["-"] -> ModuleStatements.interact
-      ps
-        | "-" `elem` ps -> panic cannotMixErr
-        | otherwise     -> ModuleStatements.clean ps
-
-  when (opts `isPresent` command "pragmas") $ do
+  when (opts `isPresent` command "modules") $
     case opts `getAllArgs` argument "path" of
-      ["-"] -> Pragmas.interact
+      ["-"] -> genericInteract ModuleStatementParser.parseE ModuleStatements.cleanText
       ps
         | "-" `elem` ps -> panic cannotMixErr
-        | otherwise     -> Pragmas.clean ps
+        | otherwise     -> genericClean ModuleStatementParser.parseE ModuleStatements.cleanText ps
+
+  when (opts `isPresent` command "pragmas") $
+    case opts `getAllArgs` argument "path" of
+      ["-"] -> genericInteract PragmasParser.parseE Pragmas.cleanText
+      ps
+        | "-" `elem` ps -> panic cannotMixErr
+        | otherwise     -> genericClean PragmasParser.parseE Pragmas.cleanText ps
 
   where
     version      = "0.0.0.1"

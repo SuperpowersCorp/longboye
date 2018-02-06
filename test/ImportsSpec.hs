@@ -10,10 +10,12 @@ import qualified Prelude
 import           Longboye.Prelude
 
 import           Data.Text                           ( isInfixOf )
+import           Longboye.Files                      ( mkInteractor )
 import           Longboye.Import                     ( Import )
 import qualified Longboye.Import           as Import
 import           Longboye.Import.Arbitrary           ()
-import           Longboye.Imports                    ( interactS )
+import           Longboye.Imports                    ( cleanText )
+import           Longboye.ImportsParser              ( parseE )
 import           Test.Hspec
 import           Test.QuickCheck                     ( property )
 import qualified Test.QuickCheck           as QC
@@ -22,20 +24,23 @@ import           Test.QuickCheck.Random              ( mkQCGen )
 main :: IO ()
 main = hspec spec
 
+interactS :: Prelude.String -> Prelude.String
+interactS = mkInteractor parseE cleanText extensions
+  where
+    extensions = []
+
 spec :: Spec
 spec = do
   describe "Imports.interact" $
     it "handles (:<|>)(..) correctly" $ do
       let sscce      = "import Foo ( (:<|>)(..) )"
-          extensions = []
-      interactS extensions sscce `shouldBe` ("\n\n" <> sscce <> "\n\n")
+      interactS sscce `shouldBe` ("\n\n" <> sscce <> "\n\n")
 
   describe "Imports.format" $ do
     it "Never stacks closing parens" $ property $ prop_neverStacksParensAcrossLines
 
     it "sorts members" $ do
       let imports      = "import Foo ( foo, bar, bif, baz )"
-          extensions   = []
           expected     = Prelude.unlines
             [ ""
             , ""
@@ -46,12 +51,10 @@ spec = do
             , "           )"
             , ""
             ]
-      interactS extensions imports `shouldBe` expected
-
+      interactS imports `shouldBe` expected
 
     it "sorts sub-members" $ do
       let imports      = "import Foo ( foo, Bar(c,b,d,a), bif, baz )"
-          extensions   = []
           expected     = Prelude.unlines
             [ ""
             , ""
@@ -66,7 +69,7 @@ spec = do
             , "           )"
             , ""
             ]
-      interactS extensions imports `shouldBe` expected
+      interactS imports `shouldBe` expected
 
 prop_neverStacksParensAcrossLines :: Bool -> Bool -> Int -> Int -> Import -> Bool
 prop_neverStacksParensAcrossLines anyQ anyH maxModLen maxAsLen imp =

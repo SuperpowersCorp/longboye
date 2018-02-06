@@ -6,14 +6,22 @@ module ModuleStatementsSpec
        , spec
        ) where
 
-import Longboye.Prelude
+import qualified Prelude
+import           Longboye.Prelude
 
-import Data.String               ( unlines )
-import Longboye.ModuleStatements ( interactS )
-import Test.Hspec
+import           Data.String                    ( unlines )
+import           Longboye.Files                 ( mkInteractor )
+import           Longboye.ModuleStatementParser ( parseE )
+import           Longboye.ModuleStatements      ( cleanText )
+import           Test.Hspec
 
 main :: IO ()
 main = hspec spec
+
+interactS :: Prelude.String -> Prelude.String
+interactS = mkInteractor parseE cleanText extensions
+  where
+    extensions = []
 
 spec :: Spec
 spec = describe "ModuleStatements.interact" $
@@ -25,7 +33,6 @@ spec = describe "ModuleStatements.interact" $
           , ""
           , "x = 5"
           ]
-        extensions = []
         expected = unlines
           [ "{-# LANGUAGE ScopedTypeVariables #-}"
           , ""
@@ -36,4 +43,4 @@ spec = describe "ModuleStatements.interact" $
           , ""
           , "x = 5"
           ]
-    interactS extensions sscce `shouldBe` expected
+    interactS sscce `shouldBe` expected

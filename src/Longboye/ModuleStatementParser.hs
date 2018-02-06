@@ -2,8 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Longboye.ModuleStatementParser
-       ( Parsed(..)
-       , parse
+       ( parse
        , parseE
        ) where
 
@@ -38,25 +37,24 @@ import           Language.Haskell.Exts.Parser                       ( ParseResul
                                                                     , parseFilename
                                                                     )
 import qualified Longboye.Errors                 as Errors
+import           Longboye.Files                                     ( Contents( WithSubject
+                                                                              , WithoutSubject
+                                                                              )
+                                                                    )
 import           Longboye.ModuleStatement                           ( ModuleStatement )
 import qualified Longboye.ModuleStatement        as ModuleStatement
 
-data Parsed
-  = NoModuleStatement Text
-  | WithModuleStatement (Text, ModuleStatement, Text)
-  deriving (Eq, Ord, Show)
-
-parse :: [Extension] -> FilePath -> Text -> Maybe Parsed
+parse :: [Extension] -> FilePath -> Text -> Maybe (Contents ModuleStatement)
 parse foundExtensions path = eitherToMaybe . parseE foundExtensions path
 
-parseE :: [Extension] -> FilePath -> Text -> Either Text Parsed
+parseE :: [Extension] -> FilePath -> Text -> Either Text (Contents ModuleStatement)
 parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
   ParseOk parsedMod ->
     case moduleStatementMay of
       Just moduleStatement ->
-        Right . WithModuleStatement $ (prefix, moduleStatement, suffix)
+        Right . WithSubject $ (prefix, moduleStatement, suffix)
       Nothing ->
-        Right . NoModuleStatement $ source
+        Right . WithoutSubject $ source
     where
       moduleStatementMay = getModuleStatement parsedMod
       prefix             = extractPrefix parsedMod source
