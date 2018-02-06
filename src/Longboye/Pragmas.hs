@@ -4,20 +4,20 @@
 module Longboye.Pragmas ( cleanText ) where
 
 import qualified Prelude
-import           Longboye.Prelude               hiding ( interact )
+import           Longboye.Prelude
 
 import qualified Data.Text              as Text
-import           Language.Haskell.Exts                 ( ModulePragma( AnnModulePragma
-                                                                     , LanguagePragma
-                                                                     , OptionsPragma
-                                                                     )
-                                                       , Name( Ident
-                                                             , Symbol
-                                                             )
-                                                       , SrcSpanInfo
-                                                       , Tool( UnknownTool )
-                                                       )
-import           Longboye.PragmasParser                ( Pragma )
+import           Language.Haskell.Exts          ( ModulePragma( AnnModulePragma
+                                                              , LanguagePragma
+                                                              , OptionsPragma
+                                                              )
+                                                , Name( Ident
+                                                      , Symbol
+                                                      )
+                                                , SrcSpanInfo
+                                                , Tool( UnknownTool )
+                                                )
+import           Longboye.PragmasParser         ( Pragma )
 
 -- TODO: Dry up vs eg Imports.cleanText
 cleanText :: Text -> [Pragma] -> Text -> Text
@@ -29,7 +29,7 @@ cleanText prefix pragmas suffix =
     formatPragmas :: [Pragma] -> Text
     formatPragmas = Text.unlines . map (fmt padding)
 
-    padding = (subtract 8) . maximum . map (Text.length . (fmt 0)) $ finalPragmas
+    padding = subtract 8 . maximum . map (Text.length . fmt 0) $ finalPragmas
 
     fmt :: Int -> Pragma -> Text
     fmt pad (LanguagePragma _ [Ident _ name]) = "{-# LANGUAGE " <> stripPackPad pad 9 name <> " #-}"
@@ -52,20 +52,20 @@ separatePragmas :: [Pragma] -> [Pragma]
 separatePragmas = concatMap splitPragma
 
 splitPragma :: Pragma -> [Pragma]
-splitPragma pragma@(OptionsPragma _ _ _) = [pragma]
-splitPragma pragma@(AnnModulePragma _ _) = [pragma]
+splitPragma pragma@OptionsPragma {}   = [pragma]
+splitPragma pragma@AnnModulePragma {} = [pragma]
 splitPragma (LanguagePragma x idents) = map reassemble idents
   where
     reassemble :: Name SrcSpanInfo -> Pragma
-    reassemble name = (LanguagePragma x [name])
+    reassemble name = LanguagePragma x [name]
 
 sortPragmas :: [Pragma] -> [Pragma]
 sortPragmas = sortBy (comparing pragConstructor <> comparing pragName)
   where
     pragConstructor :: Pragma -> Int
-    pragConstructor (LanguagePragma _ _)  = 0
-    pragConstructor (OptionsPragma _ _ _) = 1
-    pragConstructor (AnnModulePragma _ _) = panic "unexpected ANN pragma in module front matter"
+    pragConstructor LanguagePragma {}  = 0
+    pragConstructor OptionsPragma {}   = 1
+    pragConstructor AnnModulePragma {} = panic "unexpected ANN pragma in module front matter"
 
     pragName :: Pragma -> (Prelude.String, Prelude.String)
     pragName (LanguagePragma _ [Ident _ name])  = ("", name)

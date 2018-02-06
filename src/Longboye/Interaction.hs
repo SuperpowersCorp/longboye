@@ -10,11 +10,11 @@ import           Data.Text                             ( Text )
 import qualified Data.Text              as Text
 import qualified Data.Text.IO           as TextIO
 import           Longboye.Extensions    as Extensions
-import           Longboye.Import                       ( Import )
-import           Longboye.ImportsParser                ( Parsed( NoImports
-                                                               , WithImports
-                                                               )
+import           Longboye.Files                        ( Contents( WithSubject
+                                                                 , WithoutSubject
+                                                                 )
                                                        )
+import           Longboye.Import                       ( Import )
 import qualified Longboye.ImportsParser as Parser
 import           Longboye.Transformer                  ( Transformer )
 import qualified Longboye.Transformer   as Transformer
@@ -73,11 +73,11 @@ cleanFile xform path = do
   extensions <- Extensions.find path
   case Parser.parseE extensions path contents of
     Left err                   -> return . Left $ err
-    Right (NoImports _)        -> return . Right $ ()
-    Right (WithImports parsed) -> applyCleanF xform path contents parsed
+    Right (WithoutSubject _)   -> return . Right $ ()
+    Right (WithSubject parsed) -> applyCleanF xform path contents parsed
   where pseudoRandomN = sum . map ord $ path
         cuteMsg       = cuteMessages !! randIndex
-        randIndex     = pseudoRandomN `mod` (length cuteMessages)
+        randIndex     = pseudoRandomN `mod` length cuteMessages
         cuteMessages  = [ "Licking"
                         , "Chewing"
                         , "Biting"

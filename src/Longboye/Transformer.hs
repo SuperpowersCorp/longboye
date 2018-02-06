@@ -1,4 +1,5 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Longboye.Transformer
        ( Transformer
        , Context( path
@@ -10,8 +11,10 @@ module Longboye.Transformer
        , context
        ) where
 
-import Data.Text       ( Text )
-import Longboye.Import ( Import )
+import Longboye.Prelude
+
+import Data.Text        ( Text )
+import Longboye.Import  ( Import )
 
 type Transformer = Context -> Text
 

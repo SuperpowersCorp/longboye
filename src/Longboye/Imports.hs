@@ -3,18 +3,18 @@
 
 module Longboye.Imports ( cleanText ) where
 
-import           Longboye.Prelude           hiding ( interact )
+import           Longboye.Prelude
 
-import           Data.List                         ( nub )
+import           Data.List                  ( nub )
 import qualified Data.Text        as Text
-import           Longboye.Import                   ( Import
-                                                   , members
-                                                   )
+import           Longboye.Import            ( Import
+                                            , members
+                                            )
 import qualified Longboye.Import  as Import
-import           Longboye.Member                   ( Member( NamedMember
-                                                           , OpMember
-                                                           )
-                                                   )
+import           Longboye.Member            ( Member( NamedMember
+                                                    , OpMember
+                                                    )
+                                            )
 
 cleanText :: Text -> [Import] -> Text -> Text
 cleanText prefix imports suffix =
@@ -38,7 +38,7 @@ cleanText prefix imports suffix =
         sortMember m@(NamedMember _ _) = m
         sortMember (OpMember s subs) = OpMember s (sort subs)
 
-    isPreludish = any (== "Prelude") . modComponents . Import.importedModule
+    isPreludish = elem "Prelude" . modComponents . Import.importedModule
 
     modComponents :: Text -> [Text]
     modComponents = Text.splitOn "."
@@ -51,8 +51,8 @@ cleanText prefix imports suffix =
     sortDetails i = fromMaybe (im, q) prioritySortValue
       where
         prioritySortValue
-          | modComponents im == ["Prelude"]         = Just ("30", q)
-          | any (== "Prelude") . modComponents $ im = Just ("60", q)
-          | otherwise                               = Nothing
+          | modComponents im == ["Prelude"]     = Just ("30", q)
+          | elem "Prelude" . modComponents $ im = Just ("60", q)
+          | otherwise                           = Nothing
         im = Import.importedModule i
         q  = Import.qualified i

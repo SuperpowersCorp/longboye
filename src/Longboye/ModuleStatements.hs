@@ -3,33 +3,30 @@
 
 module Longboye.ModuleStatements ( cleanText ) where
 
-import           Longboye.Prelude                     hiding ( interact
-                                                             , readFile
-                                                             , writeFile
-                                                             )
+import           Longboye.Prelude
 
 import qualified Data.Text                    as Text
 import qualified Debug
-import           Language.Haskell.Exts                       ( ModuleName( ModuleName )
-                                                             , QName( Qual
-                                                                    , Special
-                                                                    , UnQual
-                                                                    )
+import           Language.Haskell.Exts                ( ModuleName( ModuleName )
+                                                      , QName( Qual
+                                                             , Special
+                                                             , UnQual
                                                              )
-import           Language.Haskell.Exts.Syntax                ( ExportSpec( EAbs
-                                                                         , EModuleContents
-                                                                         , EThingWith
-                                                                         , EVar
-                                                                         )
-                                                             , ExportSpecList( ExportSpecList )
-                                                             , Name( Ident
-                                                                   , Symbol
-                                                                   )
-                                                             )
-import           Longboye.ModuleStatement                    ( ModuleStatement
-                                                             , exportSpecListMay
-                                                             , modName
-                                                             )
+                                                      )
+import           Language.Haskell.Exts.Syntax         ( ExportSpec( EAbs
+                                                                  , EModuleContents
+                                                                  , EThingWith
+                                                                  , EVar
+                                                                  )
+                                                      , ExportSpecList( ExportSpecList )
+                                                      , Name( Ident
+                                                            , Symbol
+                                                            )
+                                                      )
+import           Longboye.ModuleStatement             ( ModuleStatement
+                                                      , exportSpecListMay
+                                                      , modName
+                                                      )
 
 cleanText :: Text -> ModuleStatement -> Text -> Text
 cleanText prefix moduleStatement suffix =

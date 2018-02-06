@@ -9,23 +9,23 @@ module Longboye.Files
   ) where
 
 import qualified Prelude
-import           Longboye.Prelude                              hiding ( interact )
+import           Longboye.Prelude
 
-import           Data.Text                                            ( pack )
+import           Data.Text                                     ( pack )
 import qualified Data.Text                       as Text
-import           Data.Text.IO                                         ( readFile
-                                                                      , writeFile
-                                                                      )
-import           Language.Haskell.Exts.Extension                      ( Extension )
+import           Data.Text.IO                                  ( readFile
+                                                               , writeFile
+                                                               )
+import           Language.Haskell.Exts.Extension               ( Extension )
 import qualified Longboye.Extensions             as Extensions
-import           System.Directory                                     ( listDirectory
-                                                                      , removeFile
-                                                                      )
-import           System.FilePath.Posix                                ( joinPath )
-import           System.Posix.Files                                   ( getFileStatus
-                                                                      , isDirectory
-                                                                      , rename
-                                                                      )
+import           System.Directory                              ( listDirectory
+                                                               , removeFile
+                                                               )
+import           System.FilePath.Posix                         ( joinPath )
+import           System.Posix.Files                            ( getFileStatus
+                                                               , isDirectory
+                                                               , rename
+                                                               )
 
 type Cleaner a = Text -> a -> Text -> Text
 
