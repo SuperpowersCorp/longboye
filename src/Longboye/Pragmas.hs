@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Longboye.Pragmas ( interact, interactS ) where
+module Longboye.Pragmas ( clean, interact, interactS ) where
 
 import qualified Prelude
 import           Longboye.Prelude                              hiding ( interact )
@@ -25,6 +25,59 @@ import           Longboye.PragmasParser                               ( Parsed( 
                                                                       , Pragma
                                                                       )
 import qualified Longboye.PragmasParser          as Parser
+import           System.Directory                                     ( listDirectory
+                                                                      , removeFile
+                                                                      )
+import           System.FilePath.Posix                                ( joinPath )
+import           System.Posix.Files                                   ( getFileStatus
+                                                                      , isDirectory
+                                                                      , rename
+                                                                      )
+
+-- TODO: DRY up these clean* function vs eg Imports
+clean :: [FilePath] -> IO ()
+clean []           = return ()
+clean (path:paths) = cleanPath path >>= either abort continue
+  where
+    abort err = panic $ "An error occured: " <> err
+    continue  = const $ clean paths
+
+cleanPath :: FilePath -> IO (Either Text ())
+cleanPath path = do
+  stat <- getFileStatus path
+  if isDirectory stat
+    then cleanDir path
+    else cleanFile path
+
+cleanDir :: FilePath -> IO (Either Text ())
+cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
+  where
+    f (Right ()) file = cleanPath (joinPath [path, file])
+    f err _           = return err
+    hidden            = ("." `isPrefixOf`)
+
+cleanFile :: FilePath -> IO (Either Text ())
+cleanFile path = do
+  putLn $ msg <> Text.pack path <> " 🐶" -- <- mind the invisible unicode doggo
+  contents <- readFile path
+  foundExtensions <- Extensions.find path
+  case Parser.parseE foundExtensions path contents of
+    Left err                   -> return . Left $ err
+    Right (NoPragmas _)        -> return . Right $ ()
+    Right (WithPragmas parsed) -> Right <$> doCleaning path contents parsed
+  where
+    msg = "Gnawing on... "
+
+doCleaning :: FilePath -> Text -> (Text, [Pragma], Text) -> IO ()
+doCleaning path contents (prefix, pragmas, suffix) = do
+  void $ writeFile backupPath contents
+  let cleaned = cleanText prefix pragmas suffix
+  writeFile tempPath cleaned
+  void $ rename tempPath path
+  void $ removeFile backupPath
+  where
+    backupPath = path ++ ".longboye.bak"
+    tempPath   = path ++ ".longboye.tmp"
 
 interact :: IO ()
 interact = Extensions.find "." >>= Prelude.interact . interactS

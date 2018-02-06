@@ -8,6 +8,7 @@ import qualified Prelude
 import           Longboye.Prelude
 
 import qualified Longboye.Imports      as Imports
+import qualified Longboye.Pragmas      as Pragmas
 import           System.Console.Docopt            ( Docopt
                                                   , argument
                                                   , command
@@ -45,6 +46,13 @@ main_ argv = do
       ps
         | "-" `elem` ps -> panic cannotMixErr
         | otherwise     -> Imports.clean ps
+
+  when (opts `isPresent` command "pragmas") $ do
+    case opts `getAllArgs` argument "path" of
+      ["-"] -> Pragmas.interact
+      ps
+        | "-" `elem` ps -> panic cannotMixErr
+        | otherwise     -> Pragmas.clean ps
 
   where
     version      = "0.0.0.1"
