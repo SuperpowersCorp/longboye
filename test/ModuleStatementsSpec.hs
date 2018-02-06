@@ -9,8 +9,7 @@ module ModuleStatementsSpec
 import Longboye.Prelude
 
 import Data.String               ( unlines )
-import Longboye.Import.Arbitrary ()
-import Longboye.Imports          ( interactS )
+import Longboye.ModuleStatements ( interactS )
 import Test.Hspec
 
 main :: IO ()
@@ -31,9 +30,9 @@ spec = describe "ModuleStatements.interact" $
           [ "{-# LANGUAGE ScopedTypeVariables #-}"
           , ""
           , "module Foo"
-          , "  ( bar"
-          , "  , baz"
-          , "  ) where"
+          , "     ( bar"
+          , "     , baz"
+          , "     ) where"
           , ""
           , "x = 5"
           ]

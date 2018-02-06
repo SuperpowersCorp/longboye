@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Longboye.ModuleStatements ( clean, interact ) where
+module Longboye.ModuleStatements ( clean, interact, interactS ) where
 
 import qualified Prelude
 import           Longboye.Prelude                              hiding ( interact
@@ -11,6 +11,7 @@ import qualified Data.Text                       as Text
 import           Data.Text.IO                                         ( readFile
                                                                       , writeFile
                                                                       )
+import qualified Debug
 import           Language.Haskell.Exts                                ( ModuleName( ModuleName )
                                                                       , QName( Qual
                                                                              , Special
@@ -51,8 +52,8 @@ clean :: [FilePath] -> IO ()
 clean []           = return ()
 clean (path:paths) = cleanPath path >>= either abort continue
   where
-    abort err  = panic $ "An error occured: " <> err
-    continue   = const $ clean paths
+    abort err = panic $ "An error occured: " <> err
+    continue  = const $ clean paths
 
 cleanPath :: FilePath -> IO (Either Text ())
 cleanPath path = do
@@ -108,45 +109,48 @@ interactS extensions contents = Text.unpack $
 
 cleanText :: Text -> ModuleStatement -> Text -> Text
 cleanText prefix moduleStatement suffix =
-  formatPrefix prefix <> formatModuleStatement moduleStatement <> formatSuffix suffix
+  formatPrefix (Debug.log "prefix" prefix)
+  <> formatModuleStatement moduleStatement
+  <> formatSuffix (Debug.log "suffix" suffix)
   where
     formatPrefix s =
       if Text.null s'
         then s'
-        else s' <> "\n"
+        else s' <> "\n\n"
       where
         s' = Text.stripEnd s
 
-    formatSuffix s = "\n" <> s
+    formatSuffix s =
+      if Text.null s'
+        then s'
+        else "\n" <> s'
+      where
+        s' = Text.stripStart s
 
     formatModuleStatement :: ModuleStatement -> Text
     formatModuleStatement ms = "module "
                                 <> fullModuleName
                                 <> exportList
                                 <> " where\n"
-                                <> "\n----------------------------------------------------------------\n"
-                                <> debugModuleStatement ms
       where
         fullModuleName :: Text
-        fullModuleName =
-          case modName ms of
-            ModuleName _ n -> Text.pack n
+        fullModuleName = Debug.log "fullModuleName" $ case modName ms of
+          ModuleName _ n -> Text.pack n
 
         exportList :: Text
-        exportList =
-          case exportSpecListMay ms of
-            Nothing         -> "[NO EXPORT LISTS - REMOVE ME]"
-            Just (ExportSpecList _ [spec]) ->
-              " ( " <> renderExport spec <> " )"
-            Just (ExportSpecList _ specs) ->
-              (<> multiSuffix)
-              . (multiPrefix <>)
-              . Text.intercalate "\n       , "
-              . map renderExport
-              $ specs
+        exportList = case exportSpecListMay ms of
+          Nothing         -> "[NO EXPORT LISTS - REMOVE ME]"
+          Just (ExportSpecList _ [spec]) ->
+            " ( " <> renderExport spec <> " )"
+          Just (ExportSpecList _ specs) ->
+            (<> multiSuffix)
+            . (multiPrefix <>)
+            . Text.intercalate "\n     , "
+            . map renderExport
+            $ specs
 
-        multiPrefix = "\n       ( "
-        multiSuffix = "\n       )"
+        multiPrefix = "\n     ( "
+        multiSuffix = "\n     )"
 
 renderExport :: ExportSpec a -> Text
 renderExport (EVar _ evar)              = renderEVar evar
@@ -155,8 +159,7 @@ renderExport (EThingWith _ _wc _qn _cn) = panic "[EThingWith:NOT IMPL]"
 renderExport (EModuleContents _ _mn)    = panic "[EModuleContents:NOT IMPL]"
 
 renderEVar :: QName a -> Text
-renderEVar (Qual _ m n) =
-  "[RENDERED_EXPORT:EVar-Qual:m=" <> mm <> ":n=" <> nn <> "]"
+renderEVar (Qual _ m n) = "[RENDERED_EXPORT:EVar-Qual:m=" <> mm <> ":n=" <> nn <> "]"
   where
     mm = renderModName m
     nn = renderName n
@@ -169,6 +172,3 @@ renderModName (ModuleName _ n') = "[MODNAME:" <> Text.pack n' <> "]"
 renderName :: Name a -> Text
 renderName (Ident _ n)  = Text.pack n
 renderName (Symbol _ s) = "(" <> Text.pack s <> ")"
-
-debugModuleStatement :: Show a => a -> Text
-debugModuleStatement ms = "[[[" <> show ms <> "]]]"
