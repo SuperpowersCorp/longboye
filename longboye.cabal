@@ -49,6 +49,8 @@ library
                     Longboye.ModuleStatement
                     Longboye.ModuleStatementParser
                     Longboye.ModuleStatements
+                    Longboye.Pragmas
+                    Longboye.PragmasParser
                     Longboye.Prelude
   default-language: Haskell2010
 
@@ -91,8 +93,11 @@ test-suite longboye-test
                     Longboye.ModuleStatement
                     Longboye.ModuleStatementParser
                     Longboye.ModuleStatements
+                    Longboye.Pragmas
+                    Longboye.PragmasParser
                     Longboye.Prelude
                     Longboye.Import.Arbitrary
                     Longboye.Member.Arbitrary
-                    LongboyeSpec
+                    ImportsSpec
+                    PragmasSpec
   default-language: Haskell2010

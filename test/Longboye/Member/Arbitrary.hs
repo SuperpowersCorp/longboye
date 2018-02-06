@@ -3,12 +3,13 @@
 
 module Longboye.Member.Arbitrary () where
 
+import Longboye.Prelude
+
 import Data.Text.Arbitrary ()
 import Longboye.Member     ( Member( NamedMember
                                    , OpMember
                                    )
                            )
-import Longboye.Prelude
 import Test.QuickCheck     ( Arbitrary
                            , arbitrary
                            )

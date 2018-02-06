@@ -98,6 +98,11 @@ We love feedback, so feel free to chime in on any of the issues.
     ...
     $ longboye --help
 
+## Installation
+
+    $ make build install
+    $ longboye --help
+
 ## Emacs Integration
 
 Put something like this in the appropriate spot in your
