@@ -29,11 +29,9 @@ import           System.Posix.Files                            ( getFileStatus
 
 type Cleaner a = Text -> a -> Text -> Text
 
-
 type Parser a = [Extension] -> FilePath -> Text -> Either ParserError (Contents a)
 
 type Interactor a = [Extension] -> Prelude.String -> Prelude.String
-
 
 data Contents a
   = WithoutSubject Text
