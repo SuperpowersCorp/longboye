@@ -72,13 +72,15 @@ cleanDir path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Righ
 
 cleanFile :: FilePath -> IO (Either Text ())
 cleanFile path = do
-  putStrLn $ "Processing file: " ++ path
+  putLn $ msg <> Text.pack path <> " 🐶" -- <- mind the invisible unicode doggo
   contents <- readFile path
   foundExtensions <- Extensions.find path
   case Parser.parseE foundExtensions path contents of
-    Left err                           -> return . Left $ err
+    Left err                   -> return . Left $ err
     Right (NoModuleStatement _)        -> return . Right $ ()
     Right (WithModuleStatement parsed) -> Right <$> doCleaning path contents parsed
+  where
+    msg = "Gnawing on... "
 
 doCleaning :: FilePath -> Text -> (Text, ModuleStatement, Text) -> IO()
 doCleaning path contents (prefix, moduleStatement, suffix) = do
