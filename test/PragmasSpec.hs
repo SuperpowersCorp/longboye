@@ -21,8 +21,10 @@ spec = do
     it "basics" $ do
       let sscce = unlines
             [ "{-# LANGUAGE NoImplicitPrelude #-}"
-            , "{- # OPTIONS_GHC -fno-warn-foo #-}"
-            , "{- # LANGUAGE ScopedTypeVariables, LambdaCase #-}"
+            , "{-# OPTIONS_GHC -fno-warn-foo #-}"
+            , "{-# OPTIONS someThing #-}"
+            , "{-# OPTIONS someOtherThing #-}"
+            , "{-# LANGUAGE ScopedTypeVariables, LambdaCase #-}"
             , "  {-#  LANGUAGE  FlexibleInstances    #-} "
             , ""
             , "module Foo where"
@@ -30,11 +32,13 @@ spec = do
             ]
           extensions = []
           expected = unlines
-            [ "{-# LANGUAGE NoImplicitPrelude   #-}"
-            , "{-# LANGUAGE FlexibleInstances   #-} "
-            , "{-# LANGUAGE LambdaCase          #-} "
-            , "{-# LANGUAGE ScopedTypeVariables #-} "
-            , "{- # OPTIONS_GHC -fno-warn-foo   #-}"
+            [ "{-# LANGUAGE FlexibleInstances   #-}"
+            , "{-# LANGUAGE LambdaCase          #-}"
+            , "{-# LANGUAGE NoImplicitPrelude   #-}"
+            , "{-# LANGUAGE ScopedTypeVariables #-}"
+            , "{-# OPTIONS someOtherThing       #-}"
+            , "{-# OPTIONS someThing            #-}"
+            , "{-# OPTIONS_GHC -fno-warn-foo    #-}"
             , ""
             , "module Foo where"
             , "x = 5"

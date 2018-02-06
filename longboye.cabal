@@ -45,6 +45,8 @@ library
                     Longboye.ImportsParser
                     Longboye.Main
                     Longboye.Member
+                    Longboye.Pragmas
+                    Longboye.PragmasParser
                     Longboye.Prelude
   default-language: Haskell2010
 
@@ -83,6 +85,8 @@ test-suite longboye-test
                     Longboye.ImportsParser
                     Longboye.Main
                     Longboye.Member
+                    Longboye.Pragmas
+                    Longboye.PragmasParser
                     Longboye.Prelude
                     Longboye.Import.Arbitrary
                     Longboye.Member.Arbitrary

@@ -7,7 +7,6 @@ import qualified Prelude
 import           Longboye.Prelude
 
 import qualified Data.Text                       as Text
-import qualified Debug
 import           Language.Haskell.Exts                   ( Module( Module
                                                                  , XmlHybrid
                                                                  , XmlPage
@@ -87,6 +86,6 @@ extractSuffix (Module _ _ pragmaDecls _ _) source =
     n = srcSpanEndLine . srcInfoSpan . ann . Prelude.last $ pragmaDecls
 
 extractPragmas :: Module SrcSpanInfo -> [ModulePragma SrcSpanInfo]
-extractPragmas (Module _l _ decls _ _) = Debug.log "PragmasParser:decls" decls
+extractPragmas (Module _l _ decls _ _) = decls
 extractPragmas XmlHybrid {}            = notSupported "XmlHybrid"
 extractPragmas XmlPage {}              = notSupported "XmlPage"
