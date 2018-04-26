@@ -15,6 +15,14 @@ hlint:
 install:
 	stack install .
 
+longboye-all:
+	longboye imports app
+	longboye imports src
+	longboye imports test
+	longboye pragmas app
+	longboye pragmas src
+	longboye pragmas test
+
 run:
 	stack exec $(EXE) $(ARGS)
 
@@ -33,6 +41,7 @@ watch-test:
 b: build
 hl: hlint
 i: install
+lba: longboye-all
 r: run
 s: setup
 t: test
