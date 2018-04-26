@@ -9,7 +9,9 @@ module ImportsSpec
 import qualified Prelude
 import           Longboye.Prelude
 
-import           Data.Text                           ( isInfixOf )
+import           Data.Text                           ( isInfixOf
+                                                     , lines
+                                                     )
 import           Longboye.Files                      ( mkInteractor )
 import           Longboye.Import                     ( Import )
 import qualified Longboye.Import           as Import
@@ -37,7 +39,9 @@ spec = do
       interactS sscce `shouldBe` ("\n\n" <> sscce <> "\n\n")
 
   describe "Imports.format" $ do
-    it "Never stacks closing parens" $ property $ prop_neverStacksParensAcrossLines
+
+    it "Never stacks closing parens" $ property $
+      prop_neverStacksParensAcrossLines
 
     it "sorts members" $ do
       let imports      = "import Foo ( foo, bar, bif, baz )"
@@ -73,8 +77,11 @@ spec = do
 
 prop_neverStacksParensAcrossLines :: Bool -> Bool -> Int -> Int -> Import -> Bool
 prop_neverStacksParensAcrossLines anyQ anyH maxModLen maxAsLen imp =
-  -- TODO: this should actually fail because of single line imports but it's not
-  not $ ") )" `isInfixOf` (Import.format anyQ anyH maxModLen maxAsLen imp)
+  singleLine || not stacked
+  where
+    singleLine = (== 1) . length . lines $ formatted
+    stacked    = ") )" `isInfixOf` formatted
+    formatted  = Import.format anyQ anyH maxModLen maxAsLen imp
 
 _tmpTest :: IO ()
 _tmpTest =
