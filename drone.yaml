@@ -1,0 +1,6 @@
+pipeline:
+  build:
+    image: fpco/stack-build:lts-9.21
+    commands:
+      - stack build
+      - stack test
