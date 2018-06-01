@@ -11,6 +11,7 @@ module Longboye.Files
 import qualified Prelude
 import           Longboye.Prelude
 
+import           Data.List                                     ( isSuffixOf )
 import           Data.Text                                     ( pack )
 import qualified Data.Text                       as Text
 import           Data.Text.IO                                  ( readFile
@@ -55,11 +56,13 @@ cleanPath parse clean path = do
     else cleanFile parse clean path
 
 cleanDir :: Parser a -> Cleaner a -> FilePath -> IO (Either Text ())
-cleanDir parse clean path = (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
+cleanDir parse clean path =
+  (filter unHiddenHaskell <$> listDirectory path) >>= foldM f (Right ())
   where
     f (Right ()) file = cleanPath parse clean (joinPath [path, file])
     f err _           = return err
     hidden            = ("." `isPrefixOf`)
+    unHiddenHaskell x = (not . hidden) x && ".hs" `isSuffixOf` x
 
 cleanFile :: Parser a -> Cleaner a -> FilePath -> IO (Either Text ())
 cleanFile parse clean path = do
