@@ -53,16 +53,17 @@ cleanPath parse clean path = do
   stat <- getFileStatus path
   if isDirectory stat
     then cleanDir  parse clean path
-    else cleanFile parse clean path
+    else if (".hs" `isSuffixOf` path)
+           then cleanFile parse clean path
+           else return $ Right ()
 
 cleanDir :: Parser a -> Cleaner a -> FilePath -> IO (Either Text ())
 cleanDir parse clean path =
-  (filter unHiddenHaskell <$> listDirectory path) >>= foldM f (Right ())
+  (filter (not . hidden) <$> listDirectory path) >>= foldM f (Right ())
   where
     f (Right ()) file = cleanPath parse clean (joinPath [path, file])
     f err _           = return err
     hidden            = ("." `isPrefixOf`)
-    unHiddenHaskell x = (not . hidden) x && ".hs" `isSuffixOf` x
 
 cleanFile :: Parser a -> Cleaner a -> FilePath -> IO (Either Text ())
 cleanFile parse clean path = do
