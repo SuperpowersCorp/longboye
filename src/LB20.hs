@@ -79,26 +79,16 @@ main = execParser opts >>= \case
 
     woof :: Doc
     woof = mconcat
-      [ text "Longboye"
-      , linebreak
-      , text ""
-      , linebreak
-      , text "             /)-_-(\\"
-      , linebreak
-      , text "              (o o)        \"Everything I know, I learned from dogs.\""
-      , linebreak
-      , text "      .-----__/\\o/                             - Nora Roberts"
-      , linebreak
-      , text "     /  __      /"
-      , linebreak
-      , text " \\__/\\ /  \\_\\ |/"
-      , linebreak
-      , text "      \\     ||"
-      , linebreak
-      , text "      //     ||"
-      , linebreak
-      , text "      |\\     |\\"
-      , linebreak
+      [ text "Longboye"                                                               , linebreak
+      , text ""                                                                       , linebreak
+      , text "             /)-_-(\\"                                                  , linebreak
+      , text "              (o o)        \"Everything I know, I learned from dogs.\"" , linebreak
+      , text "      .-----__/\\o/                             - Nora Roberts"         , linebreak
+      , text "     /  __      /"                                                      , linebreak
+      , text " \\__/\\ /  \\_\\ |/"                                                   , linebreak
+      , text "      \\     ||"                                                        , linebreak
+      , text "      //     ||"                                                        , linebreak
+      , text "      |\\     |\\"                                                      , linebreak
       ]
 
 formatAll :: FilePath -> [Formatter] -> IO ()
@@ -113,6 +103,10 @@ formatAll path formatters = do
   where
     doggo = " 🐶" -- <- mind the invisible unicode doggo
 
+
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! --
+--   TODO: keep comment positions in sync with other changes...     --
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! --
 formatOne :: [Extension] -> [Formatter] -> FilePath -> IO ()
 formatOne exts formatters path = do
   source <- readFile path
