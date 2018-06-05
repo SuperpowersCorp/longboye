@@ -14,7 +14,7 @@ import           Data.Text                                      ( pack
 import           Language.Haskell.Exts                          ( SrcSpanInfo
                                                                 , Module
                                                                 , parseFileContentsWithMode
-                                                                , prettyPrint
+                                                                , exactPrint
                                                                 )
 import           Language.Haskell.Exts.Extension                ( Extension
                                                                 , Language(Haskell2010)
@@ -125,7 +125,12 @@ formatOne exts formatters path = do
   source <- readFile path
   case parseSource exts path source of
     ParseFailed srcLoc' msg -> panic $ "FAILURE at " <> show srcLoc' <> ": " <> pack msg
-    ParseOk mod -> writeFile path . renderParsed . applyFormatters formatters $ mod
+    ParseOk mod -> safeWriteFile path . renderParsed . applyFormatters formatters $ mod
+  where
+    renderParsed :: Module SrcSpanInfo -> String
+    renderParsed mod = exactPrint mod comments
+      where
+        comments = [] -- TODO: actual comments
 
 applyFormatters :: [Formatter] -> Module SrcSpanInfo -> Module SrcSpanInfo
 applyFormatters formatters mod = foldl f mod formatters
@@ -138,11 +143,12 @@ parseSource :: [Extension] -> FilePath -> Text -> ParseResult (Module SrcSpanInf
 parseSource exts path = parseFileContentsWithMode parseMode . unpack
   where
     parseMode = defaultParseMode
-      { baseLanguage          = Haskell2010
+      { baseLanguage          = Haskell2010           -- TODO read from cabal
       , ignoreLanguagePragmas = False
       , extensions            = exts
       , parseFilename         = path
       }
 
-renderParsed :: Module SrcSpanInfo -> Text
-renderParsed = pack . prettyPrint
+-- TODO: the whole swapping in place dance
+safeWriteFile :: FilePath -> String -> IO ()
+safeWriteFile path = writeFile path . pack
