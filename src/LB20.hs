@@ -4,59 +4,57 @@
 
 module LB20 where
 
-import           Prelude                                        ( String )
-import           Longboye.Prelude                        hiding ( mod )
-import qualified Streaming.Prelude                as S
+import           Prelude                                           ( String )
+import           Longboye.Prelude                           hiding ( mod )
+import qualified Streaming.Prelude               as S
 
-import           Data.Text                                      ( pack
-                                                                , unpack
-                                                                )
-import           Language.Haskell.Exts                          ( Comment
-                                                                , Module
-                                                                , SrcSpanInfo
-                                                                , exactPrint
-                                                                , parseFileContentsWithComments
-                                                                , parseFileContentsWithMode
-                                                                )
-import           Language.Haskell.Exts.Extension                ( Extension
-                                                                , Language(Haskell2010)
-                                                                )
-import qualified Longboye.Extensions              as Extensions
+import           Data.Text                                         ( pack
+                                                                   , unpack
+                                                                   )
+import qualified LB20.Imports                    as Imports
+import qualified LB20.Pragmas                    as Pragmas
+import           Language.Haskell.Exts                             ( Comment
+                                                                   , Module
+                                                                   , SrcSpanInfo
+                                                                   , exactPrint
+                                                                   , parseFileContentsWithComments
+                                                                   , parseFileContentsWithMode
+                                                                   )
+import           Language.Haskell.Exts.Extension                   ( Extension
+                                                                   , Language( Haskell2010 )
+                                                                   )
+import           Language.Haskell.Exts.Parser                      ( ParseResult( ParseFailed
+                                                                                , ParseOk
+                                                                                )
+                                                                   , baseLanguage
+                                                                   , defaultParseMode
+                                                                   , extensions
+                                                                   , ignoreLanguagePragmas
+                                                                   , parseFilename
+                                                                   )
+import qualified Longboye.Extensions             as Exts
 import           Options.Applicative
 import           Streaming.Files
-import           System.Posix.Files                             ( isDirectory )
-import           Text.PrettyPrint.ANSI.Leijen                   ( Doc
-                                                                , linebreak
-                                                                , text
-                                                                )
-import           Language.Haskell.Exts.Parser                   ( ParseResult( ParseFailed
-                                                                             , ParseOk
-                                                                             )
-                                                                , baseLanguage
-                                                                , defaultParseMode
-                                                                , extensions
-                                                                , ignoreLanguagePragmas
-                                                                , parseFilename
-                                                                )
+import           System.Posix.Files                                ( isDirectory )
+import           Text.PrettyPrint.ANSI.Leijen                      ( Doc
+                                                                   , linebreak
+                                                                   , text
+                                                                   )
 
 data Cmd
   = CmdAll FilePath
   | CmdImports FilePath
   | CmdPragmas FilePath
 
-data Formatter = Formatter
-
-data Debug = DebugOff | DebugOn
-
-debugMode :: Debug
--- debugMode = DebugOff
-debugMode = DebugOn
+type Formatter = Module SrcSpanInfo -> Module SrcSpanInfo
 
 main :: IO ()
 main = execParser opts >>= \case
-  CmdAll     path -> formatAll path allFormatters
-  CmdImports path -> formatAll path [importsFormatter]
-  CmdPragmas path -> formatAll path [pragmasFormatter]
+  CmdAll     path -> formatAll path [ Imports.format
+                                    , Pragmas.format
+                                    ]
+  CmdImports path -> formatAll path [ Imports.format ]
+  CmdPragmas path -> formatAll path [ Pragmas.format ]
   where
     opts :: ParserInfo Cmd
     opts = info (helper <*> parseCmd) (fullDesc <> headerDoc (Just woof))
@@ -78,10 +76,6 @@ main = execParser opts >>= \case
 
     info' :: Parser a -> String -> ParserInfo a
     info' p desc = info (helper <*> p) (fullDesc <> progDesc desc)
-
-    allFormatters = [importsFormatter, pragmasFormatter]
-    importsFormatter = Formatter
-    pragmasFormatter = Formatter
 
     woof :: Doc
     woof = mconcat
@@ -109,24 +103,22 @@ main = execParser opts >>= \case
 
 formatAll :: FilePath -> [Formatter] -> IO ()
 formatAll path formatters = do
-  foundExtensions <- Extensions.find path
+  foundExtensions <- Exts.find path
   S.mapM_ (formatOne foundExtensions formatters)
     . S.map fst
-    . S.chain (debugLn . ("Formatting: " <>) . pack . fst)
+    . S.chain (putLn . ("Gnawing on... " <>) . (<> doggo) . pack . fst)
     . S.filter (not . isDirectory . snd)
-    . S.chain (debugLn . ("Processing: " <>) . pack . fst)
     . tree
     $ path
   where
-    debugLn s = case debugMode of
-      DebugOn  -> putLn $ "DEBUG: " <> s
-      DebugOff -> return ()
+    doggo = " 🐶" -- <- mind the invisible unicode doggo
 
 formatOne :: [Extension] -> [Formatter] -> FilePath -> IO ()
 formatOne exts formatters path = do
   source <- readFile path
   case parseSource exts path source of
-    ParseFailed srcLoc' msg -> panic $ "FAILURE at " <> show srcLoc' <> ": " <> pack msg
+    ParseFailed srcLoc' msg ->
+      panic $ "FAILURE at " <> show srcLoc' <> ": " <> pack msg
     ParseOk (mod, comments) ->
       safeWriteFile path . renderParsed comments . applyFormatters formatters $ mod
   where
@@ -134,11 +126,7 @@ formatOne exts formatters path = do
     renderParsed = flip exactPrint
 
 applyFormatters :: [Formatter] -> Module SrcSpanInfo -> Module SrcSpanInfo
-applyFormatters formatters mod = foldl f mod formatters
-  where
-    f :: Module SrcSpanInfo -> Formatter -> Module SrcSpanInfo
-    f mod' _formatter = mod'
-    -- TODO: actually apply formatters
+applyFormatters formatters mod = foldl (&) mod formatters
 
 parseSource :: [Extension] -> FilePath -> Text
             -> ParseResult (Module SrcSpanInfo, [Comment])
