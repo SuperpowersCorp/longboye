@@ -11,10 +11,12 @@ import qualified Streaming.Prelude                as S
 import           Data.Text                                      ( pack
                                                                 , unpack
                                                                 )
-import           Language.Haskell.Exts                          ( SrcSpanInfo
+import           Language.Haskell.Exts                          ( Comment
                                                                 , Module
-                                                                , parseFileContentsWithMode
+                                                                , SrcSpanInfo
                                                                 , exactPrint
+                                                                , parseFileContentsWithComments
+                                                                , parseFileContentsWithMode
                                                                 )
 import           Language.Haskell.Exts.Extension                ( Extension
                                                                 , Language(Haskell2010)
@@ -125,12 +127,11 @@ formatOne exts formatters path = do
   source <- readFile path
   case parseSource exts path source of
     ParseFailed srcLoc' msg -> panic $ "FAILURE at " <> show srcLoc' <> ": " <> pack msg
-    ParseOk mod -> safeWriteFile path . renderParsed . applyFormatters formatters $ mod
+    ParseOk (mod, comments) ->
+      safeWriteFile path . renderParsed comments . applyFormatters formatters $ mod
   where
-    renderParsed :: Module SrcSpanInfo -> String
-    renderParsed mod = exactPrint mod comments
-      where
-        comments = [] -- TODO: actual comments
+    renderParsed :: [Comment] -> Module SrcSpanInfo -> String
+    renderParsed = flip exactPrint
 
 applyFormatters :: [Formatter] -> Module SrcSpanInfo -> Module SrcSpanInfo
 applyFormatters formatters mod = foldl f mod formatters
@@ -139,8 +140,12 @@ applyFormatters formatters mod = foldl f mod formatters
     f mod' _formatter = mod'
     -- TODO: actually apply formatters
 
-parseSource :: [Extension] -> FilePath -> Text -> ParseResult (Module SrcSpanInfo)
-parseSource exts path = parseFileContentsWithMode parseMode . unpack
+parseSource :: [Extension] -> FilePath -> Text
+            -> ParseResult (Module SrcSpanInfo, [Comment])
+parseSource exts path src = do
+  mod <- parseFileContentsWithMode parseMode . unpack $ src
+  (_, comments) <- parseFileContentsWithComments parseMode . unpack $ src
+  return $ (mod, comments)
   where
     parseMode = defaultParseMode
       { baseLanguage          = Haskell2010           -- TODO read from cabal
