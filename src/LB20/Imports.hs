@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes        #-}
 
-module LB20.Imports ( format ) where
+module LB20.Imports ( adjustLocs, format ) where
 
 import Longboye.Prelude      hiding ( get
                                     , mod
@@ -19,18 +19,21 @@ format mod
   | otherwise    = replaceImports imports' mod'
   where
     imports      = extractImports mod
-    mod'         = adjustLocs (end' - end) mod
+    mod'         = adjustLocs (adjustStart, end' - end) mod
     (_, end')    = rangeOf imports'
     imports'     = formatImports (start, end) imports
     (start, end) = rangeOf imports
+    adjustStart  = panic "adjustStart not impl"
 
--- TODO: update srcInfoPoints too?
-adjustLocs :: Int -> Module SrcSpanInfo -> Module SrcSpanInfo
-adjustLocs offset = adjust offset srcSpanEndLineL . adjust offset srcSpanStartLineL
+-- TODO: Do we need to update srcInfoPoints too?
+-- TODO: we could just pass in the starting line to adjust
+adjustLocs :: (Int, Int) -> Module SrcSpanInfo -> Module SrcSpanInfo
+adjustLocs params = adjust params srcSpanEndLineL . adjust params srcSpanStartLineL
 
--- TODO: we need to only touch the appropriate decls...
-adjust :: Int -> Lens' SrcSpan Int -> Module SrcSpanInfo -> Module SrcSpanInfo
-adjust offset l m = m
+-- TODO: should be able to restrict the traversal to one that is filtered
+--       to just those with srcSpanStartLine > start
+adjust :: (Int, Int) -> Lens' SrcSpan Int -> Module SrcSpanInfo -> Module SrcSpanInfo
+adjust (_start, offset) l m = m
   & ((biplate :: Traversal' (Module SrcSpanInfo) SrcSpanInfo) . srcSpanL . l) +~ offset
 
 extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
@@ -57,18 +60,3 @@ rangeOf imports = case head imports of
 replaceImports :: [ImportDecl SrcSpanInfo] -> Module SrcSpanInfo -> Module SrcSpanInfo
 replaceImports imports (Module l h p _ d) = Module l h p imports d
 replaceImports _ _                        = notSupported "XmlHybrid/XmlPage"
-
--- So in theory, what we need to do is:
---
--- 1. Identify the first import
--- 2. Identify the last import.
--- 3. Grab the imports
--- 4. Adjust the positions of all the imports to be laid out right
--- 5. Adjust the positions of all the SrcSpan's after this accordingly.
---
--- Easy, right?
---
-
--- Is it worth doing something like we are currently doing where we grab
--- "sections" of the document and separate the process of processing the
--- section from the process of re-assembling the sections?
