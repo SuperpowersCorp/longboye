@@ -8,4 +8,6 @@ import Longboye.Prelude
 import Language.Haskell.Exts
 
 format :: Module SrcSpanInfo -> Module SrcSpanInfo
-format = panic "format undefined"
+format = identity -- TODO: panic "format undefined"
+
+-- TODO: Do imports first.

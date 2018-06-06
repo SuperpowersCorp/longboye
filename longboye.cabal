@@ -30,7 +30,9 @@ library
                   , docopt
                   , filepath
                   , haskell-src-exts
+                  , haskell-src-exts-prisms
                   , hspec
+                  , lens
                   , megaparsec
                   , optparse-applicative
                   , protolude
@@ -68,6 +70,7 @@ executable longboye
   ghc-options:      -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
   build-depends:    ansi-wl-pprint
                   , base
+                  , lens
                   , longboye
                   , optparse-applicative
                   , streaming
@@ -86,7 +89,9 @@ test-suite longboye-test
                   , directory
                   , filepath
                   , haskell-src-exts
+                  , haskell-src-exts-prisms
                   , hspec
+                  , lens
                   , longboye
                   , optparse-applicative
                   , protolude
