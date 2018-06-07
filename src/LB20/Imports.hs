@@ -10,8 +10,8 @@ import Longboye.Prelude      hiding ( get
 
 import Control.Lens          hiding ( set )
 import Data.Data.Lens               ( biplate )
-import Language.Haskell.Exts
 import LB20.Lenses
+import Language.Haskell.Exts
 
 format :: Module SrcSpanInfo -> Module SrcSpanInfo
 format mod
@@ -25,23 +25,39 @@ format mod
     (start, end) = rangeOf imports
     adjustStart  = panic "adjustStart not impl"
 
--- TODO: Do we need to update srcInfoPoints too?
--- TODO: we could just pass in the starting line to adjust
 adjustLocs :: (Int, Int) -> Module SrcSpanInfo -> Module SrcSpanInfo
-adjustLocs params = adjust params srcSpanEndLineL . adjust params srcSpanStartLineL
+adjustLocs params@(start, _offset) mod@(Module l h p i _) = mod'
+  where
+    mod' = Module l' h' p' i' d'
+    l' = l
+    -- l' = l & (srcSpanL . srcSpanEndLineL) +~ offset
 
--- TODO: should be able to restrict the traversal to one that is filtered
---       to just those with srcSpanStartLine > start
-adjust :: (Int, Int) -> Lens' SrcSpan Int -> Module SrcSpanInfo -> Module SrcSpanInfo
+    h' = h
+    p' = p
+    i' = i
+
+    Module _ _ _ _ d' = mod
+      & adjust params (srcSpanL . srcSpanEndLineL)
+      . adjust params (srcSpanL . srcSpanStartLineL)
+      . adjust params (srcInfoPointsL . traverse . srcSpanStartLineL . filtered (>start))
+
+adjustLocs _ _ = panic "XmlHybrid/XmlPage not supported"
+
+adjust :: (Int, Int)
+       -> Traversal' SrcSpanInfo Int
+       -> Module SrcSpanInfo
+       -> Module SrcSpanInfo
 adjust (_start, offset) l m = m
-  & ((biplate :: Traversal' (Module SrcSpanInfo) SrcSpanInfo) . srcSpanL . l) +~ offset
+  & ((biplate :: Traversal' (Module SrcSpanInfo) SrcSpanInfo) . l) +~ offset
 
 extractImports :: Module SrcSpanInfo -> [ImportDecl SrcSpanInfo]
 extractImports (Module _l _ _ decls _) = decls
 extractImports XmlHybrid {}            = notSupported "XmlHybrid"
 extractImports XmlPage {}              = notSupported "XmlPage"
 
-formatImports :: (Int, Int) -> [ImportDecl SrcSpanInfo] -> [ImportDecl SrcSpanInfo]
+formatImports :: (Int, Int)
+              -> [ImportDecl SrcSpanInfo]
+              -> [ImportDecl SrcSpanInfo]
 formatImports (_start, _end) imports = imports
   -- TODO: actually format the imports
 

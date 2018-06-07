@@ -102,24 +102,28 @@ test-suite longboye-test
                   , text
                   , unix
   other-modules:    Debug
-                    Longboye
-                    Longboye.Errors
-                    Longboye.Extensions
-                    Longboye.Files
-                    Longboye.Import
-                    Longboye.Imports
-                    Longboye.ImportsParser
-                    Longboye.Main
-                    Longboye.Member
-                    Longboye.ModuleStatement
-                    Longboye.ModuleStatementParser
-                    Longboye.ModuleStatements
-                    Longboye.Pragmas
-                    Longboye.PragmasParser
-                    Longboye.Prelude
-                    Longboye.Import.Arbitrary
-                    Longboye.Member.Arbitrary
-                    ImportsSpec
-                    ModuleStatementsSpec
-                    PragmasSpec
+                  , LB20
+                  , LB20.Imports
+                  , LB20.Lenses
+                  , LB20.Pragmas
+                  , Longboye
+                  , Longboye.Errors
+                  , Longboye.Extensions
+                  , Longboye.Files
+                  , Longboye.Import
+                  , Longboye.Imports
+                  , Longboye.ImportsParser
+                  , Longboye.Main
+                  , Longboye.Member
+                  , Longboye.ModuleStatement
+                  , Longboye.ModuleStatementParser
+                  , Longboye.ModuleStatements
+                  , Longboye.Pragmas
+                  , Longboye.PragmasParser
+                  , Longboye.Prelude
+                  , Longboye.Import.Arbitrary
+                  , Longboye.Member.Arbitrary
+                  , ImportsSpec
+                  , ModuleStatementsSpec
+                  , PragmasSpec
   default-language: Haskell2010

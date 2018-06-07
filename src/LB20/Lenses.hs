@@ -1,10 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module LB20.Lenses
-     ( srcSpanL
-     , srcSpanEndLineL
-     , srcSpanStartLineL
-     ) where
+module LB20.Lenses where
 
 import Longboye.Prelude
 
@@ -23,8 +19,14 @@ srcSpanEndLineL = lens srcSpanEndLine set
     set :: SrcSpan -> Int -> SrcSpan
     set (SrcSpan fn sl sc _ ec) el = SrcSpan fn sl sc el ec
 
+srcInfoPointsL :: Lens' SrcSpanInfo [SrcSpan]
+srcInfoPointsL = lens srcInfoPoints set
+  where
+    set :: SrcSpanInfo -> [SrcSpan] -> SrcSpanInfo
+    set (SrcSpanInfo x _) y = SrcSpanInfo x y
+
 srcSpanStartLineL :: Lens' SrcSpan Int
 srcSpanStartLineL = lens srcSpanStartLine set
   where
     set :: SrcSpan -> Int -> SrcSpan
-    set (SrcSpan fn sl sc _ ec) el = SrcSpan fn sl sc el ec
+    set (SrcSpan fn _ sc el ec) sl = SrcSpan fn sl sc el ec
