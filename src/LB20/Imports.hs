@@ -19,11 +19,10 @@ format mod
   | otherwise    = replaceImports imports' mod'
   where
     imports      = extractImports mod
-    mod'         = adjustLocs (adjustStart, end' - end) mod
+    mod'         = adjustLocs (start, end' - end) mod
     (_, end')    = rangeOf imports'
     imports'     = formatImports (start, end) imports
     (start, end) = rangeOf imports
-    adjustStart  = panic "adjustStart not impl"
 
 adjustLocs :: (Int, Int) -> Module SrcSpanInfo -> Module SrcSpanInfo
 adjustLocs params@(start, _offset) mod@(Module l h p i _) = mod'
@@ -37,9 +36,10 @@ adjustLocs params@(start, _offset) mod@(Module l h p i _) = mod'
     i' = i
 
     Module _ _ _ _ d' = mod
-      & adjust params (srcSpanL . srcSpanEndLineL)
-      . adjust params (srcSpanL . srcSpanStartLineL)
-      . adjust params (srcInfoPointsL . traverse . srcSpanStartLineL . filtered (>start))
+      & ( adjust params (srcSpanL . srcSpanEndLineL)
+        . adjust params (srcSpanL . srcSpanStartLineL)
+        . adjust params (srcInfoPointsL . traverse . srcSpanStartLineL . filtered (>start))
+        )
 
 adjustLocs _ _ = panic "XmlHybrid/XmlPage not supported"
 
