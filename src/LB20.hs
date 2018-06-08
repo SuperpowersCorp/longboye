@@ -8,6 +8,7 @@ import           Prelude                                           ( String )
 import           Longboye.Prelude                           hiding ( mod )
 import qualified Streaming.Prelude               as S
 
+import           Data.List                                         ( isInfixOf )
 import           Data.Text                                         ( pack
                                                                    , unpack
                                                                    )
@@ -97,6 +98,8 @@ formatAll path formatters = do
   S.mapM_ (formatOne foundExtensions formatters)
     . S.map fst
     . S.chain (putLn . ("Gnawing on... " <>) . (<> doggo) . pack . fst)
+    . S.filter (not . (".stack-work" `isInfixOf`) . fst)
+    . S.filter ((".hs" `isInfixOf`) . fst)
     . S.filter (not . isDirectory . snd)
     . tree
     $ path
