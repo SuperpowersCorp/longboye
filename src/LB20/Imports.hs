@@ -10,6 +10,7 @@ import Longboye.Prelude      hiding ( get
 
 import Control.Lens          hiding ( set )
 import Data.Data.Lens               ( biplate )
+import Data.List                    ( init )
 import LB20.Lenses
 import Language.Haskell.Exts
 
@@ -55,11 +56,21 @@ extractImports (Module _l _ _ decls _) = decls
 extractImports XmlHybrid {}            = notSupported "XmlHybrid"
 extractImports XmlPage {}              = notSupported "XmlPage"
 
+-- TODO: actually format the imports
 formatImports :: (Int, Int)
               -> [ImportDecl SrcSpanInfo]
               -> [ImportDecl SrcSpanInfo]
-formatImports (_start, _end) imports = imports
-  -- TODO: actually format the imports
+formatImports (_start, _end) imports = case lastMay imports of
+  Nothing -> imports
+  Just lastImport -> init imports ++ [lastImport']
+    where
+      lastImport' = moveDownALine lastImport
+
+      moveDownALine :: ImportDecl SrcSpanInfo -> ImportDecl SrcSpanInfo
+      moveDownALine imp = ImportDecl a' m q s sf pkg as sp
+        where
+           ImportDecl a m q s sf pkg as sp = imp
+           a' = a & srcSpanL . srcSpanStartLineL +~ 1
 
 rangeOf :: [ImportDecl SrcSpanInfo] -> (Int, Int)
 rangeOf imports = case head imports of
