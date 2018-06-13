@@ -1,5 +1,6 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoImplicitPrelude   #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module LB20Spec ( spec ) where
 
@@ -9,7 +10,9 @@ import Longboye.Prelude      hiding ( SrcLoc
 
 import Control.Lens
 import Data.Data.Lens               ( biplate )
-import Data.Text                    ( unlines )
+import Data.Text                    ( unlines
+                                    , unpack
+                                    )
 import LB20                         ( parseSource )
 import LB20.Imports
 import LB20.Lenses
@@ -18,6 +21,11 @@ import Test.Hspec
 
 spec :: Spec
 spec = describe "LB20" $ do
+  adjustLocsSpec
+  formatSpec
+
+adjustLocsSpec :: Spec
+adjustLocsSpec = describe "adjustLocs" $ do
   let ParseOk (mod, _)  = parseSource [] "test" exampleModText
 
   context "lens for adjustLocs" $ do
@@ -117,7 +125,7 @@ spec = describe "LB20" $ do
           mod' = mod & l' .~ 1
       toListOf l mod' `shouldBe` [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-  context "adjustLocs" $ do
+  context "adjustLocs itself" $ do
 
     it "should adjust decl locations properly (and nothing else)" $ do
       let ParseOk (_emod, _) = parseSource [] "test" expectedModText
@@ -125,7 +133,27 @@ spec = describe "LB20" $ do
       -- do we need the srcinfo points?
 --      adjustLocs (3, 5) mod `shouldBe` emod
 
--- "\n\n\n\n\nmodule Foo where\nimport Bar\nfoo :: Int\nfoo = 5"
+formatSpec :: Spec
+formatSpec = describe "format" $ do
+
+  context "when called on a module with no imports" $ do
+
+    -- it "should return the module unchanged" $ property $ \mod -> do
+    --   let mod' :: Module SrcSpanInfo = removeImports mod
+    --   format mod' `shouldBe` mod'
+    --
+    -- removeImports :: Module a -> Module a
+    -- removeImports = undefined
+
+    it "should return the module unchanged" $ do
+      let ParseOk (mod, _)  = parseSource [] "test" noImportsModText
+      exactPrint (format mod) [] `shouldBe` unpack noImportsModText
+
+  context "when called on a module with one import" $ do
+
+    it "should return the module unchanged" $ do
+      let ParseOk (mod, _)  = parseSource [] "test" oneImportModText
+      exactPrint (format mod) [] `shouldBe` unpack oneImportModText
 
 exampleModText :: Text
 exampleModText = unlines
@@ -143,6 +171,24 @@ expectedModText = unlines
   , ""
   , ""
   , ""
+  , ""
+  , "foo :: Int"
+  , "foo = 5"
+  ]
+
+noImportsModText :: Text
+noImportsModText = unlines
+  [ "module Foo where"
+  , ""
+  , "foo :: Int"
+  , "foo = 5"
+  ]
+
+oneImportModText :: Text
+oneImportModText = unlines
+  [ "module Foo where"
+  , ""
+  , "import Foo (Bar)"
   , ""
   , "foo :: Int"
   , "foo = 5"
