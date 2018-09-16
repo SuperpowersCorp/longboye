@@ -21,19 +21,13 @@ import           Language.Haskell.Exts                     ( Module( Module
                                                            , srcSpanEndLine
                                                            , srcSpanStartLine
                                                            )
-import           Language.Haskell.Exts.Extension           ( Extension
-                                                           , Language( Haskell2010 )
-                                                           )
+import           Language.Haskell.Exts.Extension           ( Extension )
 import           Language.Haskell.Exts.Parser              ( ParseResult( ParseFailed
                                                                         , ParseOk
                                                                         )
-                                                           , baseLanguage
-                                                           , defaultParseMode
-                                                           , extensions
-                                                           , ignoreLanguagePragmas
-                                                           , parseFilename
                                                            )
 import           Language.Haskell.Exts.Syntax              ( ImportDecl )
+import           Longboye.Common                           ( parseMode )
 import           Longboye.Files                            ( Contents( WithSubject
                                                                      , WithoutSubject
                                                                      )
@@ -45,7 +39,7 @@ parse :: [Extension] -> FilePath -> Text -> Maybe (Contents [Import])
 parse foundExtensions path = eitherToMaybe . parseE foundExtensions path
 
 parseE :: [Extension] -> FilePath -> Text -> Either Text (Contents [Import])
-parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
+parseE foundExtensions path source = case parseFileContentsWithMode mode sourceText of
   ParseOk parsedMod ->
     if null imports
       then Right . WithoutSubject $ source
@@ -57,14 +51,8 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
   ParseFailed srcLoc' err ->
     Left $ "ERROR at " <> show srcLoc' <> ": " <> show err
   where
-    parseMode = defaultParseMode
-      { baseLanguage          = Haskell2010
-      , ignoreLanguagePragmas = False
-      , extensions            = configuredExtensions
-      , parseFilename         = path
-      }
-    configuredExtensions = extensions defaultParseMode ++ foundExtensions
-    sourceText           = Text.unpack source
+    mode       = parseMode path foundExtensions
+    sourceText = Text.unpack source
 
 extractPrefix :: Module SrcSpanInfo -> Text -> Text
 extractPrefix XmlPage {}                        _ = notSupported "XmlPage"

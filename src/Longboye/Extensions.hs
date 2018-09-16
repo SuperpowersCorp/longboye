@@ -1,7 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Longboye.Extensions ( find )  where
+module Longboye.Extensions
+  ( find
+  )  where
 
 import           Longboye.Prelude                                hiding ( find )
 

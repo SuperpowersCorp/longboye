@@ -1,7 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Longboye.Errors ( renderError ) where
+module Longboye.Errors
+  ( renderError
+  ) where
 
 import Longboye.Prelude             hiding ( SrcLoc
                                            , srcLoc

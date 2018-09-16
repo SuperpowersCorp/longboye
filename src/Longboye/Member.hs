@@ -2,12 +2,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Longboye.Member
-       ( Member(..)
-       , fromDecl
-       , opCount
-       , render
-       , sort
-       ) where
+  ( Member(..)
+  , fromDecl
+  , opCount
+  , render
+  , sort
+  ) where
 
 import           Longboye.Prelude              hiding ( sort )
 

@@ -2,7 +2,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes       #-}
 
-module Longboye.Main ( main ) where
+module Longboye.Main
+  ( main
+  ) where
 
 import qualified Prelude
 import           Longboye.Prelude

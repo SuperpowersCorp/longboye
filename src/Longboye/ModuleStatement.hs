@@ -1,9 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
 module Longboye.ModuleStatement
-       ( ModuleStatement(..)
-       , fromDecl
-       ) where
+  ( ModuleStatement(..)
+  , fromDecl
+  ) where
 
 import Longboye.Prelude
 

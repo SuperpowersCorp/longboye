@@ -39,20 +39,21 @@ library
                   , unix
   exposed-modules:  Longboye
   other-modules:    Debug
-                    Longboye.Errors
-                    Longboye.Extensions
-                    Longboye.Files
-                    Longboye.Import
-                    Longboye.Imports
-                    Longboye.ImportsParser
-                    Longboye.Main
-                    Longboye.Member
-                    Longboye.ModuleStatement
-                    Longboye.ModuleStatementParser
-                    Longboye.ModuleStatements
-                    Longboye.Pragmas
-                    Longboye.PragmasParser
-                    Longboye.Prelude
+                  , Longboye.Common
+                  , Longboye.Errors
+                  , Longboye.Extensions
+                  , Longboye.Files
+                  , Longboye.Import
+                  , Longboye.Imports
+                  , Longboye.ImportsParser
+                  , Longboye.Main
+                  , Longboye.Member
+                  , Longboye.ModuleStatement
+                  , Longboye.ModuleStatementParser
+                  , Longboye.ModuleStatements
+                  , Longboye.Pragmas
+                  , Longboye.PragmasParser
+                  , Longboye.Prelude
   default-language: Haskell2010
 
 executable longboye
@@ -83,24 +84,25 @@ test-suite longboye-test
                   , text
                   , unix
   other-modules:    Debug
-                    Longboye
-                    Longboye.Errors
-                    Longboye.Extensions
-                    Longboye.Files
-                    Longboye.Import
-                    Longboye.Imports
-                    Longboye.ImportsParser
-                    Longboye.Main
-                    Longboye.Member
-                    Longboye.ModuleStatement
-                    Longboye.ModuleStatementParser
-                    Longboye.ModuleStatements
-                    Longboye.Pragmas
-                    Longboye.PragmasParser
-                    Longboye.Prelude
-                    Longboye.Import.Arbitrary
-                    Longboye.Member.Arbitrary
-                    ImportsSpec
-                    ModuleStatementsSpec
-                    PragmasSpec
+                  , Longboye
+                  , Longboye.Common
+                  , Longboye.Errors
+                  , Longboye.Extensions
+                  , Longboye.Files
+                  , Longboye.Import
+                  , Longboye.Imports
+                  , Longboye.ImportsParser
+                  , Longboye.Main
+                  , Longboye.Member
+                  , Longboye.ModuleStatement
+                  , Longboye.ModuleStatementParser
+                  , Longboye.ModuleStatements
+                  , Longboye.Pragmas
+                  , Longboye.PragmasParser
+                  , Longboye.Prelude
+                  , Longboye.Import.Arbitrary
+                  , Longboye.Member.Arbitrary
+                  , ImportsSpec
+                  , ModuleStatementsSpec
+                  , PragmasSpec
   default-language: Haskell2010

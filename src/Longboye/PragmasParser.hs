@@ -23,18 +23,12 @@ import           Language.Haskell.Exts                   ( Module( Module
                                                          , srcSpanEndLine
                                                          , srcSpanStartLine
                                                          )
-import           Language.Haskell.Exts.Extension         ( Extension
-                                                         , Language( Haskell2010 )
-                                                         )
+import           Language.Haskell.Exts.Extension         ( Extension )
 import           Language.Haskell.Exts.Parser            ( ParseResult( ParseFailed
                                                                       , ParseOk
                                                                       )
-                                                         , baseLanguage
-                                                         , defaultParseMode
-                                                         , extensions
-                                                         , ignoreLanguagePragmas
-                                                         , parseFilename
                                                          )
+import           Longboye.Common                         ( parseMode )
 import           Longboye.Files                          ( Contents( WithSubject
                                                                    , WithoutSubject
                                                                    )
@@ -46,7 +40,7 @@ parse :: [Extension] -> FilePath -> Text -> Maybe (Contents [Pragma])
 parse foundExtensions path = eitherToMaybe . parseE foundExtensions path
 
 parseE :: [Extension] -> FilePath -> Text -> Either Text (Contents [Pragma])
-parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
+parseE foundExtensions path source = case parseFileContentsWithMode mode sourceText of
   ParseOk parsedMod ->
     if null pragmas
       then Right . WithoutSubject $ source
@@ -58,14 +52,8 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
   ParseFailed srcLoc' err ->
     Left . Text.pack $ "ERROR at " ++ show srcLoc' ++ ": " ++ err
   where
-    parseMode = defaultParseMode
-      { baseLanguage          = Haskell2010
-      , ignoreLanguagePragmas = False
-      , extensions            = configuredExtensions
-      , parseFilename         = path
-      }
-    configuredExtensions = extensions defaultParseMode ++ foundExtensions
-    sourceText           = Text.unpack source
+    mode       = parseMode path foundExtensions
+    sourceText = Text.unpack source
 
 -- TODO: simplify it we stick with `type Pragma = ModulePragma SrcSpanInfo`
 getPragmas :: Module SrcSpanInfo -> [Pragma]

@@ -2,9 +2,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Longboye.ModuleStatementParser
-       ( parse
-       , parseE
-       ) where
+  ( parse
+  , parseE
+  ) where
 
 import qualified Prelude
 import           Longboye.Prelude
@@ -24,18 +24,12 @@ import           Language.Haskell.Exts                              ( ModuleHead
                                                                     , srcSpanEndLine
                                                                     , srcSpanStartLine
                                                                     )
-import           Language.Haskell.Exts.Extension                    ( Extension
-                                                                    , Language( Haskell2010 )
-                                                                    )
+import           Language.Haskell.Exts.Extension                    ( Extension )
 import           Language.Haskell.Exts.Parser                       ( ParseResult( ParseFailed
                                                                                  , ParseOk
                                                                                  )
-                                                                    , baseLanguage
-                                                                    , defaultParseMode
-                                                                    , extensions
-                                                                    , ignoreLanguagePragmas
-                                                                    , parseFilename
                                                                     )
+import           Longboye.Common                                    ( parseMode )
 import qualified Longboye.Errors                 as Errors
 import           Longboye.Files                                     ( Contents( WithSubject
                                                                               , WithoutSubject
@@ -48,7 +42,7 @@ parse :: [Extension] -> FilePath -> Text -> Maybe (Contents ModuleStatement)
 parse foundExtensions path = eitherToMaybe . parseE foundExtensions path
 
 parseE :: [Extension] -> FilePath -> Text -> Either Text (Contents ModuleStatement)
-parseE foundExtensions path source = case parseFileContentsWithMode parseMode sourceText of
+parseE foundExtensions path source = case parseFileContentsWithMode mode sourceText of
   ParseOk parsedMod ->
     case moduleStatementMay of
       Just moduleStatement ->
@@ -63,13 +57,7 @@ parseE foundExtensions path source = case parseFileContentsWithMode parseMode so
   ParseFailed srcLoc' err ->
     Left $ Errors.renderError srcLoc' (Text.pack err)
   where
-    parseMode = defaultParseMode
-      { baseLanguage          = Haskell2010
-      , ignoreLanguagePragmas = False
-      , extensions            = configuredExtensions
-      , parseFilename         = path
-      }
-    configuredExtensions = extensions defaultParseMode ++ foundExtensions
+    mode       = parseMode path foundExtensions
     sourceText = Text.unpack source
 
 getModuleStatement :: Module SrcSpanInfo -> Maybe ModuleStatement
