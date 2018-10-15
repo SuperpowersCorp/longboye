@@ -42,10 +42,10 @@ library
                   , system-fileio
                   , text
                   , unix
-  exposed-modules:  Longboye
+  exposed-modules:  Language.Haskell.Exts.X
+                  , Longboye
                   , LB20
                   , LB20.Imports
-                  , LB20.Lenses
                   , LB20.Pragmas
   other-modules:    Debug
                   , Longboye.Common
@@ -103,10 +103,10 @@ test-suite longboye-test
                   , text
                   , unix
   other-modules:    Debug
+                  , Language.Haskell.Exts.X
                   , LB20Spec
                   , LB20
                   , LB20.Imports
-                  , LB20.Lenses
                   , LB20.Pragmas
                   , Longboye
                   , Longboye.Common

@@ -17,8 +17,7 @@ import           Data.List                                  ( nub )
 import qualified Data.Map.Strict              as Map
 import           Data.String                                ( String )
 import           Data.Text                                  ( pack )
-import           LB20.Lenses
-import           Language.Haskell.Exts
+import           Language.Haskell.Exts.X
 import           Language.Haskell.Exts.Prisms
 
 type ImportSummary = Map Fingerprint (ImportDecl SrcSpanInfo)

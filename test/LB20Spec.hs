@@ -15,8 +15,7 @@ import Data.Text                    ( unlines
                                     )
 import LB20                         ( parseSource )
 import LB20.Imports
-import LB20.Lenses
-import Language.Haskell.Exts
+import Language.Haskell.Exts.X
 import Test.Hspec
 
 spec :: Spec

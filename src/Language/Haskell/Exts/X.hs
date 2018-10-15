@@ -1,11 +1,17 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module LB20.Lenses where
+module Language.Haskell.Exts.X
+  ( module X
+  , srcSpanL
+  , srcSpanEndLineL
+  , srcInfoPointsL
+  , srcSpanStartLineL
+  ) where
 
 import Longboye.Prelude
 
-import Control.Lens          hiding ( set )
-import Language.Haskell.Exts
+import Control.Lens               hiding ( set )
+import Language.Haskell.Exts as X
 
 srcSpanL :: Lens' SrcSpanInfo SrcSpan
 srcSpanL = lens srcInfoSpan set
