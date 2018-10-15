@@ -2,11 +2,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Longboye.Import
-       ( Import(..)
-       , asLength
-       , format
-       , fromDecl
-       ) where
+  ( Import(..)
+  , asLength
+  , format
+  , fromDecl
+  ) where
 
 import           Longboye.Prelude
 

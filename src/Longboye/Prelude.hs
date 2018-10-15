@@ -4,14 +4,14 @@
 {-# LANGUAGE OverloadedStrings     #-}
 
 module Longboye.Prelude
-       ( module Exports
-       , (|>)
-       , eitherToMaybe
-       , getLn
-       , notSupported
-       , putLn
-       , withDefault
-       ) where
+  ( module Exports
+  , (|>)
+  , eitherToMaybe
+  , getLn
+  , notSupported
+  , putLn
+  , withDefault
+  ) where
 
 import Protolude as Exports
 

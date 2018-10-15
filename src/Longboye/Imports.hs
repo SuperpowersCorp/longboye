@@ -1,7 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Longboye.Imports ( cleanText ) where
+module Longboye.Imports
+  ( cleanText
+  ) where
 
 import           Longboye.Prelude
 

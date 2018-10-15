@@ -48,20 +48,21 @@ library
                   , LB20.Lenses
                   , LB20.Pragmas
   other-modules:    Debug
-                    Longboye.Errors
-                    Longboye.Extensions
-                    Longboye.Files
-                    Longboye.Import
-                    Longboye.Imports
-                    Longboye.ImportsParser
-                    Longboye.Main
-                    Longboye.Member
-                    Longboye.ModuleStatement
-                    Longboye.ModuleStatementParser
-                    Longboye.ModuleStatements
-                    Longboye.Pragmas
-                    Longboye.PragmasParser
-                    Longboye.Prelude
+                  , Longboye.Common
+                  , Longboye.Errors
+                  , Longboye.Extensions
+                  , Longboye.Files
+                  , Longboye.Import
+                  , Longboye.Imports
+                  , Longboye.ImportsParser
+                  , Longboye.Main
+                  , Longboye.Member
+                  , Longboye.ModuleStatement
+                  , Longboye.ModuleStatementParser
+                  , Longboye.ModuleStatements
+                  , Longboye.Pragmas
+                  , Longboye.PragmasParser
+                  , Longboye.Prelude
                     Streaming.Files
   default-language: Haskell2010
 
@@ -108,6 +109,7 @@ test-suite longboye-test
                   , LB20.Lenses
                   , LB20.Pragmas
                   , Longboye
+                  , Longboye.Common
                   , Longboye.Errors
                   , Longboye.Extensions
                   , Longboye.Files
